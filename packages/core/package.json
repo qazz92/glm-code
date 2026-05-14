@@ -4,13 +4,19 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "scripts": { "build": "tsc -b && cp -r src/storage/migrations dist/storage/migrations" },
+  "scripts": {
+    "build": "tsc -b && cp -r src/storage/migrations dist/storage/migrations"
+  },
   "dependencies": {
     "@glm/shared": "workspace:*",
     "better-sqlite3": "^11.5.0",
+    "picomatch": "^4.0.2",
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0",
     "zod": "^3.23.0"
   },
-  "devDependencies": { "@types/better-sqlite3": "^7.6.0" }
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/picomatch": "^3.0.0"
+  }
 }
