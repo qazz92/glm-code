@@ -1,0 +1,17 @@
+{
+  "name": "@glm/llm-router",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": { "build": "tsc -b" },
+  "dependencies": {
+    "@glm/shared": "workspace:*",
+    "@glm/core": "workspace:*",
+    "better-sqlite3": "^11.5.0",
+    "undici": "^6.20.0",
+    "eventsource-parser": "^3.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": { "@types/better-sqlite3": "^7.6.0" }
+}
