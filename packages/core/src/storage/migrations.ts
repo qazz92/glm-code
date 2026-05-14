@@ -46,7 +46,10 @@ export function runMigrationsForDb(db: Database, dir: string): number {
   }
   return applied
 }
-
 export function runMigrations(db: Database): number {
   return runMigrationsForDb(db, join(HERE, 'migrations'))
+}
+
+export function runQuotaMigrations(db: Database): number {
+  return runMigrationsForDb(db, join(HERE, 'quota-migrations'))
 }

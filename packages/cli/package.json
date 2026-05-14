@@ -8,6 +8,7 @@
   "dependencies": {
     "@glm/shared": "workspace:*",
     "@glm/core": "workspace:*",
+    "@glm/llm-router": "workspace:*",
     "@glm/tui": "workspace:*",
     "commander": "^12.1.0",
     "kleur": "^4.1.5"

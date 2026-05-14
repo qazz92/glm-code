@@ -34,6 +34,18 @@ export class Daemon {
     this.rpc.on(method, handler)
   }
 
+  /** Expose paths for subsystems. */
+  get glmPaths() { return this.paths }
+
+  /** Expose logger for subsystems. */
+  get logger() { return this.log }
+
+  /** Register a shutdown hook for subsystems. */
+  onShutdown(fn: () => void): void {
+    const origStop = this.stop.bind(this)
+    this.stop = async () => { try { fn() } catch { /* best effort */ }; await origStop() }
+  }
+
   /** Expose the database for subsystems that need direct access. */
   get database(): Database | undefined { return this.db }
 

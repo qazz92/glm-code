@@ -29,6 +29,9 @@ importers:
       '@glm/core':
         specifier: workspace:*
         version: link:../core
+      '@glm/llm-router':
+        specifier: workspace:*
+        version: link:../llm-router
       '@glm/shared':
         specifier: workspace:*
         version: link:../shared

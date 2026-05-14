@@ -32,3 +32,6 @@ export { coalesce } from './stream/coalesce.js'
 export type { CoalescedResult } from './stream/coalesce.js'
 export { resolveCredentials } from './credentials/resolver.js'
 export type { ResolvedCredentials, ResolveOpts } from './credentials/resolver.js'
+export { listProfiles, setActiveProfile } from './credentials/profile.js'
+// Side-effect: registers 'llm-router' subsystem with LoaderHub
+import './daemon-loader.js'

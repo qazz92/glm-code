@@ -25,9 +25,8 @@ describe('multi-edit tool', () => {
         { anchor: '1', kind: 'replace', payload: ['~LINE1'] },
       ],
     })
-    const r = result as { ok: boolean; data?: { opsApplied: number } }
-    expect(r.ok).toBe(true)
-    expect(r.data?.opsApplied).toBe(2)
+    const r = result as { path: string; opsApplied: number }
+    expect(r.opsApplied).toBe(2)
     const content = await readFile(filePath, 'utf-8')
     expect(content).toBe('LINE1\nline2\nline3\nline4\nLINE5')
   })
@@ -37,15 +36,13 @@ describe('multi-edit tool', () => {
     await writeFile(filePath, 'line1\nline2\nline3')
     const original = await readFile(filePath, 'utf-8')
 
-    const result = await multiEditTool.run({
+    await expect(multiEditTool.run({
       path: filePath,
       ops: [
         { anchor: '1', kind: 'replace', payload: ['~changed'] },
         { anchor: '99', kind: 'replace', payload: ['~bad'] },
       ],
-    })
-    const r = result as { ok: boolean }
-    expect(r.ok).toBe(false)
+    })).rejects.toThrow()
 
     // File should be unchanged
     const after = await readFile(filePath, 'utf-8')
@@ -71,16 +68,13 @@ describe('multi-edit tool', () => {
   test('fails on overlapping ranges', async () => {
     const filePath = join(testDir, 'file.txt')
     await writeFile(filePath, 'a\nb\nc\nd')
-    const result = await multiEditTool.run({
+    await expect(multiEditTool.run({
       path: filePath,
       ops: [
         { anchor: '1-3', kind: 'replace_range', payload: ['~x'] },
         { anchor: '2', kind: 'replace', payload: ['~y'] },
       ],
-    })
-    const r = result as { ok: boolean; error?: { message: string } }
-    expect(r.ok).toBe(false)
-    expect(r.error?.message).toContain('Overlapping')
+    })).rejects.toThrow('Overlapping')
   })
 
   test('insert and delete combination', async () => {

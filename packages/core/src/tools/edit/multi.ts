@@ -8,7 +8,6 @@ import { readFile, writeFile, mkdir, rename, unlink } from 'node:fs/promises'
 import { resolve, dirname, basename } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import type { ToolHandler } from '../registry.js'
-import { toolOk, toolErr } from '../errors.js'
 import { planOps, applyPlan, type RawEditOp, type EditOpKind } from './apply.js'
 import { stripPayloadPrefix } from './prefixes.js'
 
@@ -40,7 +39,7 @@ export const multiEditTool: ToolHandler = {
     try {
       content = await readFile(filePath, 'utf-8')
     } catch (e) {
-      return toolErr('RUNTIME_ERROR', `Failed to read ${filePath}: ${(e as Error).message}`)
+      throw new Error(`Failed to read ${filePath}: ${(e as Error).message}`)
     }
 
     const lines = content.split('\n')
@@ -54,7 +53,10 @@ export const multiEditTool: ToolHandler = {
 
     // Plan — if any op fails, abort
     const planResult = planOps(rawOps, lines)
-    if (!planResult.ok || !planResult.data) return planResult
+    if (!planResult.ok || !planResult.data) {
+      const msg = !planResult.ok && planResult.error ? planResult.error.message : 'Edit plan failed'
+      throw new Error(msg)
+    }
 
     // Apply all ops against the original snapshot
     const plan = planResult.data
@@ -70,12 +72,12 @@ export const multiEditTool: ToolHandler = {
       await rename(tmpPath, filePath)
     } catch (e) {
       try { await unlink(tmpPath) } catch { /* best effort */ }
-      return toolErr('RUNTIME_ERROR', `Failed to write ${filePath}: ${(e as Error).message}`)
+      throw new Error(`Failed to write ${filePath}: ${(e as Error).message}`)
     }
 
-    return toolOk({
+    return {
       path: filePath,
       opsApplied: plan.ops.length,
-    })
+    }
   },
 }

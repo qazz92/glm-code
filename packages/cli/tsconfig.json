@@ -5,6 +5,7 @@
   "references": [
     { "path": "../shared" },
     { "path": "../core" },
+    { "path": "../llm-router" },
     { "path": "../tui" }
   ]
 }

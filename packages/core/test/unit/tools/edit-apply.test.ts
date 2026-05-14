@@ -22,9 +22,9 @@ describe('edit tool — apply', () => {
       path: filePath,
       ops: [{ anchor: '2', kind: 'replace', payload: ['~replaced'] }],
     })
-    const r = result as { ok: boolean; data?: { opsApplied: number } }
-    expect(r.ok).toBe(true)
-    expect(r.data?.opsApplied).toBe(1)
+    const r = result as { path: string; opsApplied: number }
+    expect(r.opsApplied).toBe(1)
+    expect(r.path).toBe(filePath)
     const content = await readFile(filePath, 'utf-8')
     expect(content).toBe('line1\nreplaced\nline3')
   })
@@ -76,33 +76,26 @@ describe('edit tool — apply', () => {
   test('fails on line out of range', async () => {
     const filePath = join(testDir, 'file.txt')
     await writeFile(filePath, 'line1\nline2')
-    const result = await editTool.run({
+    await expect(editTool.run({
       path: filePath,
       ops: [{ anchor: '10', kind: 'replace', payload: ['~x'] }],
-    })
-    const r = result as { ok: boolean; error?: { message: string } }
-    expect(r.ok).toBe(false)
-    expect(r.error?.message).toContain('exceeds file length')
+    })).rejects.toThrow('exceeds file length')
   })
 
   test('fails on invalid range', async () => {
     const filePath = join(testDir, 'file.txt')
     await writeFile(filePath, 'line1\nline2\nline3')
-    const result = await editTool.run({
+    await expect(editTool.run({
       path: filePath,
       ops: [{ anchor: '2-10', kind: 'replace_range', payload: ['~x'] }],
-    })
-    const r = result as { ok: boolean; error?: { message: string } }
-    expect(r.ok).toBe(false)
+    })).rejects.toThrow()
   })
 
   test('fails on non-existent file', async () => {
-    const result = await editTool.run({
+    await expect(editTool.run({
       path: join(testDir, 'nope.txt'),
       ops: [{ anchor: '1', kind: 'replace', payload: ['~x'] }],
-    })
-    const r = result as { ok: boolean }
-    expect(r.ok).toBe(false)
+    })).rejects.toThrow('Failed to read')
   })
 
   test('strips ~ prefix from payload', async () => {
