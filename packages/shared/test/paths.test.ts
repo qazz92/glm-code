@@ -3,7 +3,7 @@ import { resolvePaths } from '../src/paths'
 
 describe('resolvePaths', () => {
   test('returns expected ~/.glm subtree', () => {
-    const p = resolvePaths({ home: '/Users/test' })
+    const p = resolvePaths({ home: '/Users/test', env: {} })
     expect(p.root).toBe('/Users/test/.glm')
     expect(p.socket).toBe('/Users/test/.glm/daemon.sock')
     expect(p.pid).toBe('/Users/test/.glm/daemon.pid')
