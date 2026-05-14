@@ -1,4 +1,5 @@
 import type { RpcRequest, RpcResponse } from '@glm/shared'
+import type { Socket } from 'node:net'
 
 export type RpcHandler = (params: unknown, ctx: RpcContext) => Promise<unknown>
 
@@ -6,6 +7,7 @@ export interface RpcContext {
   clientId: string
   sessionId?: string
   log: import('../log.js').Logger
+  socket?: Socket
 }
 
 export const RPC_ERRORS = {

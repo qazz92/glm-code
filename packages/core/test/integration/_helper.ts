@@ -16,6 +16,7 @@ export interface SpawnedDaemon {
 
 export interface SpawnOpts {
   home?: string
+  env?: Record<string, string | undefined>
 }
 
 export async function spawnDaemonProcess(opts: SpawnOpts = {}): Promise<SpawnedDaemon> {
@@ -26,7 +27,7 @@ export async function spawnDaemonProcess(opts: SpawnOpts = {}): Promise<SpawnedD
   const child = spawn(process.execPath, [entry], {
     detached: false,
     stdio: 'pipe',
-    env: { ...process.env, GLM_HOME: glmHome }
+    env: { ...process.env, GLM_HOME: glmHome, ...opts.env }
   })
   for (let i = 0; i < 80; i++) {
     if (existsSync(socket)) break

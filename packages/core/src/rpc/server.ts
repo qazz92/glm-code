@@ -18,7 +18,7 @@ export class RpcServer {
 
   attach(socket: Socket, ctx: Omit<RpcContext, 'log'>): void {
     let leftover = ''
-    const fullCtx: RpcContext = { ...ctx, log: this.log }
+    const fullCtx: RpcContext = { ...ctx, log: this.log, socket }
     socket.on('data', async (chunk) => {
       const { frames, leftover: lo } = framesFromChunk(chunk, leftover)
       leftover = lo
