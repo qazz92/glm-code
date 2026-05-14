@@ -1,0 +1,14 @@
+{
+  "name": "@glm/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": { "glm": "./dist/bin.js" },
+  "main": "./dist/index.js",
+  "scripts": { "build": "tsc -b" },
+  "dependencies": {
+    "@glm/shared": "workspace:*",
+    "@glm/core": "workspace:*",
+    "commander": "^12.1.0",
+    "kleur": "^4.1.5"
+  }
+}

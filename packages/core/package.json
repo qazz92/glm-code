@@ -1,0 +1,16 @@
+{
+  "name": "@glm/core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": { "build": "tsc -b" },
+  "dependencies": {
+    "@glm/shared": "workspace:*",
+    "better-sqlite3": "^11.5.0",
+    "pino": "^9.5.0",
+    "pino-pretty": "^11.3.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": { "@types/better-sqlite3": "^7.6.0" }
+}
