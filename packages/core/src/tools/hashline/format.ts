@@ -46,3 +46,5 @@ export function splitAnchorRange(s: string): [string, string] | null {
 export function isAnchor(s: string): boolean {
   return ANCHOR_RE.test(s)
 }
+
+export { initHashline } from './hash.js'
