@@ -42,7 +42,7 @@ export async function runTui(opts: RunTuiOpts = {}): Promise<void> {
     const created = await rpc.call<SessionRow>('session.create', {
       cwd: process.cwd(),
       worktree: process.cwd(),
-      initialTask: null
+      initialTask: undefined
     })
     target = { id: created.id, cwd: created.cwd, initialTask: created.initialTask }
   }

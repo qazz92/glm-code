@@ -32,6 +32,9 @@ importers:
       '@glm/shared':
         specifier: workspace:*
         version: link:../shared
+      '@glm/tui':
+        specifier: workspace:*
+        version: link:../tui
       commander:
         specifier: ^12.1.0
         version: 12.1.0

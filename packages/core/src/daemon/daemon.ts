@@ -28,6 +28,15 @@ export class Daemon {
     this.log = createLogger('daemon', { file: this.paths.log })
   }
 
+  /** Register an RPC handler — called by subsystems during LoaderHub.runAll(). */
+  registerRpc(method: string, handler: import('../rpc/protocol.js').RpcHandler): void {
+    if (!this.rpc) throw new Error('Cannot register RPC before start()')
+    this.rpc.on(method, handler)
+  }
+
+  /** Expose the database for subsystems that need direct access. */
+  get database(): Database | undefined { return this.db }
+
   async start(): Promise<void> {
     const existing = readPid(this.paths.pid)
     if (existing) {
