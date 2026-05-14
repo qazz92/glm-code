@@ -66,7 +66,7 @@ function mapMessage(msg: IRMessage): OpenAIWireMessage | OpenAIWireMessage[] {
   if (msg.role === 'tool') {
     const results = msg.content.filter((b): b is Extract<IRBlock, { type: 'tool_result' }> => b.type === 'tool_result')
     if (results.length === 1) {
-      return { role: 'tool', content: results[0].content }
+      return { role: 'tool', content: results[0]!.content }
     }
     return results.map(r => ({ role: 'tool' as const, content: r.content, tool_call_id: r.toolUseId }))
   }
