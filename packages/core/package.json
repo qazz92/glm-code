@@ -4,7 +4,7 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "scripts": { "build": "tsc -b" },
+  "scripts": { "build": "tsc -b && cp -r src/storage/migrations dist/storage/migrations" },
   "dependencies": {
     "@glm/shared": "workspace:*",
     "better-sqlite3": "^11.5.0",
