@@ -10,7 +10,7 @@
  *   `raw`         → raw mode, no hashlines
  */
 
-export type Range =
+export type LineRange =
   | { type: 'single'; line: number }
   | { type: 'inclusive'; start: number; end: number }
   | { type: 'count'; start: number; count: number }
@@ -21,11 +21,11 @@ const INCLUSIVE_RE = /^(\d+)-(\d+)$/
 const COUNT_RE = /^(\d+)\+(\d+)$/
 
 /**
- * Parse a selector string into a Range descriptor.
+ * Parse a selector string into a LineRange descriptor.
  * Returns `null` when `input` is empty/undefined (no selector).
  * Throws on syntactically invalid selectors.
  */
-export function parseSelector(input: string | undefined | null): Range | null {
+export function parseSelector(input: string | undefined | null): LineRange | null {
   if (!input) return null
 
   if (input === 'raw') return { type: 'raw' }

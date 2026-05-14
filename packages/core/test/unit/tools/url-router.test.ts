@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'vitest'
 import { makeUrlRouter } from '../../../src/tools/read/url-router.js'
-import { toolErr } from '../../../src/tools/errors.js'
 
 describe('UrlRouter', () => {
   function router() {
@@ -48,14 +47,18 @@ describe('UrlRouter', () => {
     if (!result.ok) expect(result.error.code).toBe('NOT_FOUND')
   })
 
-  test('read applies selector to content', async () => {
+  test('read delegates to dispatch', async () => {
     const r = makeUrlRouter()
-    r.register('multiline', async () => ({
+    r.register('test', async (parsed) => ({
       ok: true as const,
-      data: 'line1\nline2\nline3\nline4\nline5',
+      data: `scheme=${parsed.scheme} path=${parsed.path} sel=${JSON.stringify(parsed.selector)}`,
     }))
-    const result = await r.read('multiline://x:2-4')
+    const result = await r.read('test://data:42')
     expect(result.ok).toBe(true)
-    if (result.ok) expect(result.data).toBe('line2\nline3\nline4')
+    if (result.ok) {
+      expect(result.data).toContain('scheme=test')
+      expect(result.data).toContain('path=data')
+      expect(result.data).toContain('"single"')
+    }
   })
 })

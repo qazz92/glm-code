@@ -8,7 +8,7 @@ import { resolve, extname } from 'node:path'
 import { toolOk, toolErr, type ToolResult } from '../../errors.js'
 import type { ParsedUrl, SchemeHandler } from '../url-router.js'
 import { initHashline, toHashlines } from '../../hashline/index.js'
-import type { Range } from '../selector.js'
+import type { LineRange } from '../selector.js'
 
 /** Binary extensions that should not be read as text. */
 const BINARY_EXTENSIONS = new Set([
@@ -24,8 +24,8 @@ function isBinaryPath(filePath: string): boolean {
   return BINARY_EXTENSIONS.has(extname(filePath).toLowerCase())
 }
 
-/** Apply a Range selector to multi-line text. Returns [selectedLines, fullLines]. */
-function sliceContent(content: string, range: Range): string {
+/** Apply a LineRange selector to multi-line text. */
+function sliceContent(content: string, range: LineRange): string {
   const lines = content.split('\n')
   switch (range.type) {
     case 'single':

@@ -5,14 +5,14 @@
  *          memory, mcp, conflict
  */
 
-import { parseSelector, splitPathSelector, type Range } from './selector.js'
+import { parseSelector, splitPathSelector, type LineRange } from './selector.js'
 import { toolErr, type ToolResult } from '../errors.js'
 
 export interface ParsedUrl {
   scheme: string
   /** The path component (after scheme:). */
   path: string
-  selector: Range | null
+  selector: LineRange | null
 }
 
 export type SchemeHandler = (
@@ -26,19 +26,6 @@ export interface UrlRouter {
   /** Convenience: parse + dispatch + apply selector to content. */
   read(input: string): Promise<ToolResult<string>>
 }
-
-const KNOWN_SCHEMES = [
-  'file',
-  'issue',
-  'pr',
-  'skill',
-  'rule',
-  'agent',
-  'artifact',
-  'memory',
-  'mcp',
-  'conflict',
-] as const
 
 export function makeUrlRouter(): UrlRouter {
   const handlers = new Map<string, SchemeHandler>()
@@ -81,54 +68,8 @@ export function makeUrlRouter(): UrlRouter {
   }
 
   async function read(input: string): Promise<ToolResult<string>> {
-    const parsed = parse(input)
-    const result = await dispatch(input)
-    if (!result.ok) return result
-
-    // raw selector bypasses formatting
-    if (parsed.selector?.type === 'raw') return result
-
-    // Apply line-range selector if present (handler may already have done this)
-    const content = result.data as string
-    if (parsed.selector) {
-      return applySelector(content, parsed.selector)
-    }
-
-    return result
+    return dispatch(input)
   }
 
   return { parse, register, dispatch, read }
-}
-
-/**
- * Apply a Range selector to multi-line text content.
- * Returns a substring covering the selected lines (1-indexed).
- */
-function applySelector(content: string, range: Range): ToolResult<string> {
-  const lines = content.split('\n')
-
-  switch (range.type) {
-    case 'single': {
-      if (range.line > lines.length) {
-        return toolErr('VALIDATION_ERROR', `Line ${range.line} exceeds file length (${lines.length} lines)`)
-      }
-      return { ok: true, data: lines[range.line - 1]! }
-    }
-    case 'inclusive': {
-      if (range.start > lines.length) {
-        return toolErr('VALIDATION_ERROR', `Start line ${range.start} exceeds file length (${lines.length} lines)`)
-      }
-      const end = Math.min(range.end, lines.length)
-      return { ok: true, data: lines.slice(range.start - 1, end).join('\n') }
-    }
-    case 'count': {
-      if (range.start > lines.length) {
-        return toolErr('VALIDATION_ERROR', `Start line ${range.start} exceeds file length (${lines.length} lines)`)
-      }
-      const end = Math.min(range.start - 1 + range.count, lines.length)
-      return { ok: true, data: lines.slice(range.start - 1, end).join('\n') }
-    }
-    case 'raw':
-      return { ok: true, data: content }
-  }
 }
