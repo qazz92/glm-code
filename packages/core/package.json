@@ -5,7 +5,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc -b && cp -r src/storage/migrations dist/storage/migrations && cp -r src/storage/quota-migrations dist/storage/quota-migrations"
+    "build": "tsc -b && cp -r src/storage/migrations dist/storage/migrations && cp -r src/storage/quota-migrations dist/storage/quota-migrations && cp src/tools/hashline/bigrams.json dist/tools/hashline/bigrams.json"
   },
   "dependencies": {
     "@glm/shared": "workspace:*",
@@ -13,6 +13,7 @@
     "picomatch": "^4.0.2",
     "pino": "^9.5.0",
     "pino-pretty": "^11.3.0",
+    "xxhash-wasm": "^1.0.2",
     "zod": "^3.23.0"
   },
   "devDependencies": {
