@@ -5,6 +5,7 @@ export default defineConfig({
     pool: 'forks',
     poolOptions: { forks: { singleFork: false } },
     testTimeout: 15_000,
-    coverage: { reporter: ['text', 'lcov'], include: ['packages/*/src/**/*.ts'] }
+    coverage: { reporter: ['text', 'lcov'], include: ['packages/*/src/**/*.ts'] },
+    exclude: ['**/repos/**', '**/node_modules/**', '**/dist/**']
   }
 })

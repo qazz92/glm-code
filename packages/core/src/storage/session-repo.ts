@@ -40,7 +40,7 @@ export class SessionRepo {
   list(opts: { limit?: number; activeOnly?: boolean } = {}): SessionRow[] {
     const where = opts.activeOnly ? 'WHERE active = 1' : ''
     const limit = opts.limit ?? 50
-    const rows = this.db.prepare(`SELECT * FROM sessions ${where} ORDER BY updated_at DESC LIMIT ?`).all(limit) as Record<string, unknown>[]
+    const rows = this.db.prepare(`SELECT * FROM sessions ${where} ORDER BY updated_at DESC, rowid DESC LIMIT ?`).all(limit) as Record<string, unknown>[]
     return rows.map(rowToSession)
   }
 
