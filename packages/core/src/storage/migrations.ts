@@ -13,7 +13,7 @@ function currentSchemaVersion(db: Database): number {
   )
 }
 
-export function runMigrations(db: Database, dir = join(HERE, 'migrations')) {
+export function runMigrationsForDb(db: Database, dir: string): number {
   const cur = currentSchemaVersion(db)
   const files = readdirSync(dir).filter(f => f.endsWith('.sql')).sort()
   const pending = files.filter(f => {
@@ -45,4 +45,8 @@ export function runMigrations(db: Database, dir = join(HERE, 'migrations')) {
     }
   }
   return applied
+}
+
+export function runMigrations(db: Database): number {
+  return runMigrationsForDb(db, join(HERE, 'migrations'))
 }
