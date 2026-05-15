@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/* eslint-disable no-undef */
-module.exports = {
+export default {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
