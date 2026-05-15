@@ -78,8 +78,6 @@ tmp/
 # Code graph
 .codegraph
 
-# GitHub workflows (token scope limitation)
-.github/workflows/
 
 # OMC state files
 .omc/

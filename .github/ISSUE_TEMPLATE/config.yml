@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and usage help
+    url: https://github.com/qazz92/glm-code/discussions/categories/q-a
+    about: Please use Discussions for troubleshooting, setup help, and general questions.
+  - name: Security vulnerability
+    url: https://github.com/qazz92/glm-code/security/advisories/new
+    about: Please report suspected vulnerabilities privately.

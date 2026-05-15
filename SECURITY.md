@@ -2,8 +2,18 @@
 
 ## Reporting a Vulnerability
 
-If you believe you have discovered a security vulnerability, please report it to us through the following portal: [Report Security Issue](https://yundun.console.aliyun.com/?p=xznew#/taskmanagement/tasks/detail/151)
+Please do **not** report suspected security vulnerabilities in public issues,
+discussions, or pull requests.
 
-> **Note:** This channel is strictly for reporting security-related issues. Non-security vulnerabilities or general bug reports will not be addressed here.
+Use GitHub's private vulnerability reporting flow for this repository:
 
-We sincerely appreciate your responsible disclosure and your contribution to helping us keep our project secure.
+- https://github.com/qazz92/glm-code/security/advisories/new
+
+Include as much detail as possible, including affected versions or commits,
+reproduction steps, impact, and any suggested mitigation. Maintainers will
+review the report privately and coordinate disclosure before public discussion.
+
+## Supported Versions
+
+This project is early-stage. Security fixes are generally made on the `main`
+branch first and included in the next published release.

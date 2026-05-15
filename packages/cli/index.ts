@@ -8,21 +8,28 @@
 // Suppress Node.js 24 deprecation warnings from third-party deps (e.g. @opentelemetry uses url.parse).
 // Remove when upstream deps migrate to WHATWG URL API.
 const originalEmit = process.emit;
-process.emit = function (event: string, warning: unknown, ...args: unknown[]) {
+process.emit = function (event: string | symbol, ...args: unknown[]): boolean {
+  const warning = args[0];
+  const warningName =
+    typeof warning === 'object' && warning !== null && 'name' in warning
+      ? warning.name
+      : undefined;
+  const warningMessage =
+    typeof warning === 'object' && warning !== null && 'message' in warning
+      ? warning.message
+      : undefined;
+
   if (
     event === 'warning' &&
-    typeof warning === 'object' &&
-    warning !== null &&
-    'name' in warning &&
-    (warning as { name: string }).name === 'DeprecationWarning' &&
-    typeof (warning as { message?: string }).message === 'string' &&
-    (warning as { message: string }).message.includes('url.parse')
+    warningName === 'DeprecationWarning' &&
+    typeof warningMessage === 'string' &&
+    warningMessage.includes('url.parse')
   ) {
     return false;
   }
-  return originalEmit.call(process, event as never, warning, ...(args as never[]));
-};
 
+  return Reflect.apply(originalEmit, process, [event, ...args]) as boolean;
+} as typeof process.emit;
 
 import { initStartupProfiler } from './src/utils/startupProfiler.js';
 

@@ -1,5 +1,5 @@
 name: 'Bug Report'
-description: 'Report a bug to help us improve Qwen Code'
+description: 'Report a bug to help us improve GLM Code'
 labels: ['type/bug', 'status/needs-triage']
 body:
   - type: 'markdown'
@@ -8,7 +8,7 @@ body:
         > [!IMPORTANT]
         > Thanks for taking the time to fill out this bug report!
         >
-        > Please search **[existing issues](https://github.com/QwenLM/qwen-code/issues)** to see if an issue already exists for the bug you encountered.
+        > Please search **[existing issues](https://github.com/qazz92/glm-code/issues)** to see if an issue already exists for the bug you encountered.
 
   - type: 'textarea'
     id: 'problem'
@@ -29,15 +29,15 @@ body:
     id: 'info'
     attributes:
       label: 'Client information'
-      description: 'Please paste the full text from the `/about` command run from Qwen Code. Also include which platform (macOS, Windows, Linux).'
+      description: 'Please paste the full text from the `/about` command run from GLM Code. Also include which platform (macOS, Windows, Linux).'
       value: |
         <details>
         <summary>Client Information</summary>
 
-        Run `qwen` to enter the interactive CLI, then run the `/about` command.
+        Run `glm` to enter the interactive CLI, then run the `/about` command.
 
         ```console
-        $ qwen /about
+        $ glm /about
         # paste output here
         ```
 

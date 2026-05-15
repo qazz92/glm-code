@@ -81,8 +81,8 @@ This section guides contributors on how to build, modify, and understand the dev
 To clone the repository:
 
 ```bash
-git clone https://github.com/QwenLM/qwen-code.git # Or your fork's URL
-cd qwen-code
+git clone https://github.com/qazz92/glm-code.git # Or your fork's URL
+cd glm-code
 ```
 
 To install dependencies defined in `package.json` as well as root dependencies:
@@ -103,7 +103,7 @@ This command typically compiles TypeScript to JavaScript, bundles assets, and pr
 
 [Sandboxing](#sandboxing) is highly recommended and requires, at a minimum, setting `QWEN_SANDBOX=true` in your `~/.env` and ensuring a sandboxing provider (e.g. `macOS Seatbelt`, `docker`, or `podman`) is available. See [Sandboxing](#sandboxing) for details.
 
-To build both the `qwen-code` CLI utility and the sandbox container, run `build:all` from the root directory:
+To build both the `glm` CLI utility and the sandbox container, run `build:all` from the root directory:
 
 ```bash
 npm run build:all
@@ -113,13 +113,13 @@ To skip building the sandbox container, you can use `npm run build` instead.
 
 ### Running
 
-To start the Qwen Code application from the source code (after building), run the following command from the root directory:
+To start the GLM Code application from the source code (after building), run the following command from the root directory:
 
 ```bash
 npm start
 ```
 
-If you'd like to run the source build outside of the qwen-code folder, you can utilize `npm link path/to/qwen-code/packages/cli` (see: [docs](https://docs.npmjs.com/cli/v9/commands/npm-link)) to run with `qwen-code`
+If you'd like to run the source build outside of the glm-code folder, you can utilize `npm link path/to/glm-code/packages/cli` (see: [docs](https://docs.npmjs.com/cli/v9/commands/npm-link)) to run with `glm`
 
 ### Running Tests
 
@@ -137,7 +137,7 @@ This will run tests located in the `packages/core` and `packages/cli` directorie
 
 #### Integration Tests
 
-The integration tests are designed to validate the end-to-end functionality of Qwen Code. They are not run as part of the default `npm run test` command.
+The integration tests are designed to validate the end-to-end functionality of GLM Code. They are not run as part of the default `npm run test` command.
 
 To run the integration tests, use the following command:
 
@@ -198,7 +198,7 @@ npm run lint
 
 - `packages/`: Contains the individual sub-packages of the project.
   - `cli/`: The command-line interface.
-  - `core/`: The core backend logic for Qwen Code.
+  - `core/`: The core backend logic for GLM Code.
 - `docs/`: Contains all project documentation.
 - `scripts/`: Utility scripts for building, testing, and development tasks.
 
@@ -264,16 +264,16 @@ Alternatively, you can use the "Launch Program" configuration in VS Code if you 
 To hit a breakpoint inside the sandbox container run:
 
 ```bash
-DEBUG=1 qwen-code
+DEBUG=1 glm
 ```
 
-**Note:** If you have `DEBUG=true` in a project's `.env` file, it won't affect qwen-code due to automatic exclusion. Use `.qwen-code/.env` files for qwen-code specific debug settings.
+**Note:** If you have `DEBUG=true` in a project's `.env` file, it won't affect GLM Code due to automatic exclusion. Use `.glm/.env` files for GLM Code-specific debug settings.
 
 ### React DevTools
 
 To debug the CLI's React-based UI, you can use React DevTools. Ink, the library used for the CLI's interface, is compatible with React DevTools version 4.x.
 
-1.  **Start the Qwen Code application in development mode:**
+1.  **Start the GLM Code application in development mode:**
 
     ```bash
     DEV=true npm start

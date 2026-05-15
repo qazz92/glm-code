@@ -1,6 +1,7 @@
 {
   "name": "@glm-code/glm-code",
   "version": "0.0.1",
+  "license": "Apache-2.0",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -15,8 +16,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/QwenLM/qwen-code.git"
+    "url": "git+https://github.com/qazz92/glm-code.git"
   },
+  "bugs": {
+    "url": "https://github.com/qazz92/glm-code/issues"
+  },
+  "homepage": "https://github.com/qazz92/glm-code#readme",
   "config": {
     "sandboxImageUri": "ghcr.io/qwenlm/qwen-code:0.15.10"
   },

@@ -34,7 +34,7 @@ vi.mock('../utils/jsonl-utils.js');
 describe('SessionService', () => {
   let sessionService: SessionService;
 
-  let readdirSyncSpy: MockInstance<typeof fs.readdirSync>;
+  let readdirSyncSpy: MockInstance<(path: fs.PathLike) => string[]>;
   let statSyncSpy: MockInstance<typeof fs.statSync>;
   let unlinkSyncSpy: MockInstance<typeof fs.unlinkSync>;
 
@@ -49,7 +49,10 @@ describe('SessionService', () => {
 
     sessionService = new SessionService('/test/project/root');
 
-    readdirSyncSpy = vi.spyOn(fs, 'readdirSync').mockReturnValue([]);
+    readdirSyncSpy = vi.spyOn(fs, 'readdirSync') as unknown as MockInstance<
+      (path: fs.PathLike) => string[]
+    >;
+    readdirSyncSpy.mockReturnValue([]);
     statSyncSpy = vi.spyOn(fs, 'statSync').mockImplementation(
       () =>
         ({
@@ -145,7 +148,7 @@ describe('SessionService', () => {
       readdirSyncSpy.mockReturnValue([
         `${sessionIdA}.jsonl`,
         `${sessionIdB}.jsonl`,
-      ] as unknown as Array<fs.Dirent<Buffer>>);
+      ]);
 
       statSyncSpy.mockImplementation((filePath: fs.PathLike) => {
         const path = filePath.toString();
@@ -175,9 +178,7 @@ describe('SessionService', () => {
     it('should extract prompt text from first record', async () => {
       const now = Date.now();
 
-      readdirSyncSpy.mockReturnValue([
-        `${sessionIdA}.jsonl`,
-      ] as unknown as Array<fs.Dirent<Buffer>>);
+      readdirSyncSpy.mockReturnValue([`${sessionIdA}.jsonl`]);
 
       statSyncSpy.mockReturnValue({
         mtimeMs: now,
@@ -199,9 +200,7 @@ describe('SessionService', () => {
       // a session preview) is about to display them. Pinning this
       // contract here so future refactors can't quietly re-introduce
       // the per-file scan that used to dominate /resume open time.
-      readdirSyncSpy.mockReturnValue([
-        `${sessionIdA}.jsonl`,
-      ] as unknown as Array<fs.Dirent<Buffer>>);
+      readdirSyncSpy.mockReturnValue([`${sessionIdA}.jsonl`]);
       statSyncSpy.mockReturnValue({
         mtimeMs: Date.now(),
         isFile: () => true,
@@ -221,9 +220,7 @@ describe('SessionService', () => {
         message: { role: 'user', parts: [{ text: longPrompt }] },
       };
 
-      readdirSyncSpy.mockReturnValue([
-        `${sessionIdA}.jsonl`,
-      ] as unknown as Array<fs.Dirent<Buffer>>);
+      readdirSyncSpy.mockReturnValue([`${sessionIdA}.jsonl`]);
       statSyncSpy.mockReturnValue({
         mtimeMs: Date.now(),
         isFile: () => true,
@@ -243,7 +240,7 @@ describe('SessionService', () => {
         `${sessionIdA}.jsonl`,
         `${sessionIdB}.jsonl`,
         `${sessionIdC}.jsonl`,
-      ] as unknown as Array<fs.Dirent<Buffer>>);
+      ]);
 
       statSyncSpy.mockImplementation((filePath: fs.PathLike) => {
         const path = filePath.toString();
@@ -286,7 +283,7 @@ describe('SessionService', () => {
         `${sessionIdA}.jsonl`,
         `${sessionIdB}.jsonl`,
         `${sessionIdC}.jsonl`,
-      ] as unknown as Array<fs.Dirent<Buffer>>);
+      ]);
 
       statSyncSpy.mockImplementation((filePath: fs.PathLike) => {
         const path = filePath.toString();
@@ -310,9 +307,7 @@ describe('SessionService', () => {
     });
 
     it('should skip files from different projects', async () => {
-      readdirSyncSpy.mockReturnValue([
-        `${sessionIdA}.jsonl`,
-      ] as unknown as Array<fs.Dirent<Buffer>>);
+      readdirSyncSpy.mockReturnValue([`${sessionIdA}.jsonl`]);
       statSyncSpy.mockReturnValue({
         mtimeMs: Date.now(),
         isFile: () => true,
@@ -341,7 +336,7 @@ describe('SessionService', () => {
         'not-a-uuid.jsonl', // invalid pattern
         'readme.txt', // not jsonl
         '.hidden.jsonl', // hidden file
-      ] as unknown as Array<fs.Dirent<Buffer>>);
+      ]);
       statSyncSpy.mockReturnValue({
         mtimeMs: Date.now(),
         isFile: () => true,
@@ -774,7 +769,7 @@ describe('SessionService', () => {
       readdirSyncSpy.mockReturnValue([
         `${sessionIdA}.jsonl`,
         `${sessionIdB}.jsonl`,
-      ] as unknown as Array<fs.Dirent<Buffer>>);
+      ]);
 
       statSyncSpy.mockImplementation((filePath: fs.PathLike) => {
         const path = filePath.toString();

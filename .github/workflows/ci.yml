@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  pull_request:
+    branches: ['main']
+  push:
+    branches: ['main']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-hygiene:
+    name: Repository hygiene
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Check formatting for repository metadata
+        run: |
+          npx --yes prettier@3.5.3 --check \
+            CODE_OF_CONDUCT.md \
+            CONTRIBUTING.md \
+            SECURITY.md \
+            SUPPORT.md \
+            package.json \
+            .github/dependabot.yml \
+            .github/ISSUE_TEMPLATE/config.yml \
+            .github/ISSUE_TEMPLATE/bug_report.yml \
+            .github/ISSUE_TEMPLATE/feature_request.yml \
+            .github/workflows/ci.yml \
+            .github/workflows/codeql.yml
+
+      - name: Validate package metadata
+        run: node -e "JSON.parse(require('fs').readFileSync('package.json', 'utf8'))"
+
+  core-build:
+    name: Core build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund --ignore-scripts
+
+      - name: Build core package
+        run: npm run build --workspace=packages/core
