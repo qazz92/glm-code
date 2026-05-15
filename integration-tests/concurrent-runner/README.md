@@ -44,7 +44,7 @@ Create a JSON configuration file (see `config.example.json`):
       "prompts": ["Review the codebase for security vulnerabilities."]
     }
   ],
-  "models": ["claude-3-5-sonnet-20241022", "qwen3-coder-plus"]
+  "models": ["claude-3-5-sonnet-20241022", "glm-4.5"]
 }
 ```
 
@@ -93,7 +93,7 @@ outputs/
       "run_id": "abc123",
       "task_id": "code-review",
       "task_name": "Security Code Review",
-      "model": "qwen3-coder-plus",
+      "model": "glm-4.5",
       "status": "succeeded",
       "worktree_path": "~/.glm/worktrees/run-abc123",
       "output_dir": "outputs/abc123",

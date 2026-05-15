@@ -34,11 +34,11 @@ const argv = yargs(hideBin(process.argv)).option('q', {
   default: false,
 }).argv;
 
-let qwenSandbox = process.env.GLM_SANDBOX;
+let glmSandbox = process.env.GLM_SANDBOX;
 
 bootstrapHomeEnv();
 
-if (!qwenSandbox) {
+if (!glmSandbox) {
   const configDir = process.env.GLM_HOME
     ? resolvePath(process.env.GLM_HOME)
     : join(os.homedir(), '.glm');
@@ -48,12 +48,12 @@ if (!qwenSandbox) {
       stripJsonComments(readFileSync(userSettingsFile, 'utf-8')),
     );
     if (settings.sandbox) {
-      qwenSandbox = settings.sandbox;
+      glmSandbox = settings.sandbox;
     }
   }
 }
 
-if (!qwenSandbox) {
+if (!glmSandbox) {
   // Walk up from cwd to find a project-level .env. Parse manually and copy
   // only GLM_SANDBOX — calling dotenv.config() here would inject every key,
   // including GLM_HOME / GLM_RUNTIME_DIR that the main CLI hard-blocks via
@@ -61,11 +61,11 @@ if (!qwenSandbox) {
   // redirect global state through this back door.
   let currentDir = process.cwd();
   while (true) {
-    const qwenEnv = join(currentDir, '.glm', '.env');
+    const glmEnv = join(currentDir, '.glm', '.env');
     const regularEnv = join(currentDir, '.env');
     let candidate = null;
-    if (existsSync(qwenEnv)) {
-      candidate = qwenEnv;
+    if (existsSync(glmEnv)) {
+      candidate = glmEnv;
     } else if (existsSync(regularEnv)) {
       candidate = regularEnv;
     }
@@ -89,10 +89,10 @@ if (!qwenSandbox) {
     }
     currentDir = parentDir;
   }
-  qwenSandbox = process.env.GLM_SANDBOX;
+  glmSandbox = process.env.GLM_SANDBOX;
 }
 
-qwenSandbox = (qwenSandbox || '').toLowerCase();
+glmSandbox = (glmSandbox || '').toLowerCase();
 
 const commandExists = (cmd) => {
   // Use 'where.exe' (not 'where') on Windows because PowerShell aliases
@@ -115,7 +115,7 @@ const commandExists = (cmd) => {
 };
 
 let command = '';
-if (['1', 'true'].includes(qwenSandbox)) {
+if (['1', 'true'].includes(glmSandbox)) {
   if (commandExists('docker')) {
     command = 'docker';
   } else if (commandExists('podman')) {
@@ -126,12 +126,12 @@ if (['1', 'true'].includes(qwenSandbox)) {
     );
     process.exit(1);
   }
-} else if (qwenSandbox && !['0', 'false'].includes(qwenSandbox)) {
-  if (commandExists(qwenSandbox)) {
-    command = qwenSandbox;
+} else if (glmSandbox && !['0', 'false'].includes(glmSandbox)) {
+  if (commandExists(glmSandbox)) {
+    command = glmSandbox;
   } else {
     console.error(
-      `ERROR: missing sandbox command '${qwenSandbox}' (from GLM_SANDBOX)`,
+      `ERROR: missing sandbox command '${glmSandbox}' (from GLM_SANDBOX)`,
     );
     process.exit(1);
   }

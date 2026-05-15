@@ -457,7 +457,7 @@ async function startFakeOpenAIServer(
   };
 }
 
-function qwenArgs(baseUrl: string): string[] {
+function glmArgs(baseUrl: string): string[] {
   // NOTE: --bare is intentionally omitted. Bare mode hard-codes the registered
   // tool set to read_file / edit / shell, which means the model's `agent`
   // tool_call is rejected as "Tool not found in registry" and the SubAgent
@@ -520,7 +520,7 @@ async function main(): Promise<void> {
     GLM_CODE_DISABLE_SYNCHRONIZED_OUTPUT: '1',
     GLM_CODE_NO_RELAUNCH: '1',
     // Intentionally NOT setting GLM_CODE_SIMPLE so the agent tool stays in
-    // the registry — see comment in qwenArgs() above.
+    // the registry — see comment in glmArgs() above.
     GLM_SANDBOX: 'false',
     TERM: 'xterm-256color',
     HOME: homeDir,
@@ -556,7 +556,7 @@ async function main(): Promise<void> {
   });
 
   try {
-    await terminal.spawn('node', qwenArgs(fakeServer.baseUrl));
+    await terminal.spawn('node', glmArgs(fakeServer.baseUrl));
     await terminal.waitFor('Type your message', { timeout: 30000 });
 
     const rawBefore = terminal.getRawOutput().length;

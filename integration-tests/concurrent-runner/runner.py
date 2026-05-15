@@ -279,8 +279,8 @@ class GitWorktreeManager:
         project_id = re.sub(r'[^a-zA-Z0-9]', '-', str(worktree_dir))
 
         # Build the chats directory path
-        qwen_dir = Path.home() / ".glm"
-        chats_dir = qwen_dir / "projects" / project_id / "chats"
+        glm_dir = Path.home() / ".glm"
+        chats_dir = glm_dir / "projects" / project_id / "chats"
 
         if not chats_dir.exists():
             self.console.print(f"[dim]No chats directory found at {chats_dir}[/dim]")
@@ -894,7 +894,7 @@ async def execute_single_run(
     config: RunConfig,
     tracker: StatusTracker,
     worktree_manager: GitWorktreeManager,
-    qwen_runner: GLMRunner,
+    glm_runner: GLMRunner,
     console: Console,
 ) -> None:
     """Execute a single run with proper cleanup."""
@@ -911,7 +911,7 @@ async def execute_single_run(
         # Step 2: Run CLI
         await tracker.update_status(run.run_id, RunStatus.RUNNING)
         output_dir = config.outputs_dir / run.run_id
-        await qwen_runner.run(run, worktree_dir, output_dir)
+        await glm_runner.run(run, worktree_dir, output_dir)
         
         # Step 3: Success
         run.ended_at = datetime.now().isoformat()
@@ -997,7 +997,7 @@ async def run_all(config: RunConfig, console: Console) -> ExecutionState:
     
     worktree_manager = GitWorktreeManager(console, config.source_repo)
     await worktree_manager.ensure_git_repo()
-    qwen_runner = GLMRunner(config, console)
+    glm_runner = GLMRunner(config, console)
     display = ProgressDisplay(console)
 
     # Start progress display
@@ -1024,7 +1024,7 @@ async def run_all(config: RunConfig, console: Console) -> ExecutionState:
     async def execute_with_limit(run: RunRecord):
         async with semaphore:
             await execute_single_run(
-                run, config, tracker, worktree_manager, qwen_runner, console
+                run, config, tracker, worktree_manager, glm_runner, console
             )
 
     # Run everything

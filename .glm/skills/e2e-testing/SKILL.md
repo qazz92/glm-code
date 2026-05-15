@@ -24,11 +24,11 @@ execution).
 
 ## Headless Mode
 
-Run the CLI non-interactively with JSON output (`<qwen>` = `qwen` or `node
+Run the CLI non-interactively with JSON output (`<glm>` = `glm` or `node
 dist/cli.js` per above):
 
 ```bash
-<qwen> "your prompt here" \
+<glm> "your prompt here" \
   --approval-mode yolo \
   --output-format json \
   2>/dev/null
@@ -53,7 +53,7 @@ When debugging model behavior (wrong tool arguments, schema issues), enable API
 logging to see the exact request/response payloads:
 
 ```bash
-<qwen> "prompt" \
+<glm> "prompt" \
   --approval-mode yolo \
   --output-format json \
   --openai-logging \
@@ -117,7 +117,7 @@ output.
 
 ```bash
 tmux new-session -d -s test -x 200 -y 50 \
-  "cd /tmp/test-dir && <qwen> --approval-mode yolo"
+  "cd /tmp/test-dir && <glm> --approval-mode yolo"
 sleep 3  # wait for TUI to initialize
 ```
 

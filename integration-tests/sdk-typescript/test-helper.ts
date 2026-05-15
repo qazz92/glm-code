@@ -81,8 +81,8 @@ export class SDKTestHelper {
 
     // Optionally create .glm/settings.json for CLI configuration
     if (options.createGLMConfig !== false) {
-      const qwenDir = join(this.testDir, '.glm');
-      await mkdir(qwenDir, { recursive: true });
+      const glmDir = join(this.testDir, '.glm');
+      await mkdir(glmDir, { recursive: true });
 
       const optionsSettings = options.settings ?? {};
       const generalSettings =
@@ -104,7 +104,7 @@ export class SDKTestHelper {
       };
 
       await writeFile(
-        join(qwenDir, 'settings.json'),
+        join(glmDir, 'settings.json'),
         JSON.stringify(settings, null, 2),
         'utf-8',
       );

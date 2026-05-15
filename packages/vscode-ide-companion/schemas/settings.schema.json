@@ -407,7 +407,7 @@
       "description": "Telemetry configuration."
     },
     "fastModel": {
-      "description": "Model used for generating prompt suggestions and speculative execution. Leave empty to use the main model. A smaller/faster model (e.g., glm-flash) reduces latency and cost.",
+      "description": "Model used for generating prompt suggestions and speculative execution. Leave empty to use the main model. A smaller/faster model (e.g., glm-4.5-air) reduces latency and cost.",
       "type": "string",
       "default": ""
     },

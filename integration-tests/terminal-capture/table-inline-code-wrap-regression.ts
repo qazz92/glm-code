@@ -165,7 +165,7 @@ async function startFakeOpenAIServer(): Promise<FakeServer> {
   };
 }
 
-function qwenArgs(baseUrl: string): string[] {
+function glmArgs(baseUrl: string): string[] {
   return [
     'dist/cli.js',
     '--no-chat-recording',
@@ -310,7 +310,7 @@ async function main(): Promise<void> {
 
   const screenshots: string[] = [];
   try {
-    await terminal.spawn('node', qwenArgs(fakeServer.baseUrl));
+    await terminal.spawn('node', glmArgs(fakeServer.baseUrl));
     await terminal.waitFor('Type your message', { timeout: 30000 });
     await terminal.type(PROMPT_TEXT, { delay: 12, slow: true });
     await terminal.idle(400, 4000);

@@ -92,7 +92,7 @@ describe('installation scripts', () => {
     );
     expect(script).not.toContain('ln -sf "${INSTALL_LIB_DIR}/bin/glm"');
     expect(script).toContain('shell_quote()');
-    expect(script).toContain('exec ${quoted_qwen_bin} "\\$@"');
+    expect(script).toContain('exec ${quoted_glm_bin} "\\$@"');
     expect(script).toContain('validate_version()');
     expect(script).toContain('validate_install_path');
     expect(script).toContain('validate_https_url "${NPM_REGISTRY}"');
@@ -238,7 +238,7 @@ describe('standalone release packaging', () => {
     expect(releaseScript).toContain('nodeArchiveExtension');
     expect(releaseScript).toContain('fs.createReadStream');
     expect(releaseScript).toContain('expectedArchiveNames');
-    expect(releaseScript).toContain('glm-code-${qwenTarget}');
+    expect(releaseScript).toContain('glm-code-${glmTarget}');
     expect(releaseScript).toContain('scripts/create-standalone-package.js');
     expect(releaseScript).toContain('--skip-checksums');
     expect(releaseScript).toContain('writeSha256Sums(outDir)');
@@ -279,9 +279,9 @@ describe('standalone release packaging', () => {
     const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-release-test-'));
 
     try {
-      const lines = RELEASE_TARGETS.map(({ qwenTarget }) => {
-        const extension = qwenTarget === 'win-x64' ? 'zip' : 'tar.gz';
-        return `${'a'.repeat(64)}  glm-code-${qwenTarget}.${extension}`;
+      const lines = RELEASE_TARGETS.map(({ glmTarget }) => {
+        const extension = glmTarget === 'win-x64' ? 'zip' : 'tar.gz';
+        return `${'a'.repeat(64)}  glm-code-${glmTarget}.${extension}`;
       });
       writeFileSync(path.join(tmpDir, 'SHA256SUMS'), `${lines.join('\n')}\n`);
 

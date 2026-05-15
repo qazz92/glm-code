@@ -23,5 +23,5 @@
       ]
     }
   ],
-  "models": ["qwen3-coder-plus", "claude-sonnet-4-20250514"]
+  "models": ["glm-4.5", "claude-sonnet-4-20250514"]
 }

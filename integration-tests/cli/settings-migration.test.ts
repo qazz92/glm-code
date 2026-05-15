@@ -59,12 +59,12 @@ describe('settings-migration', () => {
     testRig: TestRig,
     settings: Record<string, unknown>,
   ) => {
-    const qwenDir = join(
+    const glmDir = join(
       (testRig as unknown as { testDir: string }).testDir,
       '.glm',
     );
     writeFileSync(
-      join(qwenDir, 'settings.json'),
+      join(glmDir, 'settings.json'),
       JSON.stringify(settings, null, 2),
     );
   };
@@ -73,11 +73,11 @@ describe('settings-migration', () => {
    * Helper to read settings file from the test directory
    */
   const readSettingsFile = (testRig: TestRig): Record<string, unknown> => {
-    const qwenDir = join(
+    const glmDir = join(
       (testRig as unknown as { testDir: string }).testDir,
       '.glm',
     );
-    const content = readFileSync(join(qwenDir, 'settings.json'), 'utf-8');
+    const content = readFileSync(join(glmDir, 'settings.json'), 'utf-8');
     return JSON.parse(content) as Record<string, unknown>;
   };
 

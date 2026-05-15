@@ -403,13 +403,13 @@ create_source_json() {
         return 0
     fi
 
-    local qwen_dir="${HOME}/.glm"
-    mkdir -p "${qwen_dir}"
+    local glm_dir="${HOME}/.glm"
+    mkdir -p "${glm_dir}"
 
     local escaped_source
     escaped_source=$(printf '%s' "${SOURCE}" | sed 's/\\/\\\\/g; s/"/\\"/g')
 
-    cat > "${qwen_dir}/source.json" <<EOF
+    cat > "${glm_dir}/source.json" <<EOF
 {
   "source": "${escaped_source}"
 }
@@ -710,13 +710,13 @@ ensure_managed_install_dir() {
 
 write_unix_wrapper() {
     local wrapper_path="$1"
-    local qwen_bin="$2"
-    local quoted_qwen_bin
-    quoted_qwen_bin=$(shell_quote "${qwen_bin}")
+    local glm_bin="$2"
+    local quoted_glm_bin
+    quoted_glm_bin=$(shell_quote "${glm_bin}")
 
     cat > "${wrapper_path}" <<EOF
 #!/usr/bin/env sh
-exec ${quoted_qwen_bin} "\$@"
+exec ${quoted_glm_bin} "\$@"
 EOF
     chmod +x "${wrapper_path}"
 }
@@ -863,9 +863,9 @@ install_npm() {
     require_npm || return 1
 
     if command_exists glm; then
-        local qwen_version
-        qwen_version=$(glm --version 2>/dev/null || echo "unknown")
-        log_info "Existing GLM Code detected: ${qwen_version}"
+        local glm_version
+        glm_version=$(glm --version 2>/dev/null || echo "unknown")
+        log_info "Existing GLM Code detected: ${glm_version}"
         log_info "Upgrading to the latest version."
     fi
 
@@ -907,9 +907,9 @@ print_final_instructions() {
     echo ""
 
     if command_exists glm; then
-        local qwen_version
-        qwen_version=$(glm --version 2>/dev/null || echo "unknown")
-        log_success "GLM Code is ready to use: ${qwen_version}"
+        local glm_version
+        glm_version=$(glm --version 2>/dev/null || echo "unknown")
+        log_success "GLM Code is ready to use: ${glm_version}"
         echo ""
         echo "You can now run: glm"
         echo ""

@@ -404,15 +404,15 @@ function setupAcpTest(
       };
 
       // Choose a glm-oauth model to trigger auth-required path deterministically.
-      const qwenOauthModel = newSession.models.availableModels.find((model) =>
+      const glmOauthModel = newSession.models.availableModels.find((model) =>
         model.modelId.includes('glm-oauth'),
       );
-      expect(qwenOauthModel).toBeDefined();
+      expect(glmOauthModel).toBeDefined();
       await expect(
         sendRequest('session/set_config_option', {
           sessionId: newSession.sessionId,
           configId: 'model',
-          value: qwenOauthModel!.modelId,
+          value: glmOauthModel!.modelId,
         }),
       ).rejects.toMatchObject({
         response: {

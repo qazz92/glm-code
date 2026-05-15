@@ -22,26 +22,26 @@ const rootDir = path.resolve(__dirname, '..');
 
 const RELEASE_TARGETS = [
   {
-    qwenTarget: 'darwin-arm64',
+    glmTarget: 'darwin-arm64',
     nodeTarget: 'darwin-arm64',
     nodeArchiveExtension: 'tar.gz',
   },
   {
-    qwenTarget: 'darwin-x64',
+    glmTarget: 'darwin-x64',
     nodeTarget: 'darwin-x64',
     nodeArchiveExtension: 'tar.gz',
   },
   {
-    qwenTarget: 'linux-arm64',
+    glmTarget: 'linux-arm64',
     nodeTarget: 'linux-arm64',
     nodeArchiveExtension: 'tar.xz',
   },
   {
-    qwenTarget: 'linux-x64',
+    glmTarget: 'linux-x64',
     nodeTarget: 'linux-x64',
     nodeArchiveExtension: 'tar.xz',
   },
-  { qwenTarget: 'win-x64', nodeTarget: 'win-x64', nodeArchiveExtension: 'zip' },
+  { glmTarget: 'win-x64', nodeTarget: 'win-x64', nodeArchiveExtension: 'zip' },
 ];
 const EXPECTED_ARCHIVE_COUNT = RELEASE_TARGETS.length;
 
@@ -104,7 +104,7 @@ function isMainModule() {
 }
 
 async function packageTarget({
-  qwenTarget,
+  glmTarget,
   nodeTarget,
   nodeArchiveExtension,
   nodeDistUrl,
@@ -123,7 +123,7 @@ async function packageTarget({
   const args = [
     'scripts/create-standalone-package.js',
     '--target',
-    qwenTarget,
+    glmTarget,
     '--node-archive',
     archivePath,
     '--out-dir',
@@ -202,8 +202,8 @@ function assertStandaloneOutput(outDir) {
     .filter(Boolean)
     .sort();
   const expectedArchiveNames = RELEASE_TARGETS.map(
-    ({ qwenTarget }) =>
-      `glm-code-${qwenTarget}.${qwenTarget === 'win-x64' ? 'zip' : 'tar.gz'}`,
+    ({ glmTarget }) =>
+      `glm-code-${glmTarget}.${glmTarget === 'win-x64' ? 'zip' : 'tar.gz'}`,
   ).sort();
   const missing = expectedArchiveNames.filter(
     (archiveName) => !archiveNames.includes(archiveName),

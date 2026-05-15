@@ -110,7 +110,7 @@ message:
 
 **Status**: REPRODUCED | NOT_REPRODUCED | VERIFIED_FIXED | STILL_BROKEN
 **Method**: e2e-headless | e2e-interactive | test-script
-**Binary**: qwen | node dist/cli.js
+**Binary**: glm | node dist/cli.js
 **Command**: <exact command or test command used>
 
 ### Observed behavior

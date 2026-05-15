@@ -168,8 +168,8 @@ export class TestRig {
     mkdirSync(this.testDir, { recursive: true });
 
     // Create a settings file to point the CLI to the local collector
-    const qwenDir = join(this.testDir, '.glm');
-    mkdirSync(qwenDir, { recursive: true });
+    const glmDir = join(this.testDir, '.glm');
+    mkdirSync(glmDir, { recursive: true });
     // In sandbox mode, use an absolute path for telemetry inside the container
     // The container mounts the test directory at the same path as the host
     const telemetryPath = join(this.testDir, 'telemetry.log'); // Always use test directory for telemetry
@@ -185,7 +185,7 @@ export class TestRig {
       ...options.settings, // Allow tests to override/add settings
     };
     writeFileSync(
-      join(qwenDir, 'settings.json'),
+      join(glmDir, 'settings.json'),
       JSON.stringify(settings, null, 2),
     );
   }

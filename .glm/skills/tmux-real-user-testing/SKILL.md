@@ -244,7 +244,7 @@ Ask before deleting logs or reverting settings. Do not sanitize by default if th
 user explicitly requests complete logs. If logs may be shared externally, offer a
 separate sanitized copy rather than modifying the original.
 
-Mention likely side effects before starting: OAuth may open a browser, write Qwen
+Mention likely side effects before starting: OAuth may open a browser, write GLM
 settings, set API key config, and update model provider entries.
 
 ## Common pitfalls

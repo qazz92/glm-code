@@ -42,7 +42,7 @@ class GLMCodeAgent(AbstractInstalledAgent):
         elif "OPENAI_MODEL" in os.environ:
             env["OPENAI_MODEL"] = os.environ["OPENAI_MODEL"]
         else:
-            env["OPENAI_MODEL"] = "qwen3-coder-plus"
+            env["OPENAI_MODEL"] = "glm-4.5"
         
         # Base URL - prefer agent_kwargs over environment variables  
         if self._base_url:
