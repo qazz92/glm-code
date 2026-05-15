@@ -11,6 +11,7 @@ import { aboutCommand } from '../ui/commands/aboutCommand.js';
 import { tasksCommand } from '../ui/commands/tasksCommand.js';
 import { agentsCommand } from '../ui/commands/agentsCommand.js';
 import { arenaCommand } from '../ui/commands/arenaCommand.js';
+import { actionCommand } from '../ui/commands/actionCommand.js';
 import { approvalModeCommand } from '../ui/commands/approvalModeCommand.js';
 import { authCommand } from '../ui/commands/authCommand.js';
 import { branchCommand } from '../ui/commands/branchCommand.js';
@@ -56,6 +57,7 @@ import { statsCommand } from '../ui/commands/statsCommand.js';
 import { summaryCommand } from '../ui/commands/summaryCommand.js';
 import { terminalSetupCommand } from '../ui/commands/terminalSetupCommand.js';
 import { themeCommand } from '../ui/commands/themeCommand.js';
+import { thinkingCommand } from '../ui/commands/thinkingCommand.js';
 import { toolsCommand } from '../ui/commands/toolsCommand.js';
 import { vimCommand } from '../ui/commands/vimCommand.js';
 import { setupGithubCommand } from '../ui/commands/setupGithubCommand.js';
@@ -128,6 +130,7 @@ export class BuiltinCommandLoader implements ICommandLoader {
       agentsCommand,
       tasksCommand,
       arenaCommand,
+      actionCommand,
       approvalModeCommand,
       authCommand,
       branchCommand,
@@ -171,6 +174,7 @@ export class BuiltinCommandLoader implements ICommandLoader {
       statsCommand,
       summaryCommand,
       themeCommand,
+      thinkingCommand,
       toolsCommand,
       settingsCommand,
       vimCommand,
