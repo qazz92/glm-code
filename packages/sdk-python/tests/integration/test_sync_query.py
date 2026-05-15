@@ -4,6 +4,7 @@ import threading
 import time
 
 import pytest
+
 import glm_code_sdk.sync_query as sync_query_module
 from glm_code_sdk import is_sdk_result_message, query_sync
 from glm_code_sdk.sync_query import SyncQuery

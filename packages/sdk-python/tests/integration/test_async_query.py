@@ -5,6 +5,7 @@ from collections.abc import AsyncIterator, Callable
 from typing import Any
 
 import pytest
+
 from glm_code_sdk import (
     ProcessExitError,
     SDKUserMessage,

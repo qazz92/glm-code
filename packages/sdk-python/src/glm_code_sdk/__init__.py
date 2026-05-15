@@ -8,8 +8,8 @@ from typing import Any
 from .errors import (
     AbortError,
     ControlRequestTimeoutError,
-    ProcessExitError,
     GLMSDKError,
+    ProcessExitError,
     ValidationError,
 )
 from .protocol import (
@@ -70,6 +70,7 @@ __all__ = [
     "CanUseToolContext",
     "ContentBlock",
     "ControlRequestTimeoutError",
+    "GLMSDKError",
     "PermissionAllowResult",
     "PermissionDenyResult",
     "PermissionMode",
@@ -79,7 +80,6 @@ __all__ = [
     "Query",
     "QueryOptions",
     "QueryOptionsDict",
-    "GLMSDKError",
     "SDKAssistantMessage",
     "SDKMessage",
     "SDKPartialAssistantMessage",
