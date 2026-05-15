@@ -18,7 +18,7 @@ pip install --pre glm-code-sdk
 ## Requirements
 
 - Python `>=3.10`
-- External `qwen` CLI installed and available in `PATH`
+- External `glm` CLI installed and available in `PATH`
 
 You can also point the SDK at an explicit CLI binary or script with
 `path_to_glm_executable`.
@@ -138,7 +138,7 @@ options = {
 Common fields:
 
 - `cwd`: working directory used by the CLI
-- `path_to_glm_executable`: `qwen`, an absolute binary path, or a `.js` CLI
+- `path_to_glm_executable`: `glm`, an absolute binary path, or a `.js` CLI
   bundle
 - `model`: model override for this session
 - `permission_mode`: one of `default`, `plan`, `auto-edit`, or `yolo`; `yolo`
@@ -389,7 +389,7 @@ SDK raises `ValidationError` if these session options are combined.
 
 - `ValidationError`: invalid query options or malformed session identifiers
 - `ControlRequestTimeoutError`: CLI control operation exceeded timeout
-- `ProcessExitError`: `qwen` exited with a non-zero code
+- `ProcessExitError`: `glm` exited with a non-zero code
 - `AbortError`: query or control request was cancelled
 
 ```python
@@ -419,7 +419,7 @@ except ProcessExitError as exc:
 
 `0.1.x` is intentionally narrow:
 
-- Uses external `qwen` CLI via process transport
+- Uses external `glm` CLI via process transport
 - Targets `stream-json` parity with the TypeScript SDK core flow
 - Does not yet implement ACP transport
 - Does not yet embed MCP servers inside the SDK process
