@@ -1,0 +1,41 @@
+{
+  "name": "@glm-code/web-templates",
+  "version": "0.0.1",
+  "description": "Web templates bundled as embeddable JS/CSS strings",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GLMLM/qwen-code.git"
+  },
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "node build.mjs && tsc --build --clean && tsc",
+    "build:templates": "node build.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "prettier": "^3.8.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
