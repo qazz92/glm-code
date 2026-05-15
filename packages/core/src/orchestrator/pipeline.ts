@@ -33,6 +33,8 @@ export interface PhaseResult {
   completedAt?: number;
 }
 
+export const PHASE_COMPLETION_MARKER = 'PHASE_COMPLETE';
+
 const PHASE_ORDER: PipelinePhase[] = [
   'plan',
   'scaffold',
@@ -69,6 +71,31 @@ export const PHASE_MODEL_MAP: Record<PipelinePhase, string> = {
  */
 export function getModelForPhase(phase: PipelinePhase): string {
   return PHASE_MODEL_MAP[phase];
+}
+
+/**
+ * Marker a model must emit to explicitly finish the current pipeline phase.
+ * This keeps phase advancement tied to an intentional completion signal rather
+ * than to the mere end of an LLM turn.
+ */
+export function getPhaseCompletionMarker(phase: PipelinePhase): string {
+  return `${PHASE_COMPLETION_MARKER}: ${phase}`;
+}
+
+/**
+ * Detect an explicit phase completion marker in model output.
+ */
+export function hasPhaseCompletionMarker(
+  output: string,
+  phase: PipelinePhase,
+): boolean {
+  const markerPattern = new RegExp(
+    `^${PHASE_COMPLETION_MARKER}\\s*:\\s*${phase}\\s*$`,
+    'i',
+  );
+  return output
+    .split(/\r?\n/)
+    .some((line) => markerPattern.test(line.trim()));
 }
 
 /**
@@ -141,6 +168,7 @@ export function getCurrentAgentRole(state: PipelineState): string {
 export function buildPipelineInstruction(state: PipelineState): string {
   const phase = state.currentPhase;
   const agent = getCurrentAgentRole(state);
+  const completionMarker = getPhaseCompletionMarker(phase);
 
   return [
     `SYSTEM: Pipeline execution — Phase: ${phase} (Agent: ${agent})`,
@@ -149,6 +177,8 @@ export function buildPipelineInstruction(state: PipelineState): string {
       ? `Previous phase output: ${state.phases[phase].output}`
       : '',
     `Focus ONLY on the ${phase} phase. Do not execute other phases.`,
+    `When the ${phase} phase acceptance criteria are fully satisfied, end your response with exactly: ${completionMarker}`,
+    `If the ${phase} phase is not complete, omit ${PHASE_COMPLETION_MARKER} and explain what remains.`,
   ]
     .filter(Boolean)
     .join('\n');
