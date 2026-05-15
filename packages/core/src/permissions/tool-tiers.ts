@@ -19,28 +19,58 @@ export type YoloMode = 'off' | 'safe' | 'tier-b' | 'full';
 /** Tool name to tier mapping. */
 const TOOL_TIERS: Record<string, PermissionTier> = {
   // TIER A — Always auto-approve (read-only, no side effects)
+  read_file: 'A',
   Read: 'A',
+  ReadFile: 'A',
+  ReadFileTool: 'A',
+  glob: 'A',
   Glob: 'A',
+  grep_search: 'A',
   Grep: 'A',
+  list_directory: 'A',
+  ListFiles: 'A',
+  lsp: 'A',
   LSP: 'A',
+  Lsp: 'A',
+  tool_search: 'A',
+  ToolSearch: 'A',
+  web_search: 'A',
   WebSearch: 'A',
   Memory_recall: 'A',
-  ToolSearch: 'A',
-  ReadFile: 'A',
-  ListFiles: 'A',
+  MemoryRecall: 'A',
 
   // TIER B — Auto-approve in workspace (edits, writes, bash in project)
+  edit: 'B',
   Edit: 'B',
+  EditTool: 'B',
+  write_file: 'B',
   Write: 'B',
-  Bash: 'B',
-  Task: 'B',
-  Memory_retain: 'B',
-  Commit: 'B',
   WriteFile: 'B',
+  WriteFileTool: 'B',
+  run_shell_command: 'B',
+  Bash: 'B',
+  BashTool: 'B',
+  ShellTool: 'B',
+  monitor: 'B',
+  Monitor: 'B',
+  agent: 'B',
+  Agent: 'B',
+  Task: 'B',
+  task: 'B',
+  save_memory: 'B',
+  SaveMemory: 'B',
+  Memory_retain: 'B',
+  MemoryRetain: 'B',
+  todo_write: 'B',
+  TodoWrite: 'B',
+  commit: 'B',
+  Commit: 'B',
 
   // TIER C — Hard whitelist (destructive, external)
   Shell: 'C',
+  web_fetch: 'C',
   WebFetch: 'C',
+  mcp: 'C',
   MCP: 'C',
 };
 
@@ -51,7 +81,8 @@ const DEFAULT_TIER: PermissionTier = 'C';
  * Get the permission tier for a tool.
  */
 export function getToolTier(toolName: string): PermissionTier {
-  return TOOL_TIERS[toolName] ?? DEFAULT_TIER;
+  if (toolName.startsWith('mcp__')) return 'C';
+  return TOOL_TIERS[toolName] ?? TOOL_TIERS[toolName.toLowerCase()] ?? DEFAULT_TIER;
 }
 
 /**

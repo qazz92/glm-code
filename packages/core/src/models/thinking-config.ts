@@ -7,6 +7,7 @@
  * Controls how many tokens the model spends on chain-of-thought reasoning.
  */
 
+import type { ThinkingConfig } from '@google/genai';
 import type { ThinkingLevel } from './action-registry.js';
 import { createDebugLogger } from '../utils/debugLogger.js';
 
@@ -87,9 +88,11 @@ export function isValidThinkingLevel(name: string): name is ThinkingLevel {
  * Build thinking config for LLM API calls.
  * Returns an object suitable for `thinkingConfig` parameter.
  */
-export function buildThinkingConfig(): { budgetTokens?: number } | undefined {
-  const budget = getThinkingBudget();
-  if (budget === null) return undefined; // inherit = use default
-  if (budget === 0) return undefined; // off = no thinking
-  return { budgetTokens: budget };
+export function buildThinkingConfig(
+  level?: ThinkingLevel,
+): ThinkingConfig | undefined {
+  const budget = resolveThinkingBudget(level);
+  if (budget === null) return undefined; // inherit = use model default
+  if (budget === 0) return undefined; // off = send no thinking budget
+  return { includeThoughts: true, thinkingBudget: budget };
 }
