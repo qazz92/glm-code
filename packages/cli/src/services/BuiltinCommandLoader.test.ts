@@ -16,6 +16,15 @@ vi.mock('../ui/commands/aboutCommand.js', async () => {
   };
 });
 
+
+vi.mock('../ui/commands/actionCommand.js', () => ({
+  actionCommand: {
+    name: 'action',
+    description: 'Action command',
+    kind: 'built-in',
+  },
+}));
+
 vi.mock('../ui/commands/approvalModeCommand.js', () => ({
   approvalModeCommand: {
     name: 'approval-mode',
@@ -98,6 +107,14 @@ vi.mock('../ui/commands/quitCommand.js', () => ({
 vi.mock('../ui/commands/statsCommand.js', () => ({ statsCommand: {} }));
 vi.mock('../ui/commands/themeCommand.js', () => ({ themeCommand: {} }));
 vi.mock('../ui/commands/toolsCommand.js', () => ({ toolsCommand: {} }));
+vi.mock('../ui/commands/thinkingCommand.js', () => ({
+  thinkingCommand: {
+    name: 'thinking',
+    description: 'Thinking command',
+    kind: 'built-in',
+  },
+}));
+
 vi.mock('../ui/commands/mcpCommand.js', () => ({
   mcpCommand: {
     name: 'mcp',
@@ -173,6 +190,10 @@ describe('BuiltinCommandLoader', () => {
     expect(statusCmd).toBeDefined();
     expect(statusCmd?.kind).toBe(CommandKind.BUILT_IN);
 
+    const actionCmd = commands.find((c) => c.name === 'action');
+    expect(actionCmd).toBeDefined();
+    expect(actionCmd?.kind).toBe(CommandKind.BUILT_IN);
+
     const approvalModeCmd = commands.find((c) => c.name === 'approval-mode');
     expect(approvalModeCmd).toBeDefined();
     expect(approvalModeCmd?.kind).toBe(CommandKind.BUILT_IN);
@@ -185,6 +206,9 @@ describe('BuiltinCommandLoader', () => {
 
     const modelCmd = commands.find((c) => c.name === 'model');
     expect(modelCmd).toBeDefined();
+
+    const thinkingCmd = commands.find((c) => c.name === 'thinking');
+    expect(thinkingCmd).toBeDefined();
   });
 
   it('should include trust command when folder trust is enabled', async () => {
@@ -207,6 +231,9 @@ describe('BuiltinCommandLoader', () => {
     const commands = await loader.loadCommands(new AbortController().signal);
     const modelCmd = commands.find((c) => c.name === 'model');
     expect(modelCmd).toBeDefined();
+
+    const thinkingCmd = commands.find((c) => c.name === 'thinking');
+    expect(thinkingCmd).toBeDefined();
     expect(modelCmd?.name).toBe('model');
   });
 
@@ -229,6 +256,9 @@ describe('BuiltinCommandLoader', () => {
     // But all other built-in commands should still be loaded
     const modelCmd = commands.find((c) => c.name === 'model');
     expect(modelCmd).toBeDefined();
+
+    const thinkingCmd = commands.find((c) => c.name === 'thinking');
+    expect(thinkingCmd).toBeDefined();
 
     const statusCmd = commands.find((c) => c.name === 'status');
     expect(statusCmd).toBeDefined();
