@@ -1,4 +1,4 @@
-"""Async Query implementation for qwen_code_sdk."""
+"""Async Query implementation for glm_code_sdk."""
 
 from __future__ import annotations
 

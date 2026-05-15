@@ -1,13 +1,13 @@
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
  * Channel Plugin Integration Test — Real E2E with WebSocket
  *
- * Tests the actual MockPluginChannel (from @qwen-code/channel-plugin-example) connected
+ * Tests the actual MockPluginChannel (from @glm-code/channel-plugin-example) connected
  * to an in-process mock server via WebSocket. The full message flow is:
  *
  *   server.sendMessage("What is 2+2?")
@@ -16,7 +16,7 @@
  *         → SenderGate (open policy)
  *         → SessionRouter (creates/reuses session)
  *         → AcpBridge.prompt(sessionId, text)
- *           → qwen-code --acp (REAL model request)
+ *           → glm --acp (REAL model request)
  *       → MockPluginChannel.sendMessage(chatId, response)
  *         → WebSocket response to mock server
  *     → server resolves promise with agent text
@@ -66,7 +66,7 @@ describe('Channel Plugin (Mock WebSocket E2E)', () => {
     // 1. Start mock server on random ports (no port conflicts)
     server = await createMockServer({ httpPort: 0, wsPort: 0 });
 
-    // 2. Start AcpBridge (spawns real qwen-code --acp)
+    // 2. Start AcpBridge (spawns real glm --acp)
     bridge = new AcpBridge({
       cliEntryPath: CLI_PATH,
       cwd: testDir,

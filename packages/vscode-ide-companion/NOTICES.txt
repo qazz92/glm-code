@@ -198,7 +198,7 @@ This file contains third-party software notices and license terms.
 
 
 ============================================================
-@qwen-code/webui@undefined
+@glm-code/webui@undefined
 (No repository found)
 
 License text not found.

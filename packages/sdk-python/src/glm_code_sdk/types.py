@@ -1,4 +1,4 @@
-"""Public type definitions for qwen_code_sdk."""
+"""Public type definitions for glm_code_sdk."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ PermissionMode: TypeAlias = Literal["default", "plan", "auto-edit", "yolo"]
 AuthType: TypeAlias = Literal[
     "openai",
     "anthropic",
-    "qwen-oauth",
+    "glm-oauth",
     "gemini",
     "vertex-ai",
 ]
@@ -95,7 +95,7 @@ class TimeoutOptions:
 class QueryOptionsDict(TypedDict, total=False):
     cwd: str
     model: str
-    path_to_qwen_executable: str
+    path_to_glm_executable: str
     permission_mode: PermissionMode
     can_use_tool: CanUseTool
     env: dict[str, str]
@@ -120,7 +120,7 @@ class QueryOptionsDict(TypedDict, total=False):
 class QueryOptions:
     cwd: str | None = None
     model: str | None = None
-    path_to_qwen_executable: str | None = None
+    path_to_glm_executable: str | None = None
     permission_mode: PermissionMode | None = None
     can_use_tool: CanUseTool | None = None
     env: dict[str, str] | None = None
@@ -151,7 +151,7 @@ class QueryOptions:
         return cls(
             cwd=_as_optional_str(data, "cwd"),
             model=_as_optional_str(data, "model"),
-            path_to_qwen_executable=_as_optional_str(data, "path_to_qwen_executable"),
+            path_to_glm_executable=_as_optional_str(data, "path_to_glm_executable"),
             permission_mode=cast(
                 PermissionMode | None,
                 _as_optional_str(data, "permission_mode"),

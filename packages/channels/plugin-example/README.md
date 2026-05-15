@@ -1,6 +1,6 @@
-# @qwen-code/channel-plugin-example
+# @glm-code/channel-plugin-example
 
-A reference channel plugin for Qwen Code. It connects to a WebSocket server and routes messages through the full channel pipeline (access control, session routing, agent bridge).
+A reference channel plugin for GLM Code. It connects to a WebSocket server and routes messages through the full channel pipeline (access control, session routing, agent bridge).
 
 Use this package to:
 
@@ -12,20 +12,20 @@ Use this package to:
 ### 1. Install the package
 
 ```bash
-npm install @qwen-code/channel-plugin-example
+npm install @glm-code/channel-plugin-example
 ```
 
-### 2. Link it as a Qwen Code extension
+### 2. Link it as a GLM Code extension
 
-The package ships a `qwen-extension.json` manifest, so it works as an extension out of the box:
+The package ships a `glm-extension.json` manifest, so it works as an extension out of the box:
 
 ```bash
-qwen extensions link ./node_modules/@qwen-code/channel-plugin-example
+glm extensions link ./node_modules/@glm-code/channel-plugin-example
 ```
 
 ### 3. Configure the channel
 
-Add a channel entry to `~/.qwen/settings.json`:
+Add a channel entry to `~/.glm/settings.json`:
 
 ```json
 {
@@ -44,13 +44,13 @@ Add a channel entry to `~/.qwen/settings.json`:
 ### 4. Start the mock server
 
 ```bash
-npx qwen-channel-plugin-example-server
+npx glm-channel-plugin-example-server
 ```
 
 The server prints the HTTP and WebSocket URLs. You can customize ports with environment variables:
 
 ```bash
-HTTP_PORT=8080 WS_PORT=8081 npx qwen-channel-plugin-example-server
+HTTP_PORT=8080 WS_PORT=8081 npx glm-channel-plugin-example-server
 ```
 
 ### 5. Start the channel
@@ -58,7 +58,7 @@ HTTP_PORT=8080 WS_PORT=8081 npx qwen-channel-plugin-example-server
 In a separate terminal:
 
 ```bash
-qwen channel start my-plugin-test
+glm channel start my-plugin-test
 ```
 
 ### 6. Send a message
@@ -79,7 +79,7 @@ Mock Server (HTTP + WS)
 MockPluginChannel (this package)
   → Envelope → ChannelBase.handleInbound()
     → SenderGate → SessionRouter → AcpBridge.prompt()
-      → qwen-code agent → model API
+      → glm agent → model API
     ← response
   ← sendMessage() → WebSocket → Mock Server
   ← HTTP response
@@ -92,7 +92,7 @@ See `src/MockPluginChannel.ts` for a working example. The key points:
 1. Extend `ChannelBase` and implement `connect()`, `sendMessage()`, `disconnect()`
 2. Build an `Envelope` from incoming platform messages and call `this.handleInbound(envelope)`
 3. Export a `plugin` object conforming to `ChannelPlugin`
-4. Add a `qwen-extension.json` manifest
+4. Add a `glm-extension.json` manifest
 
 ### Features you get for free
 

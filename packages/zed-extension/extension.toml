@@ -1,32 +1,32 @@
-id = "qwen-code"
-name = "Qwen Code"
+id = "glm-code"
+name = "GLM Code"
 version = "0.1.0"
 schema_version = 1
-authors = ["Qwen Team"]
-description = "Qwen Code Agent Server Extension for Zed"
-repository = "https://github.com/QwenLM/qwen-code"
+authors = ["GLM Team"]
+description = "GLM Code Agent Server Extension for Zed"
+repository = "https://github.com/qazz92/glm-code"
 
-[agent_servers.qwen-code]
-name = "Qwen Code"
-icon = "qwen-code.svg"
+[agent_servers.glm-code]
+name = "GLM Code"
+icon = "glm-code.svg"
 
-[agent_servers.qwen-code.targets.darwin-aarch64]
-archive = "https://registry.npmjs.org/@qwen-code/qwen-code/-/qwen-code-0.10.0.tgz"
+[agent_servers.glm-code.targets.darwin-aarch64]
+archive = "https://registry.npmjs.org/@glm-code/glm-code/-/glm-code-0.10.0.tgz"
 cmd = "node"
 args = ["./package/cli.js", "--acp"]
 
-[agent_servers.qwen-code.targets.darwin-x86_64]
-archive = "https://registry.npmjs.org/@qwen-code/qwen-code/-/qwen-code-0.10.0.tgz"
+[agent_servers.glm-code.targets.darwin-x86_64]
+archive = "https://registry.npmjs.org/@glm-code/glm-code/-/glm-code-0.10.0.tgz"
 cmd = "node"
 args = ["./package/cli.js", "--acp"]
 
-[agent_servers.qwen-code.targets.linux-x86_64]
-archive = "https://registry.npmjs.org/@qwen-code/qwen-code/-/qwen-code-0.10.0.tgz"
+[agent_servers.glm-code.targets.linux-x86_64]
+archive = "https://registry.npmjs.org/@glm-code/glm-code/-/glm-code-0.10.0.tgz"
 cmd = "node"
 args = ["./package/cli.js", "--acp"]
 
-[agent_servers.qwen-code.targets.windows-x86_64]
-archive = "https://registry.npmjs.org/@qwen-code/qwen-code/-/qwen-code-0.10.0.tgz"
+[agent_servers.glm-code.targets.windows-x86_64]
+archive = "https://registry.npmjs.org/@glm-code/glm-code/-/glm-code-0.10.0.tgz"
 cmd = "node"
 args = ["./package/cli.js", "--acp"]
 

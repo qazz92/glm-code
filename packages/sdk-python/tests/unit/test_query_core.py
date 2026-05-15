@@ -5,10 +5,10 @@ from collections.abc import Callable
 from typing import Any, cast
 
 import pytest
-from qwen_code_sdk.errors import AbortError, ControlRequestTimeoutError
-from qwen_code_sdk.json_lines import parse_json_line
-from qwen_code_sdk.query import Query
-from qwen_code_sdk.types import QueryOptions, TimeoutOptions
+from glm_code_sdk.errors import AbortError, ControlRequestTimeoutError
+from glm_code_sdk.json_lines import parse_json_line
+from glm_code_sdk.query import Query
+from glm_code_sdk.types import QueryOptions, TimeoutOptions
 
 VALID_UUID = "123e4567-e89b-12d3-a456-426614174000"
 _EOF = object()
@@ -584,7 +584,7 @@ def test_sync_next_after_exhaustion_raises_stop_iteration() -> None:
     raise StopIteration immediately instead of blocking on queue.get()."""
     from queue import Queue
 
-    from qwen_code_sdk.sync_query import _STOP, SyncQuery
+    from glm_code_sdk.sync_query import _STOP, SyncQuery
 
     # Build a minimal SyncQuery without spawning the real event-loop thread.
     sq = object.__new__(SyncQuery)

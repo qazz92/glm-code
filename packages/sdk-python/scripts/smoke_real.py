@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run real end-to-end smoke tests against qwen CLI using qwen_code_sdk.
+"""Run real end-to-end smoke tests against glm CLI using glm_code_sdk.
 
 This script is intentionally lightweight and avoids any test doubles.
 It is useful for manual verification after changing SDK runtime behavior.
@@ -38,7 +38,7 @@ SRC_ROOT = SDK_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from qwen_code_sdk import (  # noqa: E402
+from glm_code_sdk import (  # noqa: E402
     SDKUserMessage,
     SyncQuery,
     is_sdk_assistant_message,
@@ -47,7 +47,7 @@ from qwen_code_sdk import (  # noqa: E402
     query,
     query_sync,
 )
-from qwen_code_sdk.transport import prepare_spawn_info  # noqa: E402
+from glm_code_sdk.transport import prepare_spawn_info  # noqa: E402
 
 T = TypeVar("T")
 
@@ -79,12 +79,12 @@ class SyncResult:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run real qwen_code_sdk smoke tests using qwen CLI",
+        description="Run real glm_code_sdk smoke tests using glm CLI",
     )
     parser.add_argument(
         "--qwen",
-        default="qwen",
-        help="Path or command for qwen executable (default: qwen)",
+        default="glm",
+        help="Path or command for glm executable (default: qwen)",
     )
     parser.add_argument(
         "--cwd",
@@ -110,8 +110,8 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def check_qwen_cli_available(qwen_cmd: str, timeout_seconds: float) -> str:
-    spawn_info = prepare_spawn_info(qwen_cmd)
+def check_glm_cli_available(glm_cmd: str, timeout_seconds: float) -> str:
+    spawn_info = prepare_spawn_info(glm_cmd)
     completed = subprocess.run(
         [spawn_info.command, *spawn_info.args, "--version"],
         check=True,
@@ -125,7 +125,7 @@ def check_qwen_cli_available(qwen_cmd: str, timeout_seconds: float) -> str:
 def build_options(args: argparse.Namespace) -> dict[str, Any]:
     return {
         "cwd": args.cwd,
-        "path_to_qwen_executable": args.qwen,
+        "path_to_glm_executable": args.glm,
         "permission_mode": "yolo",
         "max_session_turns": 1,
         "timeout": {
@@ -283,7 +283,7 @@ def run_sync_with_timeout(args: argparse.Namespace) -> SyncResult:
 
     thread = threading.Thread(
         target=worker,
-        name="qwen-sdk-real-smoke-sync",
+        name="glm-sdk-real-smoke-sync",
         daemon=True,
     )
     thread.start()
@@ -308,7 +308,7 @@ def build_failure_payload(
     *,
     stage: str,
     exc: BaseException,
-    qwen_version: str | None = None,
+    glm_version: str | None = None,
     completed: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     payload: dict[str, Any] = {
@@ -317,8 +317,8 @@ def build_failure_payload(
         "error": str(exc),
         "error_type": type(exc).__name__,
     }
-    if qwen_version is not None:
-        payload["qwen_version"] = qwen_version
+    if glm_version is not None:
+        payload["glm_version"] = glm_version
     if completed:
         payload["completed"] = completed
     return payload
@@ -328,7 +328,7 @@ async def main() -> int:
     args = parse_args()
 
     try:
-        qwen_version = check_qwen_cli_available(args.qwen, args.timeout_seconds)
+        glm_version = check_glm_cli_available(args.glm, args.timeout_seconds)
     except (subprocess.CalledProcessError, OSError, subprocess.TimeoutExpired) as exc:
         payload = build_failure_payload(stage="preflight", exc=exc)
         print(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -338,7 +338,7 @@ async def main() -> int:
     completed: dict[str, Any] = {}
     try:
         if not args.json_only:
-            print(f"[smoke] qwen version: {qwen_version}")
+            print(f"[smoke] glm version: {glm_version}")
             print(f"[smoke] running {stage}...")
         async_single = await run_stage(
             stage,
@@ -366,7 +366,7 @@ async def main() -> int:
         payload = build_failure_payload(
             stage=stage,
             exc=exc,
-            qwen_version=qwen_version,
+            glm_version=glm_version,
             completed=completed,
         )
         print(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -375,7 +375,7 @@ async def main() -> int:
     all_ok = async_single.ok and async_controls.ok and sync_result.ok
     payload = {
         "ok": all_ok,
-        "qwen_version": qwen_version,
+        "glm_version": glm_version,
         "async_single": asdict(async_single),
         "async_controls": asdict(async_controls),
         "sync": asdict(sync_result),

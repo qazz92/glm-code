@@ -7,7 +7,7 @@
   "icon": "assets/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GLMLM/qwen-code.git",
+    "url": "https://github.com/qazz92/glm-code.git",
     "directory": "packages/vscode-ide-companion"
   },
   "engines": {
@@ -19,22 +19,22 @@
     "AI"
   ],
   "keywords": [
-    "qwen-code",
-    "qwen code",
-    "qwen",
-    "qwen code",
+    "glm-code",
+    "glm code",
+    "glm",
+    "glm code",
     "cli",
     "ide integration",
     "ide companion"
   ],
   "activationEvents": [
     "onStartupFinished",
-    "onView:qwen-code.chatView.sidebar",
-    "onView:qwen-code.chatView.secondary",
-    "onCommand:qwen-code.openChat",
-    "onCommand:qwen-code.focusChat",
-    "onCommand:qwen-code.newConversation",
-    "onCommand:qwen-code.showLogs"
+    "onView:glm-code.chatView.sidebar",
+    "onView:glm-code.chatView.secondary",
+    "onCommand:glm-code.openChat",
+    "onCommand:glm-code.focusChat",
+    "onCommand:glm-code.newConversation",
+    "onCommand:glm-code.showLogs"
   ],
   "contributes": {
     "jsonValidation": [
@@ -46,155 +46,155 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "qwen-code-sidebar",
+          "id": "glm-code-sidebar",
           "title": "GLM Code",
           "icon": "assets/sidebar-icon.svg",
-          "when": "!qwen-code:supportsSecondarySidebar"
+          "when": "!glm-code:supportsSecondarySidebar"
         }
       ],
       "secondarySidebar": [
         {
-          "id": "qwen-code-secondary",
+          "id": "glm-code-secondary",
           "title": "GLM Code",
           "icon": "assets/sidebar-icon.svg",
-          "when": "qwen-code:supportsSecondarySidebar"
+          "when": "glm-code:supportsSecondarySidebar"
         }
       ]
     },
     "views": {
-      "qwen-code-sidebar": [
+      "glm-code-sidebar": [
         {
           "type": "webview",
-          "id": "qwen-code.chatView.sidebar",
+          "id": "glm-code.chatView.sidebar",
           "name": "GLM Code",
           "icon": "assets/sidebar-icon.svg",
-          "when": "!qwen-code:supportsSecondarySidebar"
+          "when": "!glm-code:supportsSecondarySidebar"
         }
       ],
-      "qwen-code-secondary": [
+      "glm-code-secondary": [
         {
           "type": "webview",
-          "id": "qwen-code.chatView.secondary",
+          "id": "glm-code.chatView.secondary",
           "name": "GLM Code",
           "icon": "assets/sidebar-icon.svg",
-          "when": "qwen-code:supportsSecondarySidebar"
+          "when": "glm-code:supportsSecondarySidebar"
         }
       ]
     },
     "languages": [
       {
-        "id": "qwen-diff-editable"
+        "id": "glm-diff-editable"
       }
     ],
     "commands": [
       {
-        "command": "qwen.diff.accept",
+        "command": "glm.diff.accept",
         "title": "GLM Code: Accept Current Diff",
         "icon": "$(check)"
       },
       {
-        "command": "qwen.diff.cancel",
+        "command": "glm.diff.cancel",
         "title": "GLM Code: Close Diff Editor",
         "icon": "$(close)"
       },
       {
-        "command": "qwen-code.runGLMCode",
+        "command": "glm-code.runGLMCode",
         "title": "GLM Code: Run"
       },
       {
-        "command": "qwen-code.showNotices",
+        "command": "glm-code.showNotices",
         "title": "GLM Code: View Third-Party Notices"
       },
       {
-        "command": "qwen-code.openChat",
+        "command": "glm-code.openChat",
         "title": "GLM Code: Open",
         "icon": "./assets/icon.png"
       },
       {
-        "command": "qwen-code.auth",
+        "command": "glm-code.auth",
         "title": "GLM Code: Auth"
       },
       {
-        "command": "qwen-code.focusChat",
+        "command": "glm-code.focusChat",
         "title": "GLM Code: Focus Chat View"
       },
       {
-        "command": "qwen-code.newConversation",
+        "command": "glm-code.newConversation",
         "title": "GLM Code: New Conversation"
       },
       {
-        "command": "qwen-code.showLogs",
+        "command": "glm-code.showLogs",
         "title": "GLM Code: Show Logs"
       },
       {
-        "command": "qwen-code.copyMessage",
-        "title": "%qwen-code.copyMessage.title%"
+        "command": "glm-code.copyMessage",
+        "title": "%glm-code.copyMessage.title%"
       },
       {
-        "command": "qwen-code.copyAllMessages",
-        "title": "%qwen-code.copyAllMessages.title%"
+        "command": "glm-code.copyAllMessages",
+        "title": "%glm-code.copyAllMessages.title%"
       },
       {
-        "command": "qwen-code.copyLastReply",
-        "title": "%qwen-code.copyLastReply.title%"
+        "command": "glm-code.copyLastReply",
+        "title": "%glm-code.copyLastReply.title%"
       }
     ],
     "menus": {
       "commandPalette": [
         {
-          "command": "qwen.diff.accept",
-          "when": "qwen.diff.isVisible"
+          "command": "glm.diff.accept",
+          "when": "glm.diff.isVisible"
         },
         {
-          "command": "qwen.diff.cancel",
-          "when": "qwen.diff.isVisible"
+          "command": "glm.diff.cancel",
+          "when": "glm.diff.isVisible"
         },
         {
-          "command": "qwen-code.auth"
+          "command": "glm-code.auth"
         },
         {
-          "command": "qwen-code.copyMessage",
+          "command": "glm-code.copyMessage",
           "when": "false"
         },
         {
-          "command": "qwen-code.copyAllMessages",
+          "command": "glm-code.copyAllMessages",
           "when": "false"
         },
         {
-          "command": "qwen-code.copyLastReply",
+          "command": "glm-code.copyLastReply",
           "when": "false"
         }
       ],
       "webview/context": [
         {
-          "command": "qwen-code.copyMessage",
+          "command": "glm-code.copyMessage",
           "when": "webviewSection == 'chat-messages'",
           "group": "9_cutcopypaste@1"
         },
         {
-          "command": "qwen-code.copyAllMessages",
+          "command": "glm-code.copyAllMessages",
           "when": "webviewSection == 'chat-messages'",
           "group": "9_cutcopypaste@2"
         },
         {
-          "command": "qwen-code.copyLastReply",
+          "command": "glm-code.copyLastReply",
           "when": "webviewSection == 'chat-messages'",
           "group": "9_cutcopypaste@3"
         }
       ],
       "editor/title": [
         {
-          "command": "qwen.diff.accept",
-          "when": "qwen.diff.isVisible",
+          "command": "glm.diff.accept",
+          "when": "glm.diff.isVisible",
           "group": "navigation"
         },
         {
-          "command": "qwen.diff.cancel",
-          "when": "qwen.diff.isVisible",
+          "command": "glm.diff.cancel",
+          "when": "glm.diff.isVisible",
           "group": "navigation"
         },
         {
-          "command": "qwen-code.openChat",
+          "command": "glm-code.openChat",
           "group": "navigation"
         }
       ]
@@ -202,7 +202,7 @@
     "configuration": {
       "title": "GLM Code",
       "properties": {
-        "qwen-code.provider": {
+        "glm-code.provider": {
           "order": 0,
           "type": "string",
           "enum": [
@@ -216,13 +216,13 @@
           "default": "coding-plan",
           "markdownDescription": "**Coding Plan**: enter API Key + Region here to sync `~/.glm/settings.json`.\n\n**API Key**: use **GLM Code: Auth** or the onboarding button to configure ModelStudio or custom OpenAI-compatible providers."
         },
-        "qwen-code.apiKey": {
+        "glm-code.apiKey": {
           "order": 1,
           "type": "string",
           "default": "",
           "markdownDescription": "API key used for **Coding Plan** settings sync. For **API Key** providers, configure the full provider details through **GLM Code: Auth**."
         },
-        "qwen-code.codingPlanRegion": {
+        "glm-code.codingPlanRegion": {
           "order": 2,
           "type": "string",
           "enum": [
@@ -236,13 +236,13 @@
           "default": "china",
           "markdownDescription": "Region for Coding Plan. _(Only used when Provider is `coding-plan`)_"
         },
-        "qwen-code.dotIndicator": {
+        "glm-code.dotIndicator": {
           "order": 3,
           "type": "boolean",
           "default": true,
           "description": "Show a colored dot on the tab icon when a task completes (orange) or needs your attention (blue) while the tab is hidden."
         },
-        "qwen-code.notifications": {
+        "glm-code.notifications": {
           "order": 4,
           "type": "boolean",
           "default": true,
@@ -252,17 +252,17 @@
     },
     "keybindings": [
       {
-        "command": "qwen.diff.accept",
+        "command": "glm.diff.accept",
         "key": "ctrl+s",
-        "when": "qwen.diff.isVisible"
+        "when": "glm.diff.isVisible"
       },
       {
-        "command": "qwen.diff.accept",
+        "command": "glm.diff.accept",
         "key": "cmd+s",
-        "when": "qwen.diff.isVisible"
+        "when": "glm.diff.isVisible"
       },
       {
-        "command": "qwen-code.focusChat",
+        "command": "glm-code.focusChat",
         "key": "ctrl+shift+l",
         "mac": "cmd+shift+l"
       }

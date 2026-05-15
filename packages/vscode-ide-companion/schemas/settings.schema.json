@@ -363,7 +363,7 @@
               "additionalProperties": false
             }
           ],
-          "description": "Replace the default QWEN ASCII art. Accepts an inline string, {\"path\": \"...\"}, or {\"small\": ..., \"large\": ...} for width-aware selection."
+          "description": "Replace the default GLM ASCII art. Accepts an inline string, {\"path\": \"...\"}, or {\"small\": ..., \"large\": ...} for width-aware selection."
         }
       }
     },
@@ -407,7 +407,7 @@
       "description": "Telemetry configuration."
     },
     "fastModel": {
-      "description": "Model used for generating prompt suggestions and speculative execution. Leave empty to use the main model. A smaller/faster model (e.g., qwen3-coder-flash) reduces latency and cost.",
+      "description": "Model used for generating prompt suggestions and speculative execution. Leave empty to use the main model. A smaller/faster model (e.g., glm-flash) reduces latency and cost.",
       "type": "string",
       "default": ""
     },
@@ -475,7 +475,7 @@
               "default": true
             },
             "splitToolMedia": {
-              "description": "When true, media (images / audio / video / files) returned by MCP tool calls is split into a follow-up user message instead of being embedded in the tool message. Required for strict OpenAI-compatible servers (e.g., LM Studio) that reject non-text content on `role: \"tool\"` messages with HTTP 400 \"Invalid 'messages' in payload\". Default false preserves the prior behavior for permissive providers. See GLMLM/qwen-code#3616.",
+              "description": "When true, media (images / audio / video / files) returned by MCP tool calls is split into a follow-up user message instead of being embedded in the tool message. Required for strict OpenAI-compatible servers (e.g., LM Studio) that reject non-text content on `role: \"tool\"` messages with HTTP 400 \"Invalid 'messages' in payload\". Default false preserves the prior behavior for permissive providers. See qazz92/glm-code#3616.",
               "type": "boolean",
               "default": false
             },
@@ -496,7 +496,7 @@
       }
     },
     "modelPricing": {
-      "description": "Optional per-model pricing for cost estimation in /stats model. Example: {\"qwen3-coder\": {\"inputPerMillionTokens\": 0.30, \"outputPerMillionTokens\": 1.20}}",
+      "description": "Optional per-model pricing for cost estimation in /stats model. Example: {\"glm-4.5\": {\"inputPerMillionTokens\": 0.30, \"outputPerMillionTokens\": 1.20}}",
       "type": "object",
       "additionalProperties": true
     },
@@ -640,7 +640,7 @@
           "additionalProperties": true
         },
         "sandboxImage": {
-          "description": "Sandbox image URI used by Docker/Podman when --sandbox-image and QWEN_SANDBOX_IMAGE are not set.",
+          "description": "Sandbox image URI used by Docker/Podman when --sandbox-image and GLM_SANDBOX_IMAGE are not set.",
           "type": "string"
         },
         "toolSearch": {
@@ -2148,12 +2148,12 @@
       "type": "object",
       "properties": {
         "cron": {
-          "description": "Enable in-session cron/loop tools (experimental). When enabled, the model can create recurring prompts using cron_create, cron_list, and cron_delete tools. Can also be enabled via QWEN_CODE_ENABLE_CRON=1 environment variable.",
+          "description": "Enable in-session cron/loop tools (experimental). When enabled, the model can create recurring prompts using cron_create, cron_list, and cron_delete tools. Can also be enabled via GLM_CODE_ENABLE_CRON=1 environment variable.",
           "type": "boolean",
           "default": false
         },
         "emitToolUseSummaries": {
-          "description": "Generate a short LLM-based label after each tool batch completes. In compact mode the label replaces the generic `Tool × N` header; in full mode it appears as a dim `● <label>` line below the tool group. Requires a fast model to be configured; runs in parallel with the next API call so latency is hidden. Currently affects interactive CLI rendering only — SDK / non-interactive emission of the `tool_use_summary` message is not yet wired (the message factory is exported for a follow-up PR). Can be overridden with QWEN_CODE_EMIT_TOOL_USE_SUMMARIES=0 or =1.",
+          "description": "Generate a short LLM-based label after each tool batch completes. In compact mode the label replaces the generic `Tool × N` header; in full mode it appears as a dim `● <label>` line below the tool group. Requires a fast model to be configured; runs in parallel with the next API call so latency is hidden. Currently affects interactive CLI rendering only — SDK / non-interactive emission of the `tool_use_summary` message is not yet wired (the message factory is exported for a follow-up PR). Can be overridden with GLM_CODE_EMIT_TOOL_USE_SUMMARIES=0 or =1.",
           "type": "boolean",
           "default": true
         }
