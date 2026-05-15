@@ -24,8 +24,11 @@ import { ApprovalMode, ToolNames } from '../index.js';
 import {
   buildPermissionCheckContext,
   evaluatePermissionRules,
+  isWorkspaceBoundPermissionContext,
 } from './permission-helpers.js';
 import type { ToolCallConfirmationDetails } from '../tools/tools.js';
+import type { PermissionCheckContext } from '../permissions/types.js';
+import { shouldAutoApprove, type YoloMode } from '../permissions/tool-tiers.js';
 
 export type PermissionFlowPermission = 'allow' | 'deny' | 'ask' | 'default';
 
@@ -108,19 +111,58 @@ export async function evaluatePermissionFlow(
  * Note: Plan mode and AUTO_EDIT mode are L5 overrides that need
  * confirmationDetails.type - callers must handle those separately.
  */
+export interface NeedsConfirmationOptions {
+  /** Permission context built during L3→L4 evaluation. */
+  pmCtx?: PermissionCheckContext;
+  /** Workspace root used to enforce Tier-B containment. */
+  workspaceRoot?: string;
+}
+
+/** Convert global approval mode into the tier auto-approval policy. */
+export function approvalModeToYoloMode(approvalMode: ApprovalMode): YoloMode {
+  switch (approvalMode) {
+    case ApprovalMode.YOLO:
+      return 'tier-b';
+    case ApprovalMode.AUTO_EDIT:
+      return 'safe';
+    case ApprovalMode.DEFAULT:
+    case ApprovalMode.PLAN:
+    default:
+      return 'off';
+  }
+}
+
 export function needsConfirmation(
   finalPermission: PermissionFlowPermission,
   approvalMode: ApprovalMode,
   toolName: string,
+  options: NeedsConfirmationOptions = {},
 ): boolean {
-  const isAskUserQuestionTool = toolName === ToolNames.ASK_USER_QUESTION;
-
-  // YOLO mode auto-approves everything except ask_user_question
-  if (approvalMode === ApprovalMode.YOLO && !isAskUserQuestionTool) {
+  if (finalPermission !== 'ask' && finalPermission !== 'default') {
     return false;
   }
 
-  return finalPermission === 'ask' || finalPermission === 'default';
+  const isAskUserQuestionTool = toolName === ToolNames.ASK_USER_QUESTION;
+  if (isAskUserQuestionTool) {
+    return true;
+  }
+
+  const yoloMode = approvalModeToYoloMode(approvalMode);
+  if (yoloMode !== 'off') {
+    const isWorkspaceFile =
+      options.pmCtx && options.workspaceRoot
+        ? isWorkspaceBoundPermissionContext(
+            options.pmCtx,
+            options.workspaceRoot,
+          )
+        : false;
+
+    if (shouldAutoApprove(toolName, yoloMode, isWorkspaceFile)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 /**

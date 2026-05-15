@@ -1338,7 +1338,12 @@ export class CoreToolScheduler {
             reqInfo.name === ToolNames.ASK_USER_QUESTION;
           let confirmationDetails: ToolCallConfirmationDetails | undefined;
 
-          if (!needsConfirmation(finalPermission, approvalMode, reqInfo.name)) {
+          if (
+              !needsConfirmation(finalPermission, approvalMode, reqInfo.name, {
+                pmCtx,
+                workspaceRoot: this.config.getTargetDir?.() ?? '',
+              })
+            ) {
             this.setToolCallOutcome(
               reqInfo.callId,
               ToolConfirmationOutcome.ProceedAlways,

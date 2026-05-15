@@ -1813,7 +1813,12 @@ export class Session implements SessionContext {
       let didRequestPermission = false;
       let confirmationDetails: ToolCallConfirmationDetails | undefined;
 
-      if (needsConfirmation(finalPermission, approvalMode, fc.name)) {
+      if (
+        needsConfirmation(finalPermission, approvalMode, fc.name, {
+          pmCtx,
+          workspaceRoot: this.config.getTargetDir?.() ?? '',
+        })
+      ) {
         confirmationDetails =
           await invocation.getConfirmationDetails(abortSignal);
 
