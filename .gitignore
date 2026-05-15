@@ -2,17 +2,11 @@
 .env
 .env~
 
-# gemini-cli settings
-# We want to keep the .gemini in the root of the repo and ignore any .gemini
-# in subdirectories. In our root .gemini we want to allow for version control
-# for subcommands.
-**/.gemini/
-!/.gemini/
-.gemini/*
-!.gemini/config.yaml
-!.gemini/commands/
+# Reference repositories (NOT source code — read-only for research)
+repos/
 
-# Note: .qwen-clipboard/ is NOT in gitignore so Gemini can access pasted images
+# Project plans, specs, and working docs (local only)
+docs/superpowers/
 
 # Dependency directory
 node_modules
@@ -28,15 +22,6 @@ package-lock.json
 CLAUDE.md
 .codex
 
-# Qwen Code Configs
-.qwen/*
-!.qwen/commands/
-!.qwen/commands/**
-!.qwen/skills/
-!.qwen/skills/**
-!.qwen/agents/
-!.qwen/agents/**
-
 # OS metadata
 .DS_Store
 Thumbs.db
@@ -44,13 +29,12 @@ Thumbs.db
 # TypeScript build info files
 *.tsbuildinfo
 
-# Ignore built ts files
+# Built files
 dist
-
-# Docker folder to help skip auth refreshes
-.docker
-
 bundle
+
+# Docker folder
+.docker
 
 # Test report files
 junit.xml
@@ -63,36 +47,39 @@ packages/web-templates/src/generated/
 .integration-tests/
 packages/vscode-ide-companion/*.vsix
 
+# Logs
 logs/
+patch_output.log
+
 # GHA credentials
 gha-creds-*.json
 
-# Log files
-patch_output.log
-
 # docs build
 docs-site/.next
-# content is a symlink to ../docs
 docs-site/content
 
-# python cache
+# Python cache
 __pycache__/
+.venv
 
+# Integration test output
 integration-tests/concurrent-runner/output/
 integration-tests/concurrent-runner/task-*
-
 integration-tests/terminal-capture/scenarios/screenshots/
 
-# storybook
+# Storybook
 *storybook.log
 storybook-static
 
-# Dev symlink: qc-helper bundled skill docs (created by scripts/dev.js)
+# Dev symlink
 packages/core/src/skills/bundled/qc-helper/docs
 tmp/
 
-# code graph skills
-.venv
+# Code graph
 .codegraph
 
+# GitHub workflows (token scope limitation)
 .github/workflows/
+
+# OMC state files
+.omc/
