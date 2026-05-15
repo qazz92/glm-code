@@ -179,7 +179,7 @@ describe('DeepSeekOpenAICompatibleProvider', () => {
       });
     });
 
-    // https://github.com/GLMLM/glm-code/issues/3695 — DeepSeek's thinking
+    // https://github.com/qazz92/glm-code/issues/3695 — DeepSeek's thinking
     // mode rejects subsequent requests when any prior assistant turn omits
     // reasoning_content, even if the model itself returned no reasoning text.
     // The provider must always send the field.

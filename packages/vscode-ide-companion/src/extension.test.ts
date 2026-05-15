@@ -296,7 +296,7 @@ describe('activate', () => {
 
       expect(executeCommandMock).toHaveBeenCalledWith(
         'workbench.extensions.installExtension',
-        'glmlm.glm-code-vscode-ide-companion',
+        'glm-code.glm-code-vscode-ide-companion',
       );
     });
 

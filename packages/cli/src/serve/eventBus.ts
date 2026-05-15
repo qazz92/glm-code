@@ -123,7 +123,7 @@ export class SubscriberLimitExceededError extends Error {
 // of running parallel event streams. The `BridgeEvent` shape is
 // already close to what's needed; what's missing is the bus being
 // publicly addressable. Reference:
-// https://github.com/GLMLM/glm-code/pull/3889#issuecomment-4427773706
+// https://github.com/qazz92/glm-code/pull/3889#issuecomment-4427773706
 export class EventBus {
   private nextId = 1;
   private readonly ring: BridgeEvent[] = [];

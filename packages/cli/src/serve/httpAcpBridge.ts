@@ -303,7 +303,7 @@ export type ChannelFactory = (workspaceCwd: string) => Promise<AcpChannel>;
 // one constructor dep; benefit: Stage 1 clients see correct fs
 // semantics today instead of a wire-level break at Stage 2. Tracked
 // under #3803. Reference:
-// https://github.com/GLMLM/glm-code/pull/3889#issuecomment-4427773706
+// https://github.com/qazz92/glm-code/pull/3889#issuecomment-4427773706
 export interface BridgeOptions {
   /**
    * §03 decision §1. `single` shares one session per workspace across HTTP
@@ -317,7 +317,7 @@ export interface BridgeOptions {
    * Stage 1.5 should accept `sessionScope` on the `POST /session`
    * body, treating the daemon-wide value as a hint not a hard rule.
    * Reference:
-   * https://github.com/GLMLM/glm-code/pull/3889#issuecomment-4427875644
+   * https://github.com/qazz92/glm-code/pull/3889#issuecomment-4427875644
    */
   sessionScope?: 'single' | 'thread';
   /** Channel factory; defaults to spawning `glm --acp` as a child process. */
@@ -557,7 +557,7 @@ class BridgeClient implements Client {
   // agent-exposing surfaces share one lifecycle. This is also the
   // closure point for the prior chiga0 audit Risk 2 (first-responder
   // lacks an authorization model). Reference:
-  // https://github.com/GLMLM/glm-code/pull/3889#issuecomment-4427773706
+  // https://github.com/qazz92/glm-code/pull/3889#issuecomment-4427773706
   async requestPermission(
     params: RequestPermissionRequest,
   ): Promise<RequestPermissionResponse> {

@@ -101,7 +101,7 @@ This command typically compiles TypeScript to JavaScript, bundles assets, and pr
 
 ### Enabling Sandboxing
 
-[Sandboxing](#sandboxing) is highly recommended and requires, at a minimum, setting `QWEN_SANDBOX=true` in your `~/.env` and ensuring a sandboxing provider (e.g. `macOS Seatbelt`, `docker`, or `podman`) is available. See [Sandboxing](#sandboxing) for details.
+[Sandboxing](#sandboxing) is highly recommended and requires, at a minimum, setting `GLM_SANDBOX=true` in your `~/.env` and ensuring a sandboxing provider (e.g. `macOS Seatbelt`, `docker`, or `podman`) is available. See [Sandboxing](#sandboxing) for details.
 
 To build both the `glm` CLI utility and the sandbox container, run `build:all` from the root directory:
 

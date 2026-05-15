@@ -28,7 +28,7 @@ export default tseslint.config(
       'dist/**',
       'docs-site/.next/**',
       'docs-site/out/**',
-      '.qwen/**',
+      '.glm/**',
     ],
   },
   eslint.configs.recommended,

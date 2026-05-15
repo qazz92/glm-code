@@ -1,6 +1,6 @@
 # Subagents
 
-Subagents are specialized AI assistants that handle specific types of tasks within Qwen Code. They allow you to delegate focused work to AI agents that are configured with task-specific prompts, tools, and behaviors.
+Subagents are specialized AI assistants that handle specific types of tasks within GLM Code. They allow you to delegate focused work to AI agents that are configured with task-specific prompts, tools, and behaviors.
 
 ## What are Subagents?
 
@@ -14,7 +14,7 @@ Subagents are independent AI assistants that:
 
 ## Fork Subagent (Implicit Fork)
 
-In addition to named subagents, Qwen Code supports **implicit forking** — when the AI omits the `subagent_type` parameter, it triggers a fork that inherits the parent's full conversation context.
+In addition to named subagents, GLM Code supports **implicit forking** — when the AI omits the `subagent_type` parameter, it triggers a fork that inherits the parent's full conversation context.
 
 ### How Fork Differs from Named Subagents
 
@@ -105,8 +105,8 @@ Subagents are managed through the `/agents` slash command and its subcommands:
 
 Subagents are stored as Markdown files in multiple locations:
 
-- **Project-level**: `.qwen/agents/` (highest precedence)
-- **User-level**: `~/.qwen/agents/` (fallback)
+- **Project-level**: `.glm/agents/` (highest precedence)
+- **User-level**: `~/.glm/agents/` (fallback)
 - **Extension-level**: Provided by installed extensions
 
 This allows you to have project-specific agents, personal agents that work across all projects, and extension-provided agents that add specialized capabilities.
@@ -122,7 +122,7 @@ Extension subagents:
 - Cannot be edited directly (edit the extension source instead)
 - Follow the same configuration format as user-defined agents
 
-To see which extensions provide subagents, check the extension's `qwen-extension.json` file for an `agents` field.
+To see which extensions provide subagents, check the extension's `glm-extension.json` file for an `agents` field.
 
 ### File Format
 
@@ -255,7 +255,7 @@ new contributors and end users understand the project.
 
 ### Automatic Delegation
 
-Qwen Code proactively delegates tasks based on:
+GLM Code proactively delegates tasks based on:
 
 - The task description in your request
 - The description field in Subagents configurations

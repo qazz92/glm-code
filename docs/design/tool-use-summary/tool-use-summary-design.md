@@ -6,9 +6,9 @@
 
 ## 1. Executive Summary
 
-After each tool batch completes, Qwen Code fires a short fast-model call that returns a git-commit-subject-style label summarizing the batch. The label shows as an inline dim `● <label>` line in full mode and replaces the generic `Tool × N` header in compact mode. Generation runs fire-and-forget in parallel with the next turn's API stream, so its ~1s latency is hidden behind main-model streaming.
+After each tool batch completes, GLM Code fires a short fast-model call that returns a git-commit-subject-style label summarizing the batch. The label shows as an inline dim `● <label>` line in full mode and replaces the generic `Tool × N` header in compact mode. Generation runs fire-and-forget in parallel with the next turn's API stream, so its ~1s latency is hidden behind main-model streaming.
 
-| Dimension             | Claude Code                                                           | Qwen Code                                                                                  |
+| Dimension             | Claude Code                                                           | GLM Code                                                                                  |
 | --------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | Trigger point         | `query.ts` — after a tool batch finalizes                             | `useGeminiStream.ts` → `handleCompletedTools` — same lifecycle point                       |
 | Generation model      | Haiku via `queryHaiku`                                                | Configured `fastModel` via `GeminiClient.generateContent`                                  |
@@ -60,11 +60,11 @@ tool_batch_complete → fork queryHaiku (fire-and-forget)
 4. **Default off.** The env-only gate keeps cost at zero unless a downstream SDK consumer opts in. The CC terminal itself does not render the message.
 5. **Input truncation at 300 chars per field.** Covers the dominant cost risk — a single large tool result blowing up the prompt — while keeping enough signal for the label.
 
-## 3. Qwen Code Implementation
+## 3. GLM Code Implementation
 
 ### 3.1 Flow
 
-Qwen Code hooks the same lifecycle point (`useGeminiStream.handleCompletedTools`) but renders on both sides of `ui.compactMode` so the feature is useful to CLI users without any SDK plumbing.
+GLM Code hooks the same lifecycle point (`useGeminiStream.handleCompletedTools`) but renders on both sides of `ui.compactMode` so the feature is useful to CLI users without any SDK plumbing.
 
 ```
 tool_batch_complete (handleCompletedTools)
@@ -101,7 +101,7 @@ tool_batch_complete (handleCompletedTools)
 
 The central architectural decision in this PR is **why the full-mode label is a standalone history item and not a decoration on the tool_group itself**.
 
-Qwen Code renders the transcript via Ink's `<Static>`. Static is append-only: once an item is committed to the terminal buffer, Ink will not repaint that region unless `refreshStatic()` is called to clear and re-render the entire transcript. This is the performance model the CLI depends on — static items don't re-render on every keystroke.
+GLM Code renders the transcript via Ink's `<Static>`. Static is append-only: once an item is committed to the terminal buffer, Ink will not repaint that region unless `refreshStatic()` is called to clear and re-render the entire transcript. This is the performance model the CLI depends on — static items don't re-render on every keystroke.
 
 Now consider the fast-model call's timing:
 
@@ -131,7 +131,7 @@ Full mode              Compact mode (with merge)
 
 Three layers, resolved in order of precedence:
 
-1. `QWEN_CODE_EMIT_TOOL_USE_SUMMARIES=0|1|true|false` — env override, highest priority.
+1. `GLM_CODE_EMIT_TOOL_USE_SUMMARIES=0|1|true|false` — env override, highest priority.
 2. `experimental.emitToolUseSummaries` in `settings.json` — default `true`.
 3. Implicit skip — if `config.getFastModel()` returns `undefined`, generation is skipped regardless of the gate. No error, no user-visible change.
 
@@ -154,12 +154,12 @@ The summary generation call sets `promptId: 'tool_use_summary_generation'` so it
 
 | Deviation                                                                | Why                                                                                                                                                                                     |
 | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Settings layer in addition to env gate                                   | Qwen Code renders the label in the CLI; users need a persistent switch, not a per-shell env export.                                                                                     |
+| Settings layer in addition to env gate                                   | GLM Code renders the label in the CLI; users need a persistent switch, not a per-shell env export.                                                                                     |
 | Default **on** instead of off                                            | Label is immediately user-visible in both display modes; users configuring `fastModel` are opting into fast-model features already.                                                     |
-| Dedicated `cleanSummary` post-processing                                 | Qwen Code supports more heterogeneous providers than CC; some models prepend `Label:` or wrap in quotes. Normalizing at the boundary keeps the UI consistent.                           |
+| Dedicated `cleanSummary` post-processing                                 | GLM Code supports more heterogeneous providers than CC; some models prepend `Label:` or wrap in quotes. Normalizing at the boundary keeps the UI consistent.                           |
 | Stores `HistoryItemToolUseSummary` rather than emitting a stream message | CLI-first implementation; the SDK-stream route is a future PR. The `ToolUseSummaryMessage` factory is already exported for that work.                                                   |
 | Prompt caching not yet wired                                             | The fast model is often the same as the main model for users who haven't configured a separate one. Adding cache sharing requires routing via `forkedAgent.ts`; tracked as a follow-up. |
-| Dual render paths (full-mode inline + compact-mode header)               | Qwen Code's default is `ui.compactMode: false`; without the inline full-mode render, the feature would be invisible to most users.                                                      |
+| Dual render paths (full-mode inline + compact-mode header)               | GLM Code's default is `ui.compactMode: false`; without the inline full-mode render, the feature would be invisible to most users.                                                      |
 
 ## 5. Known limitations
 

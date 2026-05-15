@@ -50,7 +50,7 @@ export type ExecutionMode = 'interactive' | 'non_interactive' | 'acp';
 export type CommandSource =
   | 'builtin-command' // 内置命令（BuiltinCommandLoader）
   | 'bundled-skill' // 随包分发的 skill（BundledSkillLoader）
-  | 'skill-dir-command' // 用户/项目 .qwen/commands/ 下的文件命令（FileCommandLoader，非插件）
+  | 'skill-dir-command' // 用户/项目 .glm/commands/ 下的文件命令（FileCommandLoader，非插件）
   | 'plugin-command' // 插件提供的命令（FileCommandLoader，extensionName 不为空）
   | 'mcp-prompt'; // MCP server 提供的 prompt（McpPromptLoader）
 // 以下来源预留，Phase 1 不实现对应 Loader，但 schema 先定义：
@@ -614,7 +614,7 @@ const slashCommands = await getAvailableCommands(
 
 这是 Claude Code 的标准模式，以 `/context` 为例（参见 `src/commands/context/index.ts`）：两个同名 `Command` 对象，一个 `local-jsx` 仅 interactive，另一个 `local` 仅 non-interactive，通过 `isEnabled()` 互斥。
 
-Qwen Code 在 Phase 2 中应采用等价方式，以 `supportedModes` 替代 `isEnabled()` 实现互斥：
+GLM Code 在 Phase 2 中应采用等价方式，以 `supportedModes` 替代 `isEnabled()` 实现互斥：
 
 ```typescript
 // ① 交互模式版：local-jsx，仅 interactive

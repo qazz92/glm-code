@@ -1,6 +1,6 @@
 # WeChat (Weixin)
 
-This guide covers setting up a Qwen Code channel on WeChat via the official iLink Bot API.
+This guide covers setting up a GLM Code channel on WeChat via the official iLink Bot API.
 
 ## Prerequisites
 
@@ -14,14 +14,14 @@ This guide covers setting up a Qwen Code channel on WeChat via the official iLin
 WeChat uses QR code authentication instead of a static bot token. Run the login command:
 
 ```bash
-qwen channel configure-weixin
+glm channel configure-weixin
 ```
 
-This will display a QR code URL. Scan it with your WeChat mobile app to authenticate. Your credentials are saved to `~/.qwen/channels/weixin/account.json`.
+This will display a QR code URL. Scan it with your WeChat mobile app to authenticate. Your credentials are saved to `~/.glm/channels/weixin/account.json`.
 
 ### 2. Configure the channel
 
-Add the channel to `~/.qwen/settings.json`:
+Add the channel to `~/.glm/settings.json`:
 
 ```json
 {
@@ -32,7 +32,7 @@ Add the channel to `~/.qwen/settings.json`:
       "allowedUsers": [],
       "sessionScope": "user",
       "cwd": "/path/to/your/project",
-      "model": "qwen3.5-plus",
+      "model": "glm-5",
       "instructions": "You are a concise coding assistant responding via WeChat. Keep responses under 500 characters. Use plain text only."
     }
   }
@@ -45,10 +45,10 @@ Note: WeChat channels do not use a `token` field — credentials come from the Q
 
 ```bash
 # Start only the WeChat channel
-qwen channel start my-weixin
+glm channel start my-weixin
 
 # Or start all configured channels together
-qwen channel start
+glm channel start
 ```
 
 Open WeChat and send a message to the bot. You should see a typing indicator ("...") while the agent processes, followed by the response.
@@ -57,7 +57,7 @@ Open WeChat and send a message to the bot. You should see a typing indicator (".
 
 You can send photos and documents to the bot, not just text.
 
-**Photos:** Send an image (screenshot, photo, etc.) and the agent will analyze it using its vision capabilities. This requires a multimodal model — add `"model": "qwen3.5-plus"` (or another vision-capable model) to your channel config. A typing indicator shows while the image is being downloaded and processed.
+**Photos:** Send an image (screenshot, photo, etc.) and the agent will analyze it using its vision capabilities. This requires a multimodal model — add `"model": "glm-5"` (or another vision-capable model) to your channel config. A typing indicator shows while the image is being downloaded and processed.
 
 **Files:** Send a PDF, code file, or any document. The bot downloads and decrypts it from WeChat's CDN, saves it locally, and the agent reads it with its file tools. This works with any model.
 
@@ -81,26 +81,26 @@ WeChat channels support all the standard channel options (see [Channel Overview]
 
 - **Use plain text instructions** — Since WeChat strips all markdown, add instructions like "Use plain text only" to avoid the agent producing formatted responses that look messy.
 - **Keep responses short** — WeChat message bubbles work best with concise text. Adding a character limit to your instructions helps (e.g., "Keep responses under 500 characters").
-- **Session expiry** — If you see "Session expired (errcode -14)" in the logs, your WeChat login has expired. Stop the channel and re-run `qwen channel configure-weixin` to log in again.
+- **Session expiry** — If you see "Session expired (errcode -14)" in the logs, your WeChat login has expired. Stop the channel and re-run `glm channel configure-weixin` to log in again.
 - **Restrict access** — Use `senderPolicy: "pairing"` or `"allowlist"` to control who can talk to the bot. See [DM Pairing](./overview#dm-pairing) for details.
 
 ## Troubleshooting
 
 ### "WeChat account not configured"
 
-Run `qwen channel configure-weixin` to log in via QR code first.
+Run `glm channel configure-weixin` to log in via QR code first.
 
 ### "Session expired (errcode -14)"
 
-Your WeChat login session has expired. Stop the channel and run `qwen channel configure-weixin` again.
+Your WeChat login session has expired. Stop the channel and run `glm channel configure-weixin` again.
 
 ### Bot doesn't respond
 
 - Check the terminal output for errors
-- Verify the channel is running (`qwen channel start my-weixin`)
+- Verify the channel is running (`glm channel start my-weixin`)
 - If using `senderPolicy: "allowlist"`, make sure your WeChat user ID is in `allowedUsers`
 
 ### Images not working
 
-- Make sure your channel config has a `model` that supports vision (e.g., `qwen3.5-plus`)
+- Make sure your channel config has a `model` that supports vision (e.g., `glm-5`)
 - Check the terminal for CDN download errors — these may indicate a network issue

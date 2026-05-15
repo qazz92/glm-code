@@ -1,6 +1,6 @@
 # Channel Plugin Developer Guide
 
-A channel plugin connects Qwen Code to a messaging platform. It's packaged as an [extension](../users/extension/introduction) and loaded at startup. For user-facing docs on installing and configuring plugins, see [Plugins](../users/features/channels/plugins).
+A channel plugin connects GLM Code to a messaging platform. It's packaged as an [extension](../users/extension/introduction) and loaded at startup. For user-facing docs on installing and configuring plugins, see [Plugins](../users/features/channels/plugins).
 
 ## How It Fits Together
 
@@ -17,7 +17,7 @@ ChannelBase  →  calls your sendMessage() with the agent's response
 Your extension entry point exports a `plugin` conforming to `ChannelPlugin`:
 
 ```typescript
-import type { ChannelPlugin } from '@qwen-code/channel-base';
+import type { ChannelPlugin } from '@glm-code/channel-base';
 import { MyChannel } from './MyChannel.js';
 
 export const plugin: ChannelPlugin = {
@@ -34,8 +34,8 @@ export const plugin: ChannelPlugin = {
 Extend `ChannelBase` and implement three methods:
 
 ```typescript
-import { ChannelBase } from '@qwen-code/channel-base';
-import type { Envelope } from '@qwen-code/channel-base';
+import { ChannelBase } from '@glm-code/channel-base';
+import type { Envelope } from '@glm-code/channel-base';
 
 export class MyChannel extends ChannelBase {
   async connect(): Promise<void> {
@@ -126,7 +126,7 @@ The legacy `imageBase64`/`imageMimeType` fields still work for backwards compati
 
 ## Extension Manifest
 
-Your `qwen-extension.json` declares the channel type. The key must match `channelType` in your plugin object:
+Your `glm-extension.json` declares the channel type. The key must match `channelType` in your plugin object:
 
 ```json
 {

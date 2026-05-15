@@ -2,7 +2,7 @@
 
 ## 总体目标
 
-用 Qwen 内部架构风格，交付一个在外部体验上 95% 对齐 Claude Code 的 command 平台，同时修复三模式分裂、命令来源单一、prompt command 无法被模型调用三个核心问题。
+用 GLM 内部架构风格，交付一个在外部体验上 95% 对齐 Claude Code 的 command 平台，同时修复三模式分裂、命令来源单一、prompt command 无法被模型调用三个核心问题。
 
 ---
 
@@ -198,7 +198,7 @@
 
 ### 目标
 
-在 Phase 1/2 的元数据和命令能力基础上，补齐补全体验，并补充 Claude Code 中存在而 Qwen Code 缺失的命令。
+在 Phase 1/2 的元数据和命令能力基础上，补齐补全体验，并补充 Claude Code 中存在而 GLM Code 缺失的命令。
 
 ### 功能点
 
@@ -258,7 +258,7 @@
 
 #### 3.5 Claude Code 缺失命令补齐
 
-确认并回归 Qwen Code 已有的 `/doctor` 命令；`/release-notes` 不纳入本阶段，避免引入无明确产品需求的 built-in 命令表面。
+确认并回归 GLM Code 已有的 `/doctor` 命令；`/release-notes` 不纳入本阶段，避免引入无明确产品需求的 built-in 命令表面。
 
 | 命令      | 类型    | 说明                                 |
 | --------- | ------- | ------------------------------------ |

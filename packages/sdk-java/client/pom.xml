@@ -2,7 +2,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.alibaba</groupId>
+    <groupId>ai.glm</groupId>
     <artifactId>acp-sdk</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-alpha</version>
@@ -19,8 +19,8 @@
         </license>
     </licenses>
     <scm>
-        <url>https://github.com/QwenLM/qwen-code</url>
-        <connection>scm:git:https://github.com/QwenLM/qwen-code.git</connection>
+        <url>https://github.com/qazz92/glm-code</url>
+        <connection>scm:git:https://github.com/qazz92/glm-code.git</connection>
     </scm>
     <properties>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -176,20 +176,20 @@
     </build>
 
     <organization>
-        <name>Alibaba Group</name>
-        <url>https://github.com/alibaba</url>
+        <name>GLM Code</name>
+        <url>https://github.com/qazz92/glm-code</url>
     </organization>
     <developers>
         <developer>
-            <id>skyfire</id>
-            <name>skyfire</name>
-            <email>gengwei.gw(at)alibaba-inc.com</email>
+            <id>glm-code-maintainers</id>
+            <name>glm-code-maintainers</name>
+            <email>glm-code-maintainers@example.invalid</email>
             <roles>
                 <role>Developer</role>
                 <role>Designer</role>
             </roles>
             <timezone>+8</timezone>
-            <url>https://github.com/gwinthis</url>
+            <url>https://github.com/qazz92/glm-code</url>
         </developer>
     </developers>
 

@@ -6,9 +6,9 @@
 
 ## 1. Executive Summary
 
-Qwen Code and Claude Code both provide a Ctrl+O shortcut for toggling between compact and detailed tool output views, but the **design philosophy, default state, and interaction model differ fundamentally**. This document provides a deep source-level comparison, identifies UX gaps, and proposes optimizations for Qwen Code.
+GLM Code and Claude Code both provide a Ctrl+O shortcut for toggling between compact and detailed tool output views, but the **design philosophy, default state, and interaction model differ fundamentally**. This document provides a deep source-level comparison, identifies UX gaps, and proposes optimizations for GLM Code.
 
-| Dimension            | Claude Code                                 | Qwen Code                                     |
+| Dimension            | Claude Code                                 | GLM Code                                     |
 | -------------------- | ------------------------------------------- | --------------------------------------------- |
 | Default mode         | Compact (verbose=false)                     | Verbose (compactMode=false)                   |
 | Toggle semantics     | Temporary peek at details                   | Persistent preference switch                  |
@@ -80,11 +80,11 @@ Session start → compact mode (default)
      └─ Session ends → verbose resets to false
 ```
 
-## 3. Qwen Code Implementation Analysis
+## 3. GLM Code Implementation Analysis
 
 ### 3.1 Architecture
 
-Qwen Code uses a **component-level rendering flag** that each UI component reads from context:
+GLM Code uses a **component-level rendering flag** that each UI component reads from context:
 
 ```
 ┌─────────────────────────────────────┐
@@ -163,7 +163,7 @@ Session start → verbose mode (default)
 
 ### 4.1 Default Mode Philosophy
 
-| Aspect               | Claude Code (compact default)         | Qwen Code (verbose default)                   |
+| Aspect               | Claude Code (compact default)         | GLM Code (verbose default)                   |
 | -------------------- | ------------------------------------- | --------------------------------------------- |
 | First impression     | Clean, minimal — professional feel    | Information-rich — full transparency          |
 | Learning curve       | User must learn Ctrl+O to see details | User can immediately see everything           |
@@ -171,48 +171,48 @@ Session start → verbose mode (default)
 | Information overload | Avoided by default                    | Possible for new users                        |
 | Discoverability      | Per-tool "(ctrl+o to expand)" hints   | Startup Tips rotation + ? shortcuts + /help   |
 
-**Analysis:** Claude Code's compact default works because its user base is generally experienced developers who trust the tool and don't need to see every tool invocation. Qwen Code's verbose default is appropriate for its earlier stage where building user trust through transparency is important.
+**Analysis:** Claude Code's compact default works because its user base is generally experienced developers who trust the tool and don't need to see every tool invocation. GLM Code's verbose default is appropriate for its earlier stage where building user trust through transparency is important.
 
 ### 4.2 Persistence Model
 
-| Aspect           | Claude Code               | Qwen Code                  |
+| Aspect           | Claude Code               | GLM Code                  |
 | ---------------- | ------------------------- | -------------------------- |
 | Persisted?       | No — session-only         | Yes — to settings.json     |
 | Rationale        | Verbose is temporary peek | Mode is user preference    |
 | Restart behavior | Always starts compact     | Starts with last-used mode |
 
-**Analysis:** Claude Code treats detail viewing as a momentary need — you look, then go back. Qwen Code treats it as a stable preference — some users always want details, others always want compact. Both are valid; Qwen Code's approach is more flexible.
+**Analysis:** Claude Code treats detail viewing as a momentary need — you look, then go back. GLM Code treats it as a stable preference — some users always want details, others always want compact. Both are valid; GLM Code's approach is more flexible.
 
 ### 4.3 Confirmation Protection
 
-| Aspect                  | Claude Code                                 | Qwen Code                                            |
+| Aspect                  | Claude Code                                 | GLM Code                                            |
 | ----------------------- | ------------------------------------------- | ---------------------------------------------------- |
 | Mechanism               | Overlay/modal layer (structurally separate) | Force-expand conditions in `showCompact`             |
 | Coverage                | Complete — approvals can never be hidden    | Complete — 4 conditions cover all interactive states |
 | Compact confirmation UI | N/A (overlay is always full)                | Simplified 3-option RadioButtonSelect                |
 
-**Analysis:** Claude Code's architectural separation (overlay layer) is more robust. Qwen Code's force-expand approach is effective but requires each new interactive state to be explicitly added to the condition list.
+**Analysis:** Claude Code's architectural separation (overlay layer) is more robust. GLM Code's force-expand approach is effective but requires each new interactive state to be explicitly added to the condition list.
 
 ### 4.4 Rendering Approach
 
-| Aspect       | Claude Code                         | Qwen Code                                  |
+| Aspect       | Claude Code                         | GLM Code                                  |
 | ------------ | ----------------------------------- | ------------------------------------------ |
 | Toggle scope | Screen-level (prompt ↔ transcript) | Component-level (each component decides)   |
 | Granularity  | All-or-nothing                      | Fine-grained per component                 |
 | Flexibility  | Low — global switch                 | High — components can override             |
 | Consistency  | Guaranteed                          | Depends on each component's implementation |
 
-**Analysis:** Qwen Code's component-level approach is more flexible (e.g., force-expand for specific conditions) but requires more discipline to maintain consistency. Claude Code's screen-level approach is simpler and guarantees consistent behavior.
+**Analysis:** GLM Code's component-level approach is more flexible (e.g., force-expand for specific conditions) but requires more discipline to maintain consistency. Claude Code's screen-level approach is simpler and guarantees consistent behavior.
 
 ## 5. Optimization Recommendations
 
 ### 5.1 [P0] Keep Verbose as Default — No Change Needed
 
-Qwen Code's verbose default is the right choice for its current stage. Users who are new to the tool need transparency to build trust. As the product matures, consider making compact the default (like Claude Code).
+GLM Code's verbose default is the right choice for its current stage. Users who are new to the tool need transparency to build trust. As the product matures, consider making compact the default (like Claude Code).
 
 ### 5.2 [P1] Per-Tool Expansion for Large Outputs
 
-Claude Code shows "(ctrl+o to expand)" on individual tools that produce large output. Qwen Code currently only has a global toggle. Consider:
+Claude Code shows "(ctrl+o to expand)" on individual tools that produce large output. GLM Code currently only has a global toggle. Consider:
 
 - When a single tool produces output exceeding N lines, show a per-tool "expand" hint in compact mode.
 - Scope: future enhancement, not current priority.
@@ -253,7 +253,7 @@ After the `feat/compact-mode-optimization` branch changes:
 
 ## 7. File Reference
 
-### Qwen Code
+### GLM Code
 
 | File                                                                  | Purpose                                                |
 | --------------------------------------------------------------------- | ------------------------------------------------------ |

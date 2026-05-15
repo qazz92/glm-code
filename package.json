@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/qazz92/glm-code#readme",
   "config": {
-    "sandboxImageUri": "ghcr.io/glmlm/glm-code:0.15.10"
+    "sandboxImageUri": "ghcr.io/qazz92/glm-code:0.15.10"
   },
   "scripts": {
     "start": "cross-env node scripts/start.js",

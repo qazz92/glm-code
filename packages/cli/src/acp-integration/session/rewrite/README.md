@@ -24,8 +24,8 @@ Add to `settings.json`:
   "messageRewrite": {
     "enabled": true,
     "target": "all",
-    "promptFile": ".qwen/rewrite-prompt.txt",
-    "model": "qwen3-plus",
+    "promptFile": ".glm/rewrite-prompt.txt",
+    "model": "glm3-plus",
     "contextTurns": 1,
     "timeoutMs": 60000
   }

@@ -407,7 +407,7 @@
       "description": "Telemetry configuration."
     },
     "fastModel": {
-      "description": "Model used for generating prompt suggestions and speculative execution. Leave empty to use the main model. A smaller/faster model (e.g., glm-4.5-air) reduces latency and cost.",
+      "description": "Model used for generating prompt suggestions and speculative execution. Leave empty to use the main model. A smaller/faster model (e.g., glm3-coder-flash) reduces latency and cost.",
       "type": "string",
       "default": ""
     },
@@ -475,7 +475,7 @@
               "default": true
             },
             "splitToolMedia": {
-              "description": "When true, media (images / audio / video / files) returned by MCP tool calls is split into a follow-up user message instead of being embedded in the tool message. Required for strict OpenAI-compatible servers (e.g., LM Studio) that reject non-text content on `role: \"tool\"` messages with HTTP 400 \"Invalid 'messages' in payload\". Default false preserves the prior behavior for permissive providers. See GLMLM/glm-code#3616.",
+              "description": "When true, media (images / audio / video / files) returned by MCP tool calls is split into a follow-up user message instead of being embedded in the tool message. Required for strict OpenAI-compatible servers (e.g., LM Studio) that reject non-text content on `role: \"tool\"` messages with HTTP 400 \"Invalid 'messages' in payload\". Default false preserves the prior behavior for permissive providers. See qazz92/glm-code#3616.",
               "type": "boolean",
               "default": false
             },
@@ -496,7 +496,7 @@
       }
     },
     "modelPricing": {
-      "description": "Optional per-model pricing for cost estimation in /stats model. Example: {\"glm-4.5\": {\"inputPerMillionTokens\": 0.30, \"outputPerMillionTokens\": 1.20}}",
+      "description": "Optional per-model pricing for cost estimation in /stats model. Example: {\"glm3-coder\": {\"inputPerMillionTokens\": 0.30, \"outputPerMillionTokens\": 1.20}}",
       "type": "object",
       "additionalProperties": true
     },

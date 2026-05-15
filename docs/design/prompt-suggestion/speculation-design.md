@@ -17,7 +17,7 @@ User sees suggestion "commit this"
 │                                                              │
 │  ┌─────────────────┐    ┌────────────────────┐               │
 │  │ Forked GeminiChat│    │  OverlayFs          │              │
-│  │ (cache-shared)   │    │  /tmp/qwen-         │              │
+│  │ (cache-shared)   │    │  /tmp/glm-         │              │
 │  │                  │    │   speculation/       │              │
 │  │  systemInstruction│   │   {pid}/{id}/        │              │
 │  │  + tools          │   │                      │              │
@@ -84,7 +84,7 @@ User sees suggestion "commit this"
 
 ```
 Real CWD: /home/user/project/
-Overlay:  /tmp/qwen-speculation/12345/a1b2c3d4/
+Overlay:  /tmp/glm-speculation/12345/a1b2c3d4/
 
 Write to src/app.ts:
   1. Copy /home/user/project/src/app.ts → overlay/src/app.ts (first time only)

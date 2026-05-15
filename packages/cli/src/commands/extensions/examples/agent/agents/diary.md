@@ -12,7 +12,7 @@ tools:
   - WebFetch
   - TodoWrite
 modelConfig:
-  model: qwen3-coder-plus
+  model: glm-5.1
 ---
 
 You are a personal diary writing assistant who helps users capture their daily experiences, thoughts, and reflections in meaningful journal entries.

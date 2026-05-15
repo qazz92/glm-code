@@ -83,7 +83,7 @@ export type CommandSource =
 - `src/utils/suggestions/commandSuggestions.ts`：补全排序同时考虑精确命中、alias 命中、prefix、fuzzy、skill usage；alias 命中时只展示用户实际命中的 alias。
 - `src/utils/suggestions/commandSuggestions.ts`：mid-input slash 使用 `findMidInputSlashCommand()`、`getBestCommandMatch()` 和 `findSlashCommandPositions()` 支持 ghost text 与高亮。
 - `src/components/HelpV2/Commands.tsx`：Help V2 是可浏览的命令目录，展示描述时会附带来源信息。
-- `src/commands.ts`：Claude Code 内置 `/doctor`、`/release-notes` 等命令，Qwen Code 当前已实现 `/doctor`；本阶段不实现 `/release-notes`。
+- `src/commands.ts`：Claude Code 内置 `/doctor`、`/release-notes` 等命令，GLM Code 当前已实现 `/doctor`；本阶段不实现 `/release-notes`。
 
 Phase 3 采用“体验对齐，不复制架构”的方式借鉴上述点。
 
@@ -642,29 +642,29 @@ npm run build && npm run bundle
 Interactive 场景建议使用独立临时目录，避免污染当前仓库：
 
 ```bash
-tmux new-session -d -s qwen-slash-phase3 -x 200 -y 50 \
-  "cd /tmp/qwen-slash-phase3 && /Users/mochi/code/qwen-code-test/dist/cli.js --approval-mode yolo"
+tmux new-session -d -s glm-slash-phase3 -x 200 -y 50 \
+  "cd /tmp/glm-slash-phase3 && /Users/mochi/code/glm-code-test/dist/cli.js --approval-mode yolo"
 sleep 3
 ```
 
 发送输入时拆分文本和回车，避免 TUI 吞掉提交：
 
 ```bash
-tmux send-keys -t qwen-slash-phase3 "/help"
+tmux send-keys -t glm-slash-phase3 "/help"
 sleep 0.5
-tmux send-keys -t qwen-slash-phase3 Enter
+tmux send-keys -t glm-slash-phase3 Enter
 ```
 
 捕获输出：
 
 ```bash
-tmux capture-pane -t qwen-slash-phase3 -p -S -100
+tmux capture-pane -t glm-slash-phase3 -p -S -100
 ```
 
 清理：
 
 ```bash
-tmux kill-session -t qwen-slash-phase3
+tmux kill-session -t glm-slash-phase3
 ```
 
 #### 10.5.2 E2E 测试清单

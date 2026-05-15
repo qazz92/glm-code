@@ -4,7 +4,7 @@
 
 Improve the `/auth -> API Key -> Custom API Key` experience by replacing the current documentation-only screen with an in-terminal setup wizard for custom API providers.
 
-Qwen Code supports multiple API protocols through `authType` / `modelProviders` keys, including `openai`, `anthropic`, and `gemini`. Therefore, the custom setup wizard should start by asking users to select the protocol, then collect endpoint, key, and model information for that protocol.
+GLM Code supports multiple API protocols through `authType` / `modelProviders` keys, including `openai`, `anthropic`, and `gemini`. Therefore, the custom setup wizard should start by asking users to select the protocol, then collect endpoint, key, and model information for that protocol.
 
 The wizard guides users through:
 
@@ -12,7 +12,7 @@ The wizard guides users through:
 Select Protocol -> Enter Base URL -> Enter API Key -> Enter Model IDs -> Review JSON -> Save + authenticate
 ```
 
-This keeps the custom API key setup inside Qwen Code, reduces the need to manually edit `settings.json`, and makes the final configuration transparent by showing the generated JSON before saving.
+This keeps the custom API key setup inside GLM Code, reduces the need to manually edit `settings.json`, and makes the final configuration transparent by showing the generated JSON before saving.
 
 ## Background
 
@@ -24,12 +24,12 @@ Custom Configuration
 You can configure your API key and models in settings.json
 
 Refer to the documentation for setup instructions
-https://qwenlm.github.io/qwen-code-docs/en/users/configuration/model-providers/
+https://docs.z.ai/glm-code-docs/en/users/configuration/model-providers/
 
 Esc to go back
 ```
 
-This requires users to leave the CLI, read documentation, understand `settings.json`, manually configure `modelProviders`, choose an `envKey`, add API keys, and then return to Qwen Code. Users have reported that this flow is difficult and disconnected from the rest of the `/auth` experience.
+This requires users to leave the CLI, read documentation, understand `settings.json`, manually configure `modelProviders`, choose an `envKey`, add API keys, and then return to GLM Code. Users have reported that this flow is difficult and disconnected from the rest of the `/auth` experience.
 
 The current ModelStudio Standard API key path already provides a guided setup flow:
 
@@ -41,7 +41,7 @@ Alibaba Cloud ModelStudio Standard API Key
          └─ Save + authenticate
 ```
 
-Custom API key setup should offer a similar guided experience, while also respecting that Qwen Code supports multiple provider protocols.
+Custom API key setup should offer a similar guided experience, while also respecting that GLM Code supports multiple provider protocols.
 
 ## Problem Statement
 
@@ -62,7 +62,7 @@ The custom API key path is currently a dead end inside `/auth`:
    │     └─ Custom API Key
    │        └─ Documentation-only screen
    │
-   └─ Qwen OAuth
+   └─ GLM OAuth
 ```
 
 This causes several usability issues:
@@ -76,12 +76,12 @@ This causes several usability issues:
 ## Goals
 
 1. Let users configure a custom API provider completely inside `/auth`.
-2. Support the main protocols Qwen Code supports in `modelProviders`: `openai`, `anthropic`, and `gemini`.
+2. Support the main protocols GLM Code supports in `modelProviders`: `openai`, `anthropic`, and `gemini`.
 3. Keep the flow close to the existing ModelStudio Standard flow.
 4. Treat `baseUrl` as the custom-provider equivalent of `region`.
-5. Automatically generate a Qwen-managed private `envKey` from the selected protocol and input `baseUrl`.
-6. Store the API key under `settings.json.env`, consistent with the current Qwen-managed credential pattern.
-7. Avoid conflicts with user shell environment variables by using a Qwen-specific generated key name.
+5. Automatically generate a GLM-managed private `envKey` from the selected protocol and input `baseUrl`.
+6. Store the API key under `settings.json.env`, consistent with the current GLM-managed credential pattern.
+7. Avoid conflicts with user shell environment variables by using a GLM-specific generated key name.
 8. Show the generated JSON before saving so users can review the exact settings changes.
 9. Preserve unrelated existing `modelProviders` entries.
 10. Authenticate immediately after saving and show success or failure feedback.
@@ -147,7 +147,7 @@ Each protocol maps directly to a `modelProviders` key and `security.auth.selecte
    │        ├─ Review generated JSON
    │        └─ Save + authenticate
    │
-   └─ Qwen OAuth
+   └─ GLM OAuth
 ```
 
 ### Custom API Key state machine
@@ -292,7 +292,7 @@ Validation:
 
 On valid submit:
 
-- Generate the Qwen-managed `envKey` from selected protocol and `baseUrl`.
+- Generate the GLM-managed `envKey` from selected protocol and `baseUrl`.
 - Move to API key input.
 
 ### Step 3: Enter API Key
@@ -333,7 +333,7 @@ Notes:
 │                                                              │
 │ Enter one or more model IDs, separated by commas.            │
 │                                                              │
-│ Model IDs: qwen/qwen3-coder,openai/gpt-4.1_                  │
+│ Model IDs: glm/glm-5.1,openai/gpt-4.1_                  │
 │                                                              │
 │ Enter to continue, Esc to go back                            │
 └──────────────────────────────────────────────────────────────┘
@@ -357,10 +357,10 @@ Example:
 
 ```text
 Input:
-qwen/qwen3-coder, openai/gpt-4.1, qwen/qwen3-coder
+glm/glm-5.1, openai/gpt-4.1, glm/glm-5.1
 
 Normalized:
-qwen/qwen3-coder, openai/gpt-4.1
+glm/glm-5.1, openai/gpt-4.1
 ```
 
 ### Step 5: Review JSON
@@ -377,16 +377,16 @@ OpenAI-compatible example:
 │                                                              │
 │ {                                                            │
 │   "env": {                                                   │
-│     "QWEN_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1":│
+│     "GLM_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1":│
 │       "sk-••••••••••••••••"                                  │
 │   },                                                         │
 │   "modelProviders": {                                        │
 │     "openai": [                                              │
 │       {                                                      │
-│         "id": "qwen/qwen3-coder",                           │
-│         "name": "qwen/qwen3-coder",                         │
+│         "id": "glm/glm-5.1",                           │
+│         "name": "glm/glm-5.1",                         │
 │         "baseUrl": "https://openrouter.ai/api/v1",          │
-│         "envKey": "QWEN_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1"│
+│         "envKey": "GLM_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1"│
 │       }                                                      │
 │     ]                                                        │
 │   },                                                         │
@@ -396,7 +396,7 @@ OpenAI-compatible example:
 │     }                                                        │
 │   },                                                         │
 │   "model": {                                                 │
-│     "name": "qwen/qwen3-coder"                              │
+│     "name": "glm/glm-5.1"                              │
 │   }                                                          │
 │ }                                                            │
 │                                                              │
@@ -409,7 +409,7 @@ Anthropic-compatible example:
 ```json
 {
   "env": {
-    "QWEN_CUSTOM_API_KEY_ANTHROPIC_HTTPS_API_ANTHROPIC_COM_V1": "sk-••••"
+    "GLM_CUSTOM_API_KEY_ANTHROPIC_HTTPS_API_ANTHROPIC_COM_V1": "sk-••••"
   },
   "modelProviders": {
     "anthropic": [
@@ -417,7 +417,7 @@ Anthropic-compatible example:
         "id": "claude-sonnet-4-5",
         "name": "claude-sonnet-4-5",
         "baseUrl": "https://api.anthropic.com/v1",
-        "envKey": "QWEN_CUSTOM_API_KEY_ANTHROPIC_HTTPS_API_ANTHROPIC_COM_V1"
+        "envKey": "GLM_CUSTOM_API_KEY_ANTHROPIC_HTTPS_API_ANTHROPIC_COM_V1"
       }
     ]
   },
@@ -483,12 +483,12 @@ Please check:
 
 The wizard should not ask users to enter an `envKey`.
 
-Qwen-managed API keys are stored in `settings.json.env`, so the env key should be generated automatically under a Qwen-specific namespace. This avoids collisions with user-managed shell environment variables and prevents multiple custom endpoints from overwriting each other.
+GLM-managed API keys are stored in `settings.json.env`, so the env key should be generated automatically under a GLM-specific namespace. This avoids collisions with user-managed shell environment variables and prevents multiple custom endpoints from overwriting each other.
 
 ### Format
 
 ```text
-QWEN_CUSTOM_API_KEY_${PROTOCOL}_${NORMALIZED_BASE_URL}
+GLM_CUSTOM_API_KEY_${PROTOCOL}_${NORMALIZED_BASE_URL}
 ```
 
 Including the protocol avoids collisions when the same endpoint is used under different protocol adapters.
@@ -498,23 +498,23 @@ Including the protocol avoids collisions when the same endpoint is used under di
 ```text
 Protocol: openai
 Base URL: https://api.openai.com/v1
--> QWEN_CUSTOM_API_KEY_OPENAI_HTTPS_API_OPENAI_COM_V1
+-> GLM_CUSTOM_API_KEY_OPENAI_HTTPS_API_OPENAI_COM_V1
 
 Protocol: openai
 Base URL: https://openrouter.ai/api/v1
--> QWEN_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1
+-> GLM_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1
 
 Protocol: anthropic
 Base URL: https://api.anthropic.com/v1
--> QWEN_CUSTOM_API_KEY_ANTHROPIC_HTTPS_API_ANTHROPIC_COM_V1
+-> GLM_CUSTOM_API_KEY_ANTHROPIC_HTTPS_API_ANTHROPIC_COM_V1
 
 Protocol: gemini
 Base URL: https://generativelanguage.googleapis.com
--> QWEN_CUSTOM_API_KEY_GEMINI_HTTPS_GENERATIVELANGUAGE_GOOGLEAPIS_COM
+-> GLM_CUSTOM_API_KEY_GEMINI_HTTPS_GENERATIVELANGUAGE_GOOGLEAPIS_COM
 
 Protocol: openai
 Base URL: http://localhost:11434/v1
--> QWEN_CUSTOM_API_KEY_OPENAI_HTTP_LOCALHOST_11434_V1
+-> GLM_CUSTOM_API_KEY_OPENAI_HTTP_LOCALHOST_11434_V1
 ```
 
 ### Normalization rule
@@ -532,7 +532,7 @@ baseUrl
   -> collapse consecutive _ characters
   -> remove leading/trailing _
 
-return QWEN_CUSTOM_API_KEY_${NORMALIZED_PROTOCOL}_${NORMALIZED_BASE_URL}
+return GLM_CUSTOM_API_KEY_${NORMALIZED_PROTOCOL}_${NORMALIZED_BASE_URL}
 ```
 
 Pseudo-code:
@@ -547,7 +547,7 @@ function generateCustomApiKeyEnvKey(protocol: string, baseUrl: string): string {
       .replace(/_+/g, '_')
       .replace(/^_+|_+$/g, '');
 
-  return `QWEN_CUSTOM_API_KEY_${normalize(protocol)}_${normalize(baseUrl)}`;
+  return `GLM_CUSTOM_API_KEY_${normalize(protocol)}_${normalize(baseUrl)}`;
 }
 ```
 
@@ -559,7 +559,7 @@ Given user input:
 Protocol: openai
 Base URL: https://openrouter.ai/api/v1
 API key: sk-or-v1-xxx
-Model IDs: qwen/qwen3-coder,openai/gpt-4.1
+Model IDs: glm/glm-5.1,openai/gpt-4.1
 ```
 
 The wizard should produce:
@@ -567,21 +567,21 @@ The wizard should produce:
 ```json
 {
   "env": {
-    "QWEN_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1": "sk-or-v1-xxx"
+    "GLM_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1": "sk-or-v1-xxx"
   },
   "modelProviders": {
     "openai": [
       {
-        "id": "qwen/qwen3-coder",
-        "name": "qwen/qwen3-coder",
+        "id": "glm/glm-5.1",
+        "name": "glm/glm-5.1",
         "baseUrl": "https://openrouter.ai/api/v1",
-        "envKey": "QWEN_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1"
+        "envKey": "GLM_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1"
       },
       {
         "id": "openai/gpt-4.1",
         "name": "openai/gpt-4.1",
         "baseUrl": "https://openrouter.ai/api/v1",
-        "envKey": "QWEN_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1"
+        "envKey": "GLM_CUSTOM_API_KEY_OPENAI_HTTPS_OPENROUTER_AI_API_V1"
       }
     ]
   },
@@ -591,7 +591,7 @@ The wizard should produce:
     }
   },
   "model": {
-    "name": "qwen/qwen3-coder"
+    "name": "glm/glm-5.1"
   }
 }
 ```
@@ -641,7 +641,7 @@ This ensures `refreshAuth(selectedProtocol)` can use the newly entered key in th
 For the generated env key:
 
 ```text
-generatedEnvKey = QWEN_CUSTOM_API_KEY_${PROTOCOL}_${NORMALIZED_BASE_URL}
+generatedEnvKey = GLM_CUSTOM_API_KEY_${PROTOCOL}_${NORMALIZED_BASE_URL}
 ```
 
 Update `modelProviders[selectedProtocol]` as follows:
@@ -733,7 +733,7 @@ Suggested copy:
 
 ```text
 Need advanced generationConfig or capabilities? See:
-https://qwenlm.github.io/qwen-code-docs/en/users/configuration/model-providers/
+https://docs.z.ai/glm-code-docs/en/users/configuration/model-providers/
 ```
 
 ## Implementation Notes
@@ -819,7 +819,7 @@ maskApiKey(apiKey: string): string
 ### Settings
 
 - The API key is written to `settings.json.env[generatedEnvKey]`.
-- `generatedEnvKey` is derived from selected protocol and `baseUrl` using the Qwen private namespace.
+- `generatedEnvKey` is derived from selected protocol and `baseUrl` using the GLM private namespace.
 - `modelProviders[selectedProtocol]` receives one entry per normalized model ID.
 - Each custom model entry uses `id === name`.
 - `security.auth.selectedType` is set to the selected protocol.

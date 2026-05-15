@@ -123,7 +123,7 @@ class VsCodeInstaller implements IdeInstaller {
         isWindows ? `"${commandPath}"` : commandPath,
         [
           '--install-extension',
-          'glmlm.glm-code-vscode-ide-companion',
+          'glm-code.glm-code-vscode-ide-companion',
           '--force',
         ],
         { stdio: 'pipe', shell: isWindows },

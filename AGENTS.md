@@ -4,7 +4,7 @@
 > It is NOT our source code. Never modify files under `repos/`.
 > Our actual source code lives under the `packages/` directory.
 
-This file provides guidance to Qwen Code when working with code in this
+This file provides guidance to GLM Code when working with code in this
 repository.
 
 ## Common Commands
@@ -77,7 +77,7 @@ Or combined in one command:
 
 ```bash
 cd integration-tests && \
-  cross-env QWEN_SANDBOX=false npx vitest run cli interactive
+  cross-env GLM_SANDBOX=false npx vitest run cli interactive
 ```
 
 **Gotcha:** In interactive tests, always call `session.idle()` between sends —
@@ -112,12 +112,12 @@ npm run preflight  # Full check: clean → install → format → lint → build
 
 ### General workflow
 
-1. **Design doc for non-trivial work** — write one in `.qwen/design/` if the
+1. **Design doc for non-trivial work** — write one in `.glm/design/` if the
    change touches multiple files or involves design decisions. Skip for small
    bugfixes.
 2. **Test plan for behavioral changes** — write an E2E test plan in
-   `.qwen/e2e-tests/` when the change affects user-observable behavior. Dry-run
-   against the global `qwen` CLI first to confirm the baseline.
+   `.glm/e2e-tests/` when the change affects user-observable behavior. Dry-run
+   against the global `glm` CLI first to confirm the baseline.
 3. **Build + typecheck before declaring done**:
    `npm run build && npm run typecheck`.
 4. **Code review** — run `/review` when available. Triage each comment:
@@ -167,14 +167,14 @@ applicable.
 
 ## Project Directories
 
-Project artifacts live under `.qwen/`:
+Project artifacts live under `.glm/`:
 
 | Directory               | Purpose                              |
 | ----------------------- | ------------------------------------ |
-| `.qwen/design/`         | Design docs for planned features     |
-| `.qwen/e2e-tests/`      | E2E test plans and results           |
-| `.qwen/issues/`         | Issue drafts before filing on GitHub |
-| `.qwen/pr-drafts/`      | PR drafts before submitting          |
-| `.qwen/pr-reviews/`     | PR review notes                      |
-| `.qwen/investigations/` | Structured debugging journals        |
-| `.qwen/scripts/`        | Utility scripts                      |
+| `.glm/design/`         | Design docs for planned features     |
+| `.glm/e2e-tests/`      | E2E test plans and results           |
+| `.glm/issues/`         | Issue drafts before filing on GitHub |
+| `.glm/pr-drafts/`      | PR drafts before submitting          |
+| `.glm/pr-reviews/`     | PR review notes                      |
+| `.glm/investigations/` | Structured debugging journals        |
+| `.glm/scripts/`        | Utility scripts                      |

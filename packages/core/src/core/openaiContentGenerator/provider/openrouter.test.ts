@@ -104,7 +104,7 @@ describe('OpenRouterOpenAICompatibleProvider', () => {
 
       expect(headers).toEqual({
         'User-Agent': `GLMCode/1.0.0 (${process.platform}; ${process.arch})`,
-        'HTTP-Referer': 'https://github.com/GLMLM/glm-code.git',
+        'HTTP-Referer': 'https://github.com/qazz92/glm-code.git',
         'X-OpenRouter-Title': 'GLM Code',
       });
     });
@@ -124,7 +124,7 @@ describe('OpenRouterOpenAICompatibleProvider', () => {
 
       expect(headers).toEqual({
         'User-Agent': 'ParentAgent/1.0.0',
-        'HTTP-Referer': 'https://github.com/GLMLM/glm-code.git', // OpenRouter-specific value should override
+        'HTTP-Referer': 'https://github.com/qazz92/glm-code.git', // OpenRouter-specific value should override
         'X-OpenRouter-Title': 'GLM Code',
       });
 
@@ -140,7 +140,7 @@ describe('OpenRouterOpenAICompatibleProvider', () => {
         `GLMCode/unknown (${process.platform}; ${process.arch})`,
       );
       expect(headers['HTTP-Referer']).toBe(
-        'https://github.com/GLMLM/glm-code.git',
+        'https://github.com/qazz92/glm-code.git',
       );
       expect(headers['X-OpenRouter-Title']).toBe('GLM Code');
     });
@@ -213,7 +213,7 @@ describe('OpenRouterOpenAICompatibleProvider', () => {
       // Should have both parent and OpenRouter-specific headers
       expect(headers['User-Agent']).toBeDefined(); // From parent
       expect(headers['HTTP-Referer']).toBe(
-        'https://github.com/GLMLM/glm-code.git',
+        'https://github.com/qazz92/glm-code.git',
       ); // OpenRouter-specific
       expect(headers['X-OpenRouter-Title']).toBe('GLM Code'); // OpenRouter-specific
     });

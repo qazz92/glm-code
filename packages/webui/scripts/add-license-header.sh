@@ -6,7 +6,7 @@
 
 LICENSE_HEADER="/**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */"
 

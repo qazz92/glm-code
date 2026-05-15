@@ -34,7 +34,7 @@ export const bugCommand: SlashCommand = {
       .join('\n');
 
     let bugReportUrl =
-      'https://github.com/GLMLM/glm-code/issues/new?template=bug_report.yml&title={title}&info={info}';
+      'https://github.com/qazz92/glm-code/issues/new?template=bug_report.yml&title={title}&info={info}';
 
     const bugCommandSettings = context.services.config?.getBugCommand();
     if (bugCommandSettings?.urlTemplate) {

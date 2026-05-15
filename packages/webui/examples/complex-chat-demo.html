@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@qwen-code/webui Complex Chat Demo</title>
+    <title>@glm-code/webui Complex Chat Demo</title>
     <!-- Load React and ReactDOM from CDN -->
     <script
       crossorigin
@@ -14,12 +14,12 @@
       src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
     ></script>
     <!-- Load the webui library from CDN -->
-    <script src="https://unpkg.com/@qwen-code/webui@0.1.0-beta.2/dist/index.umd.js"></script>
+    <script src="https://unpkg.com/@glm-code/webui@0.1.0-beta.2/dist/index.umd.js"></script>
 
     <!-- Load the CSS -->
     <link
       rel="stylesheet"
-      href="https://unpkg.com/@qwen-code/webui@0.1.0-beta.2/dist/styles.css"
+      href="https://unpkg.com/@glm-code/webui@0.1.0-beta.2/dist/styles.css"
     />
 
     <!-- Load Babel Standalone for JSX processing -->
@@ -83,7 +83,7 @@
 
   <body>
     <div class="container">
-      <h1>@qwen-code/webui Complex Chat Demo</h1>
+      <h1>@glm-code/webui Complex Chat Demo</h1>
       <h2>Real conversation example with tool calls</h2>
       <div id="complex-chat-root" class="chat-container"></div>
 
@@ -107,7 +107,7 @@
           message: {
             role: 'user',
             content: `Message received: Object from: Object
-service-worker.js:137 Attempting to connect to Native Host: com.qwen.cli.bridge
+service-worker.js:137 Attempting to connect to Native Host: com.glm.cli.bridge
 service-worker.js:202 Sending handshake...
 service-worker.js:175 Native host disconnected
 service-worker.js:177 Disconnect error: Object
@@ -116,7 +116,7 @@ service-worker.js:207 Handshake timeout - no response from Native Host
 
 Cannot receive host info. Expected output:
 service-worker.js:150 [Native Event] host_info Object
-service-worker.js:552 [Qwen] host_info Object
+service-worker.js:552 [GLM] host_info Object
 service-worker.js:617 [Host] Info Object
 service-worker.js:164 [Native Message] handshake_response Object
 service-worker.js:231 Handshake successful: Object`,
@@ -177,7 +177,7 @@ packages/chrome-extension/
 │   └── manifest.json          # Extension manifest
 └── native-host/
     ├── index.js               # Native host entry
-    └── com.qwen.cli.bridge.json  # Host manifest
+    └── com.glm.cli.bridge.json  # Host manifest
 \`\`\`
 
 The issue appears to be in the handshake timing. The native host is exiting before the handshake completes.`,
@@ -380,7 +380,7 @@ pnpm install
       const combinedMessages = [...complexChatMessages, ...toolCallMessages];
 
       // Get the ChatViewer and Platform components from the global object
-      const { ChatViewer, PlatformProvider } = QwenCodeWebUI;
+      const { ChatViewer, PlatformProvider } = GLMCodeWebUI;
 
       // Define a minimal platform context for web usage
       const platformContext = {

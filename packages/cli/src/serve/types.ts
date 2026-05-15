@@ -97,7 +97,7 @@ export const CAPABILITIES_SCHEMA_VERSION = 1 as const;
 // Stage 1.5 should convert this to a registry that bridges and
 // plugins push into, alongside an `ext_*` event family + a
 // `POST /ext/:method` route. Tracked under #3803.
-// Reference: https://github.com/GLMLM/glm-code/pull/3889#issuecomment-4427773706
+// Reference: https://github.com/qazz92/glm-code/pull/3889#issuecomment-4427773706
 export const STAGE1_FEATURES = [
   'health',
   'capabilities',

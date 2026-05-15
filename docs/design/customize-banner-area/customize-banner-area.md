@@ -1,19 +1,19 @@
 # Customize Banner Area Design
 
-> Allow users to replace the QWEN ASCII art, replace the brand title, and
+> Allow users to replace the GLM ASCII art, replace the brand title, and
 > hide the banner entirely — without letting them suppress the operational
-> data (version, auth, model, working directory) that makes Qwen Code
+> data (version, auth, model, working directory) that makes GLM Code
 > debuggable and trustworthy.
 
 ## Overview
 
-The Qwen Code CLI prints a banner at startup containing a QWEN ASCII logo
+The GLM Code CLI prints a banner at startup containing a GLM ASCII logo
 and a bordered info panel. Several real-world use cases want some control
 over this surface:
 
 - **White-label / third-party brand integration**: enterprises and teams
-  embedding Qwen Code into their own products want to display their brand
-  identity rather than the default "Qwen Code".
+  embedding GLM Code into their own products want to display their brand
+  identity rather than the default "GLM Code".
 - **Personalization**: individuals want to match the terminal banner to a
   team standard or their own taste.
 - **Multi-tenant / multi-instance distinction**: in shared environments,
@@ -26,7 +26,7 @@ top, not let them silence the information that makes a session
 debuggable. That stance drives every "what can change vs. what is locked"
 decision in the rest of this document.
 
-This is tracked by [issue #3005](https://github.com/QwenLM/qwen-code/issues/3005).
+This is tracked by [issue #3005](https://github.com/qazz92/glm-code/issues/3005).
 
 ## Banner region taxonomy
 
@@ -41,9 +41,9 @@ breaks into the following regions:
 │                                                                             │
 │   ┌──── Logo Column ─────┐  gap=2  ┌──── Info Panel (bordered) ──────────┐  │
 │   │                      │         │                                     │  │
-│   │  ███ QWEN ASCII ███  │         │  ① Title:    >_ Qwen Code (vX.Y.Z)  │  │
+│   │  ███ GLM ASCII ███  │         │  ① Title:    >_ GLM Code (vX.Y.Z)  │  │
 │   │  ███   ART ART  ███  │         │  ② Subtitle: «blank, or override»   │  │
-│   │  ███ QWEN ASCII ███  │         │  ③ Status:   Qwen OAuth | qwen-…    │  │
+│   │  ███ GLM ASCII ███  │         │  ③ Status:   GLM OAuth | glm-…    │  │
 │   │                      │         │  ④ Path:     ~/projects/example     │  │
 │   └──────── A ───────────┘         └──────────────── B ──────────────────┘  │
 │                                                                             │
@@ -60,7 +60,7 @@ The two top-level boxes are:
 - **B. Info panel** — a bordered box containing four rows. The second
   row is a blank visual spacer by default, optionally swapped for a
   caller-supplied subtitle:
-  - **B①** Title: `>_ Qwen Code (vX.Y.Z)` — brand text + version suffix.
+  - **B①** Title: `>_ GLM Code (vX.Y.Z)` — brand text + version suffix.
   - **B②** Subtitle / spacer: blank single-space row by default. When
     `ui.customBannerSubtitle` is set, that string takes this row (e.g.
     a fork might use `Built-in DataWorks Official Skills`).
@@ -76,7 +76,7 @@ falls back to plain output).
 | Region                                      | Today's source                      | Customization category          | Rationale                                                                                                                                                                                                    |
 | ------------------------------------------- | ----------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **A. Logo column**                          | `shortAsciiLogo` (`AsciiArt.ts`)    | **Replaceable + auto-hideable** | Pure brand surface. White-label needs full control over the visual. The existing "auto-hide on narrow terminals" fallback is preserved.                                                                      |
-| **B①. Title — brand text** (`>_ Qwen Code`) | Hard-coded in `Header.tsx`          | **Replaceable**                 | Brand surface. The leading `>_` glyph is part of the existing brand; if a user wants it gone, they simply omit it from `customBannerTitle`.                                                                  |
+| **B①. Title — brand text** (`>_ GLM Code`) | Hard-coded in `Header.tsx`          | **Replaceable**                 | Brand surface. The leading `>_` glyph is part of the existing brand; if a user wants it gone, they simply omit it from `customBannerTitle`.                                                                  |
 | **B①. Title — version suffix** (`(vX.Y.Z)`) | `version` prop                      | **Locked**                      | Critical for bug reports. Hiding it makes "what version are you on?" answerable only via `--version`, which is a real cost in support workflows. We trade a small white-label loss for support tractability. |
 | **B②. Subtitle / spacer row**               | blank by default                    | **Replaceable**                 | Pure brand / context surface. Used by white-label forks to label the build (e.g. "Built-in DataWorks Official Skills"). Sanitized like the title; one line only — no layout-breaking newlines.               |
 | **B③. Status line** (auth + model)          | `formattedAuthType`, `model` props  | **Locked**                      | Operational and security signal. Users must always see which credential is in use and which model will spend their tokens. Suppressing it is a footgun even for white-label scenarios.                       |
@@ -128,7 +128,7 @@ a denser font in another; the limiting factor is visual width, not letters.
 ### Where settings live
 
 All four settings live under `ui` in `settings.json`. Both user-level
-(`~/.qwen/settings.json`) and workspace-level (`.qwen/settings.json` in
+(`~/.glm/settings.json`) and workspace-level (`.glm/settings.json` in
 the project root) are supported with the standard merge precedence
 (workspace overrides user, system overrides workspace).
 
@@ -139,7 +139,7 @@ settings define `{ large }`, both contribute — `small` from user,
 `large` from workspace. This keeps two things working at once:
 
 1. Each `{ path }` entry resolves against the file that declared it
-   (workspace `.qwen/` vs. user `~/.qwen/`); the merged view alone would
+   (workspace `.glm/` vs. user `~/.glm/`); the merged view alone would
    lose that scope information.
 2. Users can keep a default `large` tier in their personal settings and
    override only `small` per-workspace, without restating the whole
@@ -194,7 +194,7 @@ auth/model line:
 ┌─────────────────────────────────────────────────────────┐
 │ DataWorks DataAgent (vX.Y.Z)                            │  ← B① title
 │ Built-in DataWorks Official Skills                      │  ← B② subtitle
-│ Qwen OAuth | qwen-coder ( /model to change)             │  ← B③ status
+│ GLM OAuth | glm-coder ( /model to change)             │  ← B③ status
 │ ~/projects/example                                      │  ← B④ path
 └─────────────────────────────────────────────────────────┘
 ```
@@ -245,8 +245,8 @@ with the active gradient theme just like the default logo.
 Avoids JSON-escaping a multi-line string. Path resolution rules:
 
 - **Workspace settings**: relative paths resolve against the workspace
-  `.qwen/` directory.
-- **User settings**: relative paths resolve against `~/.qwen/`.
+  `.glm/` directory.
+- **User settings**: relative paths resolve against `~/.glm/`.
 - Absolute paths are used as-is.
 - The file is read **once at startup**, sanitized, and cached. Editing
   the file mid-session does not re-render the banner — restart the CLI.
@@ -346,12 +346,12 @@ Where `banner-large.txt` contains the stacked-words ANSI Shadow output
 
 ### How to verify your change
 
-1. Save `settings.json` and start a fresh `qwen` session — banner
+1. Save `settings.json` and start a fresh `glm` session — banner
    resolution runs once at startup.
 2. Resize the terminal to confirm `small` / `large` tiers swap as
    expected, and that the logo column disappears at very narrow widths.
 3. If something does not appear as expected, look at
-   `~/.qwen/debug/<sessionId>.txt` (the symlink `latest.txt` points to
+   `~/.glm/debug/<sessionId>.txt` (the symlink `latest.txt` points to
    the current session) and grep for `[BANNER]` — every soft failure
    logs a warn line with the underlying reason.
 
@@ -385,7 +385,7 @@ Where `banner-large.txt` contains the stacked-words ANSI Shadow output
    │      ≤ 64 KB            │         render Logo Column
    │ 3. sanitize art:        │         render Info Panel:
    │    stripControlSeqs     │           Title    = customBannerTitle
-   │    ≤ 200 lines × 200    │                   ?? '>_ Qwen Code'
+   │    ≤ 200 lines × 200    │                   ?? '>_ GLM Code'
    │    cols                 │           Subtitle = customBannerSubtitle
    │ 4. sanitize title +     │                   ?? blank spacer row
    │    subtitle (single-    │           Status   = locked
@@ -406,7 +406,7 @@ and again only on settings reload events:
      defense (Windows: plain read-only — the constant is not exposed),
      capped at 64 KB. Relative paths resolve against the _owning
      settings file's directory_ — workspace settings against the
-     workspace `.qwen/`, user settings against `~/.qwen/`. Read failure
+     workspace `.glm/`, user settings against `~/.glm/`. Read failure
      logs `[BANNER]` warn and falls back to default for that tier.
 3. **Sanitize**. A banner-specific stripper drops OSC / CSI / SS2 / SS3
    leaders and replaces every other C0 / C1 control byte (and DEL) with
@@ -420,7 +420,7 @@ and again only on settings reload events:
    - Else fall back to `small` if it fits.
    - Else, **if the user supplied any custom art**, hide the logo column
      entirely (the existing `showLogo = false` branch) — falling back to
-     the bundled QWEN logo here would silently undo a white-label
+     the bundled GLM logo here would silently undo a white-label
      deployment on narrow terminals. The info panel still renders.
    - Else (no custom art was supplied at all) fall through to
      `shortAsciiLogo` and let the existing width gate decide whether to
@@ -475,7 +475,7 @@ customBannerTitle: {
   requiresRestart: false,
   default: '' as string,
   description:
-    'Replace the default ">_ Qwen Code" title shown in the banner info panel. The version suffix is always appended.',
+    'Replace the default ">_ GLM Code" title shown in the banner info panel. The version suffix is always appended.',
   showInDialog: false,
 },
 customBannerSubtitle: {
@@ -495,7 +495,7 @@ customAsciiArt: {
   requiresRestart: false,
   default: undefined,
   description:
-    'Replace the default QWEN ASCII art. Accepts an inline string, {"path": "..."}, or {"small": ..., "large": ...} for width-aware selection.',
+    'Replace the default GLM ASCII art. Accepts an inline string, {"path": "..."}, or {"small": ..., "large": ...} for width-aware selection.',
   showInDialog: false,
   // The runtime accepts a union the SettingDefinition `type` field can't
   // express. The override is emitted verbatim by the JSON-schema generator
@@ -571,7 +571,7 @@ when set:
 
 ```tsx
 <Text bold color={theme.text.accent}>
-  {customBannerTitle ? customBannerTitle : '>_ Qwen Code'}
+  {customBannerTitle ? customBannerTitle : '>_ GLM Code'}
 </Text>
 …
 {customBannerSubtitle ? (
@@ -732,7 +732,7 @@ follow-up if user demand surfaces.
 
 | Item                                                               | Why not                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | ------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Text-to-ASCII rendering (`{ text: "xxxCode" }` form)               | Considered and rejected for v1. Adding this would require either a `figlet` runtime dependency (~2–3 MB unpacked once a usable set of fonts is included) or a vendored single-font renderer (~200 lines + a `.flf` font file we'd own). Both options bring ongoing surface area: font selection, font-license tracking, "my font doesn't render right on terminal X" issues, and CJK / wide-character handling. The driving use case for this feature (white-label / multi-tenant) almost always has a designer producing intentional ASCII art, not relying on a default figlet font. Users who want one-line generation can already get it with `npx figlet "xxxCode" > brand.txt` + `customAsciiArt: { "path": "./brand.txt" }` — same outcome, no added dependency, no support burden inside Qwen Code. If demand surfaces later this form is purely additive: extend `AsciiArtSource` to `string \| {path} \| {text, font?}` without breaking any existing config. |
+| Text-to-ASCII rendering (`{ text: "xxxCode" }` form)               | Considered and rejected for v1. Adding this would require either a `figlet` runtime dependency (~2–3 MB unpacked once a usable set of fonts is included) or a vendored single-font renderer (~200 lines + a `.flf` font file we'd own). Both options bring ongoing surface area: font selection, font-license tracking, "my font doesn't render right on terminal X" issues, and CJK / wide-character handling. The driving use case for this feature (white-label / multi-tenant) almost always has a designer producing intentional ASCII art, not relying on a default figlet font. Users who want one-line generation can already get it with `npx figlet "xxxCode" > brand.txt` + `customAsciiArt: { "path": "./brand.txt" }` — same outcome, no added dependency, no support burden inside GLM Code. If demand surfaces later this form is purely additive: extend `AsciiArtSource` to `string \| {path} \| {text, font?}` without breaking any existing config. |
 | `/banner` slash command for live editing                           | The settings UI is the canonical edit surface. A live editor for multi-line ASCII art is its own project.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | Custom gradient colors / per-line color overrides                  | Theme owns colors. A separate proposal can extend the theme contract; banner customization should not duplicate that surface.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | URL-loaded ASCII art                                               | Network fetch at startup is its own can of worms — failure modes, caching, security review. The file-path form is the lower-risk equivalent.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -746,17 +746,17 @@ follow-up if user demand surfaces.
 For the eventual implementation PR, the following end-to-end checks
 should pass.
 
-1. `~/.qwen/settings.json` with `customBannerTitle: "Acme CLI"` and an
-   inline `customAsciiArt` string → `qwen` shows the new title and art;
+1. `~/.glm/settings.json` with `customBannerTitle: "Acme CLI"` and an
+   inline `customAsciiArt` string → `glm` shows the new title and art;
    version suffix still present.
 2. `customBannerSubtitle: "Built-in Acme Skills"` → the subtitle row
    renders between the title and the auth/model line in the secondary
    text color; auth, model, and path still visible. Unsetting it
    restores the blank spacer row (back-compat).
-3. `hideBanner: true` → `qwen` starts with no banner; tips and chat
+3. `hideBanner: true` → `glm` starts with no banner; tips and chat
    render normally.
 4. `customAsciiArt: { "path": "./brand.txt" }` in a workspace
-   `settings.json`, with `brand.txt` next to it in `.qwen/` → loads
+   `settings.json`, with `brand.txt` next to it in `.glm/` → loads
    from disk on workspace open.
 5. `customAsciiArt: { "small": "...", "large": "..." }` → resize the
    terminal between wide / medium / narrow; large at wide widths,
@@ -766,7 +766,7 @@ should pass.
    `customBannerSubtitle` → both render as literal text, not
    interpreted as red.
 7. Point `path` at a missing file → CLI starts; `[BANNER]` warn
-   appears in `~/.qwen/debug/<sessionId>.txt`; default art renders.
+   appears in `~/.glm/debug/<sessionId>.txt`; default art renders.
 8. Open the worktree with workspace trust off → workspace-defined
    `customAsciiArt` (including `{ path }` entries) is silently
    ignored; user-scope settings still apply.

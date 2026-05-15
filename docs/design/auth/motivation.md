@@ -3,7 +3,7 @@
 The auth module used to model each setup path as a separate flow: API key,
 OAuth, subscription plans, and custom providers. In practice, all of these paths
 produce the same kind of output: updates to the user's provider configuration in
-`~/.qwen/settings.json`.
+`~/.glm/settings.json`.
 
 This refactor makes provider setup the shared abstraction. A provider describes
 how it is shown, how credentials are collected, which models it installs, and
@@ -14,7 +14,7 @@ architectures.
 ## Goals
 
 - Keep `/auth` user-facing flows easy to understand:
-  - Alibaba ModelStudio for first-party Qwen setup.
+  - Alibaba ModelStudio for first-party GLM setup.
   - Third-party providers for common built-in integrations such as DeepSeek,
     MiniMax, and Z.AI.
   - OAuth providers such as OpenRouter.
@@ -94,7 +94,7 @@ the same provider install path:
 
 Static built-in providers can persist provider metadata under
 `providerMetadata.<providerId>`, including the model list version and base URL.
-This lets Qwen Code detect when a provider's built-in model list changes and
+This lets GLM Code detect when a provider's built-in model list changes and
 prompt the user to update owned models without overwriting unrelated custom
 models.
 

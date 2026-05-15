@@ -24,8 +24,8 @@ export default defineConfig({
     react(),
     dts({
       include: ['src'],
+      entryRoot: 'src',
       outDir: 'dist',
-      rollupTypes: true,
       insertTypesEntry: true,
     }),
   ],

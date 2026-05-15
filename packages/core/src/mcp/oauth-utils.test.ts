@@ -331,7 +331,7 @@ describe('OAuthUtils', () => {
       );
     });
 
-    // Regression test for https://github.com/GLMLM/glm-code/issues/1749
+    // Regression test for https://github.com/qazz92/glm-code/issues/1749
     // Per MCP spec, resource should be the canonical URI including the path,
     // so multi-tenant servers can distinguish between different MCP servers.
     it('should preserve full path for multi-tenant MCP servers (issue #1749)', () => {

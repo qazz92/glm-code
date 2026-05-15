@@ -4,7 +4,7 @@
   "description": "GLM Code Core",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GLMLM/glm-code.git"
+    "url": "git+https://github.com/qazz92/glm-code.git"
   },
   "type": "module",
   "main": "dist/index.js",

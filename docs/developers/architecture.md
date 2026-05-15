@@ -1,14 +1,14 @@
-# Qwen Code Architecture Overview
+# GLM Code Architecture Overview
 
-This document provides a high-level overview of Qwen Code's architecture.
+This document provides a high-level overview of GLM Code's architecture.
 
 ## Core Components
 
-Qwen Code is primarily composed of two main packages, along with a suite of tools that can be used by the system in the course of handling command-line input:
+GLM Code is primarily composed of two main packages, along with a suite of tools that can be used by the system in the course of handling command-line input:
 
 ### 1. CLI Package (`packages/cli`)
 
-**Purpose:** This contains the user-facing portion of Qwen Code, such as handling the initial user input, presenting the final output, and managing the overall user experience.
+**Purpose:** This contains the user-facing portion of GLM Code, such as handling the initial user input, presenting the final output, and managing the overall user experience.
 
 **Key Functions:**
 
@@ -20,11 +20,11 @@ Qwen Code is primarily composed of two main packages, along with a suite of tool
 
 ### 2. Core Package (`packages/core`)
 
-**Purpose:** This acts as the backend for Qwen Code. It receives requests sent from `packages/cli`, orchestrates interactions with the configured model API, and manages the execution of available tools.
+**Purpose:** This acts as the backend for GLM Code. It receives requests sent from `packages/cli`, orchestrates interactions with the configured model API, and manages the execution of available tools.
 
 **Key Functions:**
 
-- **API Client:** Communicates with the Qwen model API to send prompts and receive responses.
+- **API Client:** Communicates with the GLM model API to send prompts and receive responses.
 - **Prompt Construction:** Builds appropriate prompts for the model, incorporating conversation history and available tool definitions.
 - **Tool Registration and Execution:** Manages the registration of available tools and executes them based on model requests.
 - **State Management:** Maintains conversation and session state information.
@@ -32,9 +32,9 @@ Qwen Code is primarily composed of two main packages, along with a suite of tool
 
 ### 3. Tools (`packages/core/src/tools/`)
 
-**Purpose:** These are individual modules that extend the capabilities of the Qwen model, allowing it to interact with the local environment (e.g., file system, shell commands, web fetching).
+**Purpose:** These are individual modules that extend the capabilities of the GLM model, allowing it to interact with the local environment (e.g., file system, shell commands, web fetching).
 
-**Interaction:** `packages/core` invokes these tools based on requests from the Qwen model.
+**Interaction:** `packages/core` invokes these tools based on requests from the GLM model.
 
 **Common Tools Include:**
 
@@ -46,7 +46,7 @@ Qwen Code is primarily composed of two main packages, along with a suite of tool
 
 ## Interaction Flow
 
-A typical interaction with Qwen Code follows this flow:
+A typical interaction with GLM Code follows this flow:
 
 1.  **User Input:** The user types a prompt or command into the terminal, which is managed by `packages/cli`.
 2.  **Request to Core:** `packages/cli` sends the user's input to `packages/core`.
@@ -65,14 +65,14 @@ A typical interaction with Qwen Code follows this flow:
 
 ## Configuration Options
 
-Qwen Code offers multiple ways to configure its behavior:
+GLM Code offers multiple ways to configure its behavior:
 
 ### Configuration Layers (in order of precedence)
 
 1. Command-line arguments
 2. Environment variables
-3. Project settings file (`.qwen/settings.json`)
-4. User settings file (`~/.qwen/settings.json`)
+3. Project settings file (`.glm/settings.json`)
+4. User settings file (`~/.glm/settings.json`)
 5. System settings files
 6. Default values
 

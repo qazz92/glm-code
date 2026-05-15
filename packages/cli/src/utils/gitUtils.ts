@@ -61,7 +61,7 @@ export const getLatestGitHubRelease = async (
   try {
     const controller = new AbortController();
 
-    const endpoint = `https://api.github.com/repos/GLMLM/glm-code-action/releases/latest`;
+    const endpoint = `https://api.github.com/repos/qazz92/glm-code-action/releases/latest`;
 
     const response = await fetch(endpoint, {
       method: 'GET',

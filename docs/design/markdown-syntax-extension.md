@@ -80,15 +80,15 @@ the generated PNG and only recompute the Kitty/iTerm2 placement dimensions.
 
 The image path is intentionally opt-in and capability-gated instead of always
 bundling or invoking Puppeteer/Chromium from the hot CLI path. A user can enable
-the image path with `QWEN_CODE_MERMAID_IMAGE_RENDERING=1`, then provide
+the image path with `GLM_CODE_MERMAID_IMAGE_RENDERING=1`, then provide
 `@mermaid-js/mermaid-cli` by installing `mmdc` on `PATH` or by setting
-`QWEN_CODE_MERMAID_MMD_CLI` to the binary path. For ad-hoc local verification,
-`QWEN_CODE_MERMAID_ALLOW_NPX=1` allows the renderer to invoke
+`GLM_CODE_MERMAID_MMD_CLI` to the binary path. For ad-hoc local verification,
+`GLM_CODE_MERMAID_ALLOW_NPX=1` allows the renderer to invoke
 `npx -y @mermaid-js/mermaid-cli@11.12.0`; this is intentionally opt-in because
 the first run may install Puppeteer/Chromium and block rendering. Repo-local
 `node_modules/.bin` renderers are not auto-discovered unless
-`QWEN_CODE_MERMAID_ALLOW_LOCAL_RENDERERS=1` is set. Terminal protocol selection
-can be forced with `QWEN_CODE_MERMAID_IMAGE_PROTOCOL=kitty|iterm2|off`.
+`GLM_CODE_MERMAID_ALLOW_LOCAL_RENDERERS=1` is set. Terminal protocol selection
+can be forced with `GLM_CODE_MERMAID_IMAGE_PROTOCOL=kitty|iterm2|off`.
 
 For Kitty-compatible terminals such as Ghostty, the renderer uses Kitty
 Unicode placeholders instead of writing the image payload as Ink text. The PNG

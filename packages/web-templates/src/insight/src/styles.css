@@ -847,7 +847,7 @@ body {
   margin-bottom: 4px;
 }
 
-.qwen-md-section {
+.glm-md-section {
   background: #eff6ff;
   border: 1px solid #bfdbfe;
   border-radius: 8px;
@@ -855,14 +855,14 @@ body {
   margin-bottom: 20px;
 }
 
-.qwen-md-section h3 {
+.glm-md-section h3 {
   font-size: 13px;
   font-weight: 600;
   color: #1e40af;
   margin: 0 0 8px 0;
 }
 
-.qwen-md-actions {
+.glm-md-actions {
   margin-bottom: 8px;
   padding-bottom: 8px;
   border-bottom: 1px solid #dbeafe;
@@ -888,7 +888,7 @@ body {
   background: #16a34a;
 }
 
-.qwen-md-item {
+.glm-md-item {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
@@ -897,7 +897,7 @@ body {
   border-bottom: 1px solid #dbeafe;
 }
 
-.qwen-md-item:last-child {
+.glm-md-item:last-child {
   border-bottom: none;
 }
 

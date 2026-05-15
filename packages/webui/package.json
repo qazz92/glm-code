@@ -5,17 +5,17 @@
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/src/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
     "./icons": {
-      "types": "./dist/components/icons/index.d.ts",
-      "import": "./dist/components/icons/index.js",
-      "require": "./dist/components/icons/index.cjs"
+      "types": "./dist/src/components/icons/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
     "./tailwind.preset": "./tailwind.preset.cjs",
     "./styles.css": "./dist/styles.css"

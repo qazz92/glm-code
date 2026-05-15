@@ -1,19 +1,19 @@
 # Sandbox
 
-This document explains how to run Qwen Code inside a sandbox to reduce risk when tools execute shell commands or modify files.
+This document explains how to run GLM Code inside a sandbox to reduce risk when tools execute shell commands or modify files.
 
 ## Prerequisites
 
-Before using sandboxing, you need to install and set up Qwen Code:
+Before using sandboxing, you need to install and set up GLM Code:
 
 ```bash
-npm install -g @qwen-code/qwen-code
+npm install -g @glm-code/glm-code
 ```
 
 To verify the installation
 
 ```bash
-qwen --version
+glm --version
 ```
 
 ## Overview of sandboxing
@@ -29,7 +29,7 @@ The benefits of sandboxing include:
 
 > [!note]
 >
-> **Naming note:** Some sandbox-related environment variables may have used the `GEMINI_*` prefix historically. All new environment variables use the `QWEN_*` prefix.
+> **Naming note:** Some sandbox-related environment variables may have used the `GEMINI_*` prefix historically. All new environment variables use the `GLM_*` prefix.
 
 ## Sandboxing methods
 
@@ -47,9 +47,9 @@ Lightweight, built-in sandboxing using `sandbox-exec`.
 
 Cross-platform sandboxing with complete process isolation.
 
-By default, Qwen Code uses a published sandbox image (configured in the CLI package) and will pull it as needed.
+By default, GLM Code uses a published sandbox image (configured in the CLI package) and will pull it as needed.
 
-The container sandbox mounts your workspace and your `~/.qwen` directory into the container so auth and settings persist between runs.
+The container sandbox mounts your workspace and your `~/.glm` directory into the container so auth and settings persist between runs.
 
 **Best for**: Strong isolation on any OS, consistent tooling inside a known image.
 
@@ -65,11 +65,11 @@ The container sandbox mounts your workspace and your `~/.qwen` directory into th
 
 ```bash
 # Enable sandboxing with command flag
-qwen -s -p "analyze the code structure"
+glm -s -p "analyze the code structure"
 
 # Or enable sandboxing for your shell session (recommended for CI / scripts)
-export QWEN_SANDBOX=true   # true auto-picks a provider (see notes below)
-qwen -p "run the test suite"
+export GLM_SANDBOX=true   # true auto-picks a provider (see notes below)
+glm -p "run the test suite"
 
 # Configure in settings.json
 {
@@ -83,36 +83,36 @@ qwen -p "run the test suite"
 >
 > **Provider selection notes:**
 >
-> - On **macOS**, `QWEN_SANDBOX=true` typically selects `sandbox-exec` (Seatbelt) if available.
-> - On **Linux/Windows**, `QWEN_SANDBOX=true` requires `docker` or `podman` to be installed.
-> - To force a provider, set `QWEN_SANDBOX=docker|podman|sandbox-exec`.
+> - On **macOS**, `GLM_SANDBOX=true` typically selects `sandbox-exec` (Seatbelt) if available.
+> - On **Linux/Windows**, `GLM_SANDBOX=true` requires `docker` or `podman` to be installed.
+> - To force a provider, set `GLM_SANDBOX=docker|podman|sandbox-exec`.
 
 ## Configuration
 
 ### Enable sandboxing (in order of precedence)
 
-1. **Environment variable**: `QWEN_SANDBOX=true|false|docker|podman|sandbox-exec`
+1. **Environment variable**: `GLM_SANDBOX=true|false|docker|podman|sandbox-exec`
 2. **Command flag / argument**: `-s`, `--sandbox`, or `--sandbox=<provider>`
 3. **Settings file**: `tools.sandbox` in your `settings.json` (e.g., `{"tools": {"sandbox": true}}`).
 
 > [!important]
 >
-> If `QWEN_SANDBOX` is set, it **overrides** the CLI flag and `settings.json`.
+> If `GLM_SANDBOX` is set, it **overrides** the CLI flag and `settings.json`.
 
 ### Configure the sandbox image (Docker/Podman)
 
 - **CLI flag**: `--sandbox-image <image>`
-- **Environment variable**: `QWEN_SANDBOX_IMAGE=<image>`
-- **Settings file**: `tools.sandboxImage` in your `settings.json` (e.g., `{"tools": {"sandboxImage": "ghcr.io/qwenlm/qwen-code:0.14.1"}}`)
+- **Environment variable**: `GLM_SANDBOX_IMAGE=<image>`
+- **Settings file**: `tools.sandboxImage` in your `settings.json` (e.g., `{"tools": {"sandboxImage": "ghcr.io/qazz92/glm-code:0.14.1"}}`)
 
 Priority order (highest to lowest):
 
 1. `--sandbox-image`
-2. `QWEN_SANDBOX_IMAGE`
+2. `GLM_SANDBOX_IMAGE`
 3. `tools.sandboxImage`
-4. Built-in default image from the CLI package (for example `ghcr.io/qwenlm/qwen-code:<version>`)
+4. Built-in default image from the CLI package (for example `ghcr.io/qazz92/glm-code:<version>`)
 
-`settings.env.QWEN_SANDBOX_IMAGE` also works as a generic env injection mechanism, but `tools.sandboxImage` is the preferred persistent setting.
+`settings.env.GLM_SANDBOX_IMAGE` also works as a generic env injection mechanism, but `tools.sandboxImage` is the preferred persistent setting.
 
 ### macOS Seatbelt profiles
 
@@ -133,7 +133,7 @@ Built-in profiles (set via `SEATBELT_PROFILE` env var):
 
 To use a custom Seatbelt profile:
 
-1. Create a file named `.qwen/sandbox-macos-<profile_name>.sb` in your project.
+1. Create a file named `.glm/sandbox-macos-<profile_name>.sb` in your project.
 2. Set `SEATBELT_PROFILE=<profile_name>`.
 
 ### Custom Sandbox Flags
@@ -158,7 +158,7 @@ export SANDBOX_FLAGS="--flag1 --flag2=value"
 
 If you want to restrict outbound network access to an allowlist, you can run a local proxy alongside the sandbox:
 
-- Set `QWEN_SANDBOX_PROXY_COMMAND=<command>`
+- Set `GLM_SANDBOX_PROXY_COMMAND=<command>`
 - The command must start a proxy server that listens on `:::8877`
 
 This is especially useful with `*-proxied` Seatbelt profiles.
@@ -167,7 +167,7 @@ For a working allowlist-style proxy example, see: [Example Proxy Script](/develo
 
 ## Linux UID/GID handling
 
-On Linux, Qwen Code defaults to enabling UID/GID mapping so the sandbox runs as your user (and reuses the mounted `~/.qwen`). Override with:
+On Linux, GLM Code defaults to enabling UID/GID mapping so the sandbox runs as your user (and reuses the mounted `~/.glm`). Override with:
 
 ```bash
 export SANDBOX_SET_UID_GID=true   # Force host UID/GID
@@ -186,17 +186,17 @@ export SANDBOX_SET_UID_GID=false  # Disable UID/GID mapping
 
 **Missing commands**
 
-- Container sandbox: add them via `.qwen/sandbox.Dockerfile` or `.qwen/sandbox.bashrc`.
+- Container sandbox: add them via `.glm/sandbox.Dockerfile` or `.glm/sandbox.bashrc`.
 - Seatbelt: your host binaries are used, but the sandbox may restrict access to some paths.
 
 **Java not available in Docker sandbox**
 
-The official Qwen Code Docker image is intentionally minimal to keep the image small, secure, and fast to pull. Different users require different language runtimes (Java, Python, Node.js, etc.), and bundling all environments into a single image is not practical. Therefore, Java is **not included by default** in the Docker sandbox.
+The official GLM Code Docker image is intentionally minimal to keep the image small, secure, and fast to pull. Different users require different language runtimes (Java, Python, Node.js, etc.), and bundling all environments into a single image is not practical. Therefore, Java is **not included by default** in the Docker sandbox.
 
-If your workflow requires Java, you can extend the base image by creating a `.qwen/sandbox.Dockerfile` in your project:
+If your workflow requires Java, you can extend the base image by creating a `.glm/sandbox.Dockerfile` in your project:
 
 ```dockerfile
-FROM ghcr.io/qwenlm/qwen-code:latest
+FROM ghcr.io/qazz92/glm-code:latest
 
 RUN apt-get update && \
     apt-get install -y openjdk-17-jre && \
@@ -207,7 +207,7 @@ RUN apt-get update && \
 Then rebuild the sandbox image:
 
 ```bash
-QWEN_SANDBOX=docker BUILD_SANDBOX=1 qwen -s
+GLM_SANDBOX=docker BUILD_SANDBOX=1 glm -s
 ```
 
 For more details on customizing the sandbox, see [Customizing the sandbox environment](/developers/tools/sandbox).
@@ -220,19 +220,19 @@ For more details on customizing the sandbox, see [Customizing the sandbox enviro
 ### Debug mode
 
 ```bash
-DEBUG=1 qwen -s -p "debug command"
+DEBUG=1 glm -s -p "debug command"
 ```
 
-**Note:** If you have `DEBUG=true` in a project's `.env` file, it won't affect the CLI due to automatic exclusion. Use `.qwen/.env` files for Qwen Code-specific debug settings.
+**Note:** If you have `DEBUG=true` in a project's `.env` file, it won't affect the CLI due to automatic exclusion. Use `.glm/.env` files for GLM Code-specific debug settings.
 
 ### Inspect sandbox
 
 ```bash
 # Check environment
-qwen -s -p "run shell command: env | grep SANDBOX"
+glm -s -p "run shell command: env | grep SANDBOX"
 
 # List mounts
-qwen -s -p "run shell command: mount | grep workspace"
+glm -s -p "run shell command: mount | grep workspace"
 ```
 
 ## Security notes

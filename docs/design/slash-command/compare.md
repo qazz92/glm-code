@@ -1,4 +1,4 @@
-# Qwen Code Command 模块重构方案
+# GLM Code Command 模块重构方案
 
 ## 1. 目标定义
 
@@ -21,7 +21,7 @@
 
 ## 2. 重写后的结论
 
-Qwen 现有 command 系统的问题，不是完全没有能力，而是：
+GLM 现有 command 系统的问题，不是完全没有能力，而是：
 
 1. 只在 interactive 主路径上较完整
 2. 类型模型太薄，无法承载 Claude 级别的产品面
@@ -32,7 +32,7 @@ Qwen 现有 command 系统的问题，不是完全没有能力，而是：
 因此新的方案必须同时解决四件事：
 
 1. **补齐 Claude Code 的能力面**
-2. **保留 Qwen 统一 outcome 模型的工程优势**
+2. **保留 GLM 统一 outcome 模型的工程优势**
 3. **建立统一 registry / resolver / executor / adapter 架构**
 4. **让帮助、补全、ACP available commands、文档共用同一套元数据**
 
@@ -63,11 +63,11 @@ Qwen 现有 command 系统的问题，不是完全没有能力，而是：
 3. 模式一致性对齐
 4. 内部实现简洁
 
-### 3.2 保留 Qwen 的统一 outcome 模型
+### 3.2 保留 GLM 的统一 outcome 模型
 
 不建议机械复制 Claude 的执行实现。
 
-Qwen 当前统一结果模型仍然值得保留，因为它天然适合：
+GLM 当前统一结果模型仍然值得保留，因为它天然适合：
 
 - UI 接管
 - 审批/确认
@@ -92,7 +92,7 @@ Qwen 当前统一结果模型仍然值得保留，因为它天然适合：
 
 ### 4.1 命令类型
 
-Qwen 需要显式支持三类命令：
+GLM 需要显式支持三类命令：
 
 1. `prompt`
 2. `local`
@@ -100,7 +100,7 @@ Qwen 需要显式支持三类命令：
 
 ### 4.2 命令来源
 
-Qwen 的 command schema 从第一阶段开始就必须覆盖以下来源：
+GLM 的 command schema 从第一阶段开始就必须覆盖以下来源：
 
 1. built-in commands
 2. bundled skills
@@ -289,7 +289,7 @@ Qwen 的 command schema 从第一阶段开始就必须覆盖以下来源：
 这样可以做到：
 
 - 外部体验按 Claude 对齐
-- 内部实现仍保持 Qwen 可维护性
+- 内部实现仍保持 GLM 可维护性
 
 ## 6.3 冲突策略
 
@@ -449,7 +449,7 @@ Qwen 的 command schema 从第一阶段开始就必须覆盖以下来源：
 2. `SkillTool` 或未来统一 command tool 消费该视图
 3. 用户 slash command 与模型 skill invocation 共用同一套 prompt-command 资产池
 
-这样 Qwen 才能在体验上接近 Claude 对 `/review`、`/commit`、`/openspec-apply` 这类能力的处理方式。
+这样 GLM 才能在体验上接近 Claude 对 `/review`、`/commit`、`/openspec-apply` 这类能力的处理方式。
 
 ---
 
@@ -661,7 +661,7 @@ Help 不再是平铺列表，而是完整命令目录。
 
 这次重构的本质不是“给现有 SlashCommand 多加几个字段”，而是：
 
-- **用 Qwen 的内部架构风格，交付一个在外部体验上 95% 对齐 Claude Code 的 command 平台**
+- **用 GLM 的内部架构风格，交付一个在外部体验上 95% 对齐 Claude Code 的 command 平台**
 
 如果必须二选一：
 

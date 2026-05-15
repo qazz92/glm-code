@@ -1,6 +1,6 @@
 # Dual Output
 
-Dual Output is a sidecar mode for the interactive TUI: while Qwen Code keeps
+Dual Output is a sidecar mode for the interactive TUI: while GLM Code keeps
 rendering normally on `stdout`, it concurrently emits a structured JSON event
 stream to a separate channel so an external program — an IDE extension, a web
 frontend, a CI pipeline, an automation script — can observe and steer the
@@ -33,7 +33,7 @@ stream:
 
 ### IDE extensions (VS Code / JetBrains / Cursor / Neovim)
 
-Embed Qwen Code inside the IDE. The TUI runs in the editor's integrated
+Embed GLM Code inside the IDE. The TUI runs in the editor's integrated
 terminal panel for users who want it, while the extension consumes
 `--json-fd` / `--json-file` events to drive:
 
@@ -53,7 +53,7 @@ via `--input-file`. No ANSI parsing on either side.
 
 ### CI / automation observers
 
-A CI job runs Qwen Code with a task prompt. The human sees the TUI in the
+A CI job runs GLM Code with a task prompt. The human sees the TUI in the
 job log; the CI system tails `--json-file` to:
 
 - Fail the job if a `result` event reports an error.
@@ -84,7 +84,7 @@ as first-class metrics in Grafana. No need for log-parsing regex.
 
 ### Testing and QA
 
-Integration tests spawn Qwen Code headlessly, drive it with `--input-file`
+Integration tests spawn GLM Code headlessly, drive it with `--input-file`
 scripts, and assert on `--json-file` events. Unlike parsing stdout ANSI,
 assertions are stable across UI refactors.
 
@@ -101,7 +101,7 @@ rejected to prevent corrupting the TUI's own output.
 
 ## Why two output flags? (`--json-fd` vs `--json-file`)
 
-At first glance `--json-fd` looks sufficient — the caller spawns Qwen Code
+At first glance `--json-fd` looks sufficient — the caller spawns GLM Code
 with an extra file descriptor, the TUI writes events to it, done. In
 practice, fd passing breaks down under the most important embedding
 scenario: running the TUI inside a pseudo-terminal (PTY). That is why
@@ -112,7 +112,7 @@ this feature also exposes a path-based alternative.
 Pure `child_process.spawn` with a `stdio` array:
 
 ```ts
-const child = spawn('qwen', ['--json-fd', '3'], {
+const child = spawn('glm', ['--json-fd', '3'], {
   stdio: ['inherit', 'inherit', 'inherit', eventsFd],
 });
 ```
@@ -159,12 +159,12 @@ spawn model:
 import { spawn } from 'node-pty';
 
 const pty = spawn(
-  'qwen',
+  'glm',
   [
     '--json-file',
-    '/tmp/qwen-events.jsonl',
+    '/tmp/glm-events.jsonl',
     '--input-file',
-    '/tmp/qwen-input.jsonl',
+    '/tmp/glm-input.jsonl',
   ],
   { cols: 120, rows: 40 },
 );
@@ -199,29 +199,29 @@ wrappers that throw away stdout anyway.
 
 ## Quick start
 
-Run Qwen Code with all three channels enabled:
+Run GLM Code with all three channels enabled:
 
 ```bash
-mkfifo /tmp/qwen-events.jsonl /tmp/qwen-input.jsonl
-qwen \
-  --json-file /tmp/qwen-events.jsonl \
-  --input-file /tmp/qwen-input.jsonl
+mkfifo /tmp/glm-events.jsonl /tmp/glm-input.jsonl
+glm \
+  --json-file /tmp/glm-events.jsonl \
+  --input-file /tmp/glm-input.jsonl
 ```
 
 In a second terminal, tail the event stream:
 
 ```bash
-cat /tmp/qwen-events.jsonl
+cat /tmp/glm-events.jsonl
 ```
 
 In a third terminal, push a prompt into the running TUI:
 
 ```bash
-echo '{"type":"submit","text":"Explain this repo"}' >> /tmp/qwen-input.jsonl
+echo '{"type":"submit","text":"Explain this repo"}' >> /tmp/glm-input.jsonl
 ```
 
 The prompt appears in the TUI exactly as if the user typed it, and the
-streaming response is mirrored on `/tmp/qwen-events.jsonl`.
+streaming response is mirrored on `/tmp/glm-events.jsonl`.
 
 ## Output event schema
 
@@ -331,23 +331,23 @@ polling — events are written synchronously as the TUI emits them.
 
 ## Spawn example
 
-A typical embedding parent process spawns Qwen Code with both channels:
+A typical embedding parent process spawns GLM Code with both channels:
 
 ```ts
 import { spawn } from 'node:child_process';
 import { openSync } from 'node:fs';
 
-const eventsFd = openSync('/tmp/qwen-events.jsonl', 'w');
+const eventsFd = openSync('/tmp/glm-events.jsonl', 'w');
 const child = spawn(
-  'qwen',
-  ['--json-fd', '3', '--input-file', '/tmp/qwen-input.jsonl'],
+  'glm',
+  ['--json-fd', '3', '--input-file', '/tmp/glm-input.jsonl'],
   { stdio: ['inherit', 'inherit', 'inherit', eventsFd] },
 );
 ```
 
 The TUI still owns the user's terminal on stdio 0/1/2, while the embedder
 reads structured events on the file backing fd 3 and pushes commands by
-appending JSONL lines to `/tmp/qwen-input.jsonl`.
+appending JSONL lines to `/tmp/glm-input.jsonl`.
 
 ## Settings-based configuration
 
@@ -356,12 +356,12 @@ through every launch. The same channels can be configured in
 `settings.json` under the top-level `dualOutput` key:
 
 ```jsonc
-// ~/.qwen/settings.json  (user-level)
-// or <workspace>/.qwen/settings.json  (workspace-level)
+// ~/.glm/settings.json  (user-level)
+// or <workspace>/.glm/settings.json  (workspace-level)
 {
   "dualOutput": {
-    "jsonFile": "/tmp/qwen-events.jsonl",
-    "inputFile": "/tmp/qwen-input.jsonl",
+    "jsonFile": "/tmp/glm-events.jsonl",
+    "inputFile": "/tmp/glm-input.jsonl",
   },
 }
 ```
@@ -376,7 +376,7 @@ Precedence rules:
   (identical to today's default).
 
 The `requiresRestart: true` flag means changes only take effect on the
-next Qwen Code launch, since the bridge is constructed once during
+next GLM Code launch, since the bridge is constructed once during
 startup.
 
 ## Runnable demos
@@ -392,11 +392,11 @@ normally:
 
 ```bash
 # Terminal A
-mkfifo /tmp/qwen-events.jsonl
-cat /tmp/qwen-events.jsonl | jq -c 'select(.type != "stream_event") | {type, subtype}'
+mkfifo /tmp/glm-events.jsonl
+cat /tmp/glm-events.jsonl | jq -c 'select(.type != "stream_event") | {type, subtype}'
 
 # Terminal B
-qwen --json-file /tmp/qwen-events.jsonl
+glm --json-file /tmp/glm-events.jsonl
 # ...then chat normally; terminal A shows session_start,
 # user/assistant/result/control_request lifecycle in real time.
 ```
@@ -414,12 +414,12 @@ the first:
 
 ```bash
 # Terminal A
-touch /tmp/qwen-in.jsonl
-qwen --input-file /tmp/qwen-in.jsonl
+touch /tmp/glm-in.jsonl
+glm --input-file /tmp/glm-in.jsonl
 
 # Terminal B — the TUI responds as if you typed it
 echo '{"type":"submit","text":"list files in the current directory"}' \
-  >> /tmp/qwen-in.jsonl
+  >> /tmp/glm-in.jsonl
 ```
 
 ### POC 3 — remote tool-permission bridge
@@ -428,18 +428,18 @@ Approve or deny tool calls from a separate process:
 
 ```bash
 # Terminal A — observe control_requests
-mkfifo /tmp/qwen-out.jsonl
-touch /tmp/qwen-in.jsonl
-(cat /tmp/qwen-out.jsonl \
+mkfifo /tmp/glm-out.jsonl
+touch /tmp/glm-in.jsonl
+(cat /tmp/glm-out.jsonl \
   | jq -c 'select(.type == "control_request")') &
 
 # Terminal B
-qwen --json-file /tmp/qwen-out.jsonl --input-file /tmp/qwen-in.jsonl
-# Ask Qwen to do something that needs approval, e.g.
+glm --json-file /tmp/glm-out.jsonl --input-file /tmp/glm-in.jsonl
+# Ask GLM to do something that needs approval, e.g.
 # "run `ls -la /tmp`". A control_request will appear in terminal A.
 # Copy the request_id, then in a third terminal:
 echo '{"type":"confirmation_response","request_id":"<paste-id>","allowed":true}' \
-  >> /tmp/qwen-in.jsonl
+  >> /tmp/glm-in.jsonl
 # The TUI confirmation prompt dismisses and the tool executes.
 ```
 
@@ -460,7 +460,7 @@ consumer can log it or retry:
 
 ### POC 4 — Node embedder (IDE-like)
 
-The most realistic shape: a parent process spawns Qwen Code, tails
+The most realistic shape: a parent process spawns GLM Code, tails
 events, and injects prompts on its own schedule.
 
 ```ts
@@ -471,12 +471,12 @@ import { createInterface } from 'node:readline';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-const events = join(tmpdir(), `qwen-events-${process.pid}.jsonl`);
-const input = join(tmpdir(), `qwen-input-${process.pid}.jsonl`);
+const events = join(tmpdir(), `glm-events-${process.pid}.jsonl`);
+const input = join(tmpdir(), `glm-input-${process.pid}.jsonl`);
 writeFileSync(events, '');
 writeFileSync(input, '');
 
-const child = spawn('qwen', ['--json-file', events, '--input-file', input], {
+const child = spawn('glm', ['--json-file', events, '--input-file', input], {
   stdio: 'inherit',
 });
 
@@ -525,13 +525,13 @@ Run with:
 
 ```bash
 npx tsx demo-embedder.ts
-# Qwen Code TUI opens in the current terminal; the embedder logs
+# GLM Code TUI opens in the current terminal; the embedder logs
 # handshake + turn-end + session_end events to the parent's stdout.
 ```
 
 ### POC 5 — capability handshake feature detection
 
-Older Qwen Code versions won't emit `protocol_version`. Treat the field
+Older GLM Code versions won't emit `protocol_version`. Treat the field
 as optional and feature-detect:
 
 ```ts
@@ -541,11 +541,11 @@ rl.on('line', (line) => {
     const v = ev.data?.protocol_version ?? 0;
     if (v < 1) {
       console.error(
-        'qwen-code dual output is present but protocol < 1; ' +
+        'glm-code dual output is present but protocol < 1; ' +
           'falling back to best-effort behavior',
       );
     } else {
-      console.log('qwen-code dual output protocol v' + v);
+      console.log('glm-code dual output protocol v' + v);
     }
   }
 });
@@ -569,19 +569,19 @@ If the TUI crashes before `session_end`, the output stream closes
 ### POC 7 — failure drills (prove the flags never break the TUI)
 
 ```bash
-qwen --json-fd 1
+glm --json-fd 1
 # stderr: "Warning: dual output disabled — ..."
 # TUI still launches normally.
 
-qwen --json-fd 9999
+glm --json-fd 9999
 # stderr: "Warning: dual output disabled — fd 9999 not open"
 # TUI still launches normally.
 
-qwen --json-fd 3 --json-file /tmp/x.jsonl
+glm --json-fd 3 --json-file /tmp/x.jsonl
 # yargs rejects: "--json-fd and --json-file are mutually exclusive."
 # Process exits before TUI starts.
 
-qwen --json-file /nonexistent/dir/x.jsonl
+glm --json-file /nonexistent/dir/x.jsonl
 # stderr warning; TUI still launches.
 ```
 

@@ -121,7 +121,7 @@ describe('ide-installer', () => {
           expectedCommand,
           [
             '--install-extension',
-            'glmlm.glm-code-vscode-ide-companion',
+            'glm-code.glm-code-vscode-ide-companion',
             '--force',
           ],
           { stdio: 'pipe', shell: isActuallyWindows },

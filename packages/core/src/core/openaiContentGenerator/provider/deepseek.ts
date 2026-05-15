@@ -55,7 +55,7 @@ export function isDeepSeekHostname(
  * same input-format constraint, so the model-name fallback is
  * intentional. For decisions that depend on the wire shape DeepSeek's
  * own API exposes (e.g. `reasoning_effort`, `thinking`), use
- * `isDeepSeekHostname` instead — see https://github.com/GLMLM/glm-code/issues/3613.
+ * `isDeepSeekHostname` instead — see https://github.com/qazz92/glm-code/issues/3613.
  */
 export function isDeepSeekProvider(
   contentGeneratorConfig: ContentGeneratorConfig,
@@ -221,7 +221,7 @@ function translateReasoningEffort(
 // prior assistant turn, including ones without tool_calls. The model may
 // legitimately return a turn without reasoning text, so the field can be
 // missing when we rebuild the request. Send an empty string in that case so
-// the API contract is satisfied. https://github.com/GLMLM/glm-code/issues/3695
+// the API contract is satisfied. https://github.com/qazz92/glm-code/issues/3695
 function ensureReasoningContentOnToolCalls(
   message: OpenAI.Chat.ChatCompletionMessageParam,
 ): OpenAI.Chat.ChatCompletionMessageParam {

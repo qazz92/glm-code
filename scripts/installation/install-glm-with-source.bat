@@ -350,11 +350,11 @@ if /i "!MIRROR!"=="aliyun" (
 )
 
 if /i "!VERSION_PATH!"=="latest" (
-    set "STANDALONE_BASE_URL=https://github.com/GLMLM/glm-code/releases/latest/download"
+    set "STANDALONE_BASE_URL=https://github.com/qazz92/glm-code/releases/latest/download"
     exit /b 0
 )
 
-set "STANDALONE_BASE_URL=https://github.com/GLMLM/glm-code/releases/download/!VERSION_PATH!"
+set "STANDALONE_BASE_URL=https://github.com/qazz92/glm-code/releases/download/!VERSION_PATH!"
 exit /b 0
 
 :UrlExists

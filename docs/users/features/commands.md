@@ -1,18 +1,18 @@
 # Commands
 
-This document details all commands supported by Qwen Code, helping you efficiently manage sessions, customize the interface, and control its behavior.
+This document details all commands supported by GLM Code, helping you efficiently manage sessions, customize the interface, and control its behavior.
 
-Qwen Code commands are triggered through specific prefixes and fall into three categories:
+GLM Code commands are triggered through specific prefixes and fall into three categories:
 
 | Prefix Type                | Function Description                                | Typical Use Case                                                 |
 | -------------------------- | --------------------------------------------------- | ---------------------------------------------------------------- |
-| Slash Commands (`/`)       | Meta-level control of Qwen Code itself              | Managing sessions, modifying settings, getting help              |
+| Slash Commands (`/`)       | Meta-level control of GLM Code itself              | Managing sessions, modifying settings, getting help              |
 | At Commands (`@`)          | Quickly inject local file content into conversation | Allowing AI to analyze specified files or code under directories |
 | Exclamation Commands (`!`) | Direct interaction with system Shell                | Executing system commands like `git status`, `ls`, etc.          |
 
 ## 1. Slash Commands (`/`)
 
-Slash commands are used to manage Qwen Code sessions, interface, and basic behavior.
+Slash commands are used to manage GLM Code sessions, interface, and basic behavior.
 
 ### 1.1 Session and Project Management
 
@@ -36,7 +36,7 @@ Commands for adjusting interface appearance and work environment.
 | `/clear`     | Clear terminal screen content            | `/clear` (shortcut: `Ctrl+L`) |
 | `/context`   | Show context window usage breakdown      | `/context`                    |
 | → `detail`   | Show per-item context usage breakdown    | `/context detail`             |
-| `/theme`     | Change Qwen Code visual theme            | `/theme`                      |
+| `/theme`     | Change GLM Code visual theme            | `/theme`                      |
 | `/vim`       | Turn input area Vim editing mode on/off  | `/vim`                        |
 | `/directory` | Manage multi-directory support workspace | `/dir add ./src,./tests`      |
 | `/editor`    | Open dialog to select supported editor   | `/editor`                     |
@@ -71,7 +71,7 @@ Commands for managing AI tools and models.
 | →`auto-edit`     | Automatically approve edits                   | Trusted environment                           |
 | →`yolo`          | Automatically approve all                     | Quick prototyping                             |
 | `/model`         | Switch model used in current session          | `/model`                                      |
-| `/model --fast`  | Set a lighter model for prompt suggestions    | `/model --fast qwen3-coder-flash`             |
+| `/model --fast`  | Set a lighter model for prompt suggestions    | `/model --fast glm-4.5-air`             |
 | `/extensions`    | List all active extensions in current session | `/extensions`                                 |
 | `/memory`        | Open the Memory Manager dialog                | `/memory`                                     |
 | `/remember`      | Save a durable memory                         | `/remember Prefer terse responses`            |
@@ -86,7 +86,7 @@ These commands invoke bundled skills that provide specialized workflows.
 | ------------ | ------------------------------------------------------------------- | ------------------------------------------------- |
 | `/review`    | Review code changes with 5 parallel agents + deterministic analysis | `/review`, `/review 123`, `/review 123 --comment` |
 | `/loop`      | Run a prompt on a recurring schedule                                | `/loop 5m check the build`                        |
-| `/qc-helper` | Answer questions about Qwen Code usage and configuration            | `/qc-helper how do I configure MCP?`              |
+| `/qc-helper` | Answer questions about GLM Code usage and configuration            | `/qc-helper how do I configure MCP?`              |
 
 See [Code Review](./code-review.md) for full `/review` documentation.
 
@@ -205,7 +205,7 @@ this setting.
 > [!tip]
 >
 > Configure a fast model via `/model --fast <model>` (e.g.
-> `qwen3-coder-flash`) to make `/recap` fast and cheap. Set
+> `glm-4.5-air`) to make `/recap` fast and cheap. Set
 > `general.showSessionRecap` to `false` to opt out of the auto-trigger
 > while keeping the manual command available.
 
@@ -220,9 +220,9 @@ Commands for obtaining information and performing system settings.
 | `/stats`    | Display detailed statistics for current session | `/stats`                         |
 | `/settings` | Open settings editor                            | `/settings`                      |
 | `/auth`     | Change authentication method                    | `/auth`                          |
-| `/bug`      | Submit issue about Qwen Code                    | `/bug Button click unresponsive` |
+| `/bug`      | Submit issue about GLM Code                    | `/bug Button click unresponsive` |
 | `/copy`     | Copy last output content to clipboard           | `/copy`                          |
-| `/quit`     | Exit Qwen Code immediately                      | `/quit` or `/exit`               |
+| `/quit`     | Exit GLM Code immediately                      | `/quit` or `/exit`               |
 
 ### 1.9 Common Shortcuts
 
@@ -236,7 +236,7 @@ Commands for obtaining information and performing system settings.
 
 ### 1.10 Authentication Commands
 
-Use `/auth` inside a Qwen Code session to configure authentication. Use `/doctor` to inspect the current authentication and environment status.
+Use `/auth` inside a GLM Code session to configure authentication. Use `/doctor` to inspect the current authentication and environment status.
 
 | Command   | Description                                |
 | --------- | ------------------------------------------ |
@@ -245,7 +245,7 @@ Use `/auth` inside a Qwen Code session to configure authentication. Use `/doctor
 
 > [!note]
 >
-> The standalone `qwen auth` CLI command has been removed. Legacy invocations such as `qwen auth status` print a removal notice with migration guidance. See the [Authentication](../configuration/auth) page for full details.
+> The standalone `glm auth` CLI command has been removed. Legacy invocations such as `glm auth status` print a removal notice with migration guidance. See the [Authentication](../configuration/auth) page for full details.
 
 ## 2. @ Commands (Introducing Files)
 
@@ -261,14 +261,14 @@ Note: Spaces in paths need to be escaped with backslash (e.g., `@My\ Documents/f
 
 ## 3. Exclamation Commands (`!`) - Shell Command Execution
 
-Exclamation commands allow you to execute system commands directly within Qwen Code.
+Exclamation commands allow you to execute system commands directly within GLM Code.
 
 | Command Format     | Description                                                        | Examples                               |
 | ------------------ | ------------------------------------------------------------------ | -------------------------------------- |
 | `!<shell command>` | Execute command in sub-Shell                                       | `!ls -la`, `!git status`               |
 | Standalone `!`     | Switch Shell mode, any input is executed directly as Shell command | `!`(enter) → Input command → `!`(exit) |
 
-Environment Variables: Commands executed via `!` will set the `QWEN_CODE=1` environment variable.
+Environment Variables: Commands executed via `!` will set the `GLM_CODE=1` environment variable.
 
 ## 4. Custom Commands
 
@@ -283,8 +283,8 @@ Save frequently used prompts as shortcut commands to improve work efficiency and
 | Function         | Description                                | Advantages                             | Priority | Applicable Scenarios                                 |
 | ---------------- | ------------------------------------------ | -------------------------------------- | -------- | ---------------------------------------------------- |
 | Namespace        | Subdirectory creates colon-named commands  | Better command organization            |          |                                                      |
-| Global Commands  | `~/.qwen/commands/`                        | Available in all projects              | Low      | Personal frequently used commands, cross-project use |
-| Project Commands | `<project root directory>/.qwen/commands/` | Project-specific, version-controllable | High     | Team sharing, project-specific commands              |
+| Global Commands  | `~/.glm/commands/`                        | Available in all projects              | Low      | Personal frequently used commands, cross-project use |
+| Project Commands | `<project root directory>/.glm/commands/` | Project-specific, version-controllable | High     | Team sharing, project-specific commands              |
 
 Priority Rules: Project commands > User commands (project command used when names are same)
 
@@ -294,8 +294,8 @@ Priority Rules: Project commands > User commands (project command used when name
 
 | File Location                            | Generated Command | Example Call          |
 | ---------------------------------------- | ----------------- | --------------------- |
-| `~/.qwen/commands/test.md`               | `/test`           | `/test Parameter`     |
-| `<project>/.qwen/commands/git/commit.md` | `/git:commit`     | `/git:commit Message` |
+| `~/.glm/commands/test.md`               | `/test`           | `/test Parameter`     |
+| `<project>/.glm/commands/git/commit.md` | `/git:commit`     | `/git:commit Message` |
 
 Naming Rules: Path separator (`/` or `\`) converted to colon (`:`)
 
@@ -409,8 +409,8 @@ Review {{args}}, reference standards:
 
 | Operation                     | Command/Code                              |
 | ----------------------------- | ----------------------------------------- |
-| 1. Create directory structure | `mkdir -p ~/.qwen/commands/refactor`      |
-| 2. Create command file        | `touch ~/.qwen/commands/refactor/pure.md` |
+| 1. Create directory structure | `mkdir -p ~/.glm/commands/refactor`      |
+| 2. Create command file        | `touch ~/.glm/commands/refactor/pure.md` |
 | 3. Edit command content       | Refer to the complete code below.         |
 | 4. Test command               | `@file.js` → `/refactor:pure`             |
 

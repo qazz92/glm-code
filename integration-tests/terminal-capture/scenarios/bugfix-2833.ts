@@ -11,7 +11,7 @@ export default {
   terminal: { title: 'glm-code', cwd: '../../..' },
   flow: [
     {
-      type: '/qc:bugfix https://github.com/GLMLM/glm-code/issues/2833',
+      type: '/qc:bugfix https://github.com/qazz92/glm-code/issues/2833',
       // Bugfix workflow is long-running (20+ minutes), capture throughout
       streaming: {
         delayMs: 10000, // Wait 10s for initial prompt processing

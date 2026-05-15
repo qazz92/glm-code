@@ -35,7 +35,7 @@ Add the following dependency to your `pom.xml` file:
 
 ```xml
 <dependency>
-    <groupId>com.alibaba</groupId>
+    <groupId>ai.glm</groupId>
     <artifactId>acp-sdk</artifactId>
     <version>0.0.1-alpha</version>
 </dependency>
@@ -58,7 +58,7 @@ The following is a simple example showing how to use the ACP SDK to create a cli
 public void testSession() throws AgentInitializeException, SessionNewException, IOException {
     // Create an ACP client with a process transport
     AcpClient acpClient = new AcpClient(
-            new ProcessTransport(new ProcessTransportOptions().setCommandArgs(new String[] {"qwen", "--acp", "-y"})));
+            new ProcessTransport(new ProcessTransportOptions().setCommandArgs(new String[] {"glm", "--acp", "-y"})));
 
     try {
         // Send a prompt to the agent

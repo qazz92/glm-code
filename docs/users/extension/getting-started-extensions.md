@@ -1,10 +1,10 @@
-# Getting Started with Qwen Code Extensions
+# Getting Started with GLM Code Extensions
 
-This guide will walk you through creating your first Qwen Code extension. You'll learn how to set up a new extension, add a custom tool via an MCP server, create a custom command, and provide context to the model with a `QWEN.md` file.
+This guide will walk you through creating your first GLM Code extension. You'll learn how to set up a new extension, add a custom tool via an MCP server, create a custom command, and provide context to the model with a `GLM.md` file.
 
 ## Prerequisites
 
-Before you start, make sure you have the Qwen Code installed and a basic understanding of Node.js and TypeScript.
+Before you start, make sure you have the GLM Code installed and a basic understanding of Node.js and TypeScript.
 
 ## Step 1: Create a New Extension
 
@@ -13,7 +13,7 @@ The easiest way to start is by using one of the built-in templates. We'll use th
 Run the following command to create a new directory called `my-first-extension` with the template files:
 
 ```bash
-qwen extensions new my-first-extension mcp-server
+glm extensions new my-first-extension mcp-server
 ```
 
 This will create a new directory with the following structure:
@@ -21,7 +21,7 @@ This will create a new directory with the following structure:
 ```
 my-first-extension/
 ├── example.ts
-├── qwen-extension.json
+├── glm-extension.json
 ├── package.json
 └── tsconfig.json
 ```
@@ -30,9 +30,9 @@ my-first-extension/
 
 Let's look at the key files in your new extension.
 
-### `qwen-extension.json`
+### `glm-extension.json`
 
-This is the manifest file for your extension. It tells Qwen Code how to load and use your extension.
+This is the manifest file for your extension. It tells GLM Code how to load and use your extension.
 
 ```json
 {
@@ -51,7 +51,7 @@ This is the manifest file for your extension. It tells Qwen Code how to load and
 - `name`: The unique name for your extension.
 - `version`: The version of your extension.
 - `mcpServers`: This section defines one or more Model Context Protocol (MCP) servers. MCP servers are how you can add new tools for the model to use.
-  - `command`, `args`, `cwd`: These fields specify how to start your server. Notice the use of the `${extensionPath}` variable, which Qwen Code replaces with the absolute path to your extension's installation directory. This allows your extension to work regardless of where it's installed.
+  - `command`, `args`, `cwd`: These fields specify how to start your server. Notice the use of the `${extensionPath}` variable, which GLM Code replaces with the absolute path to your extension's installation directory. This allows your extension to work regardless of where it's installed.
 
 ### `example.ts`
 
@@ -111,7 +111,7 @@ These are standard configuration files for a TypeScript project. The `package.js
 
 ## Step 3: Build and Link Your Extension
 
-Before you can use the extension, you need to compile the TypeScript code and link the extension to your Qwen Code installation for local development.
+Before you can use the extension, you need to compile the TypeScript code and link the extension to your GLM Code installation for local development.
 
 1.  **Install dependencies:**
 
@@ -126,17 +126,17 @@ Before you can use the extension, you need to compile the TypeScript code and li
     npm run build
     ```
 
-    This will compile `example.ts` into `dist/example.js`, which is the file referenced in your `qwen-extension.json`.
+    This will compile `example.ts` into `dist/example.js`, which is the file referenced in your `glm-extension.json`.
 
 3.  **Link the extension:**
 
-    The `link` command creates a symbolic link from the Qwen Code extensions directory to your development directory. This means any changes you make will be reflected immediately without needing to reinstall.
+    The `link` command creates a symbolic link from the GLM Code extensions directory to your development directory. This means any changes you make will be reflected immediately without needing to reinstall.
 
     ```bash
-    qwen extensions link .
+    glm extensions link .
     ```
 
-Now, restart your Qwen Code session. The new `fetch_posts` tool will be available. You can test it by asking: "fetch posts".
+Now, restart your GLM Code session. The new `fetch_posts` tool will be available. You can test it by asking: "fetch posts".
 
 ## Step 4: Add a Custom Command
 
@@ -165,11 +165,11 @@ Custom commands provide a way to create shortcuts for complex prompts. Let's add
 
 > **Note:** Commands use Markdown format with optional YAML frontmatter. TOML format is deprecated but still supported for backwards compatibility.
 
-After saving the file, restart the Qwen Code. You can now run `/fs:grep-code "some pattern"` to use your new command.
+After saving the file, restart the GLM Code. You can now run `/fs:grep-code "some pattern"` to use your new command.
 
 ## Step 5: Add Custom Skills and Subagents (Optional)
 
-Extensions can also provide custom skills and subagents to extend Qwen Code's capabilities.
+Extensions can also provide custom skills and subagents to extend GLM Code's capabilities.
 
 ### Adding a Custom Skill
 
@@ -246,13 +246,13 @@ Subagents are specialized AI assistants for specific tasks.
     5. Verify functionality is preserved
     ```
 
-After restarting Qwen Code, your custom skills will be available via `/skills` and subagents via `/agents manage`.
+After restarting GLM Code, your custom skills will be available via `/skills` and subagents via `/agents manage`.
 
-## Step 6: Add a Custom `QWEN.md`
+## Step 6: Add a Custom `GLM.md`
 
-You can provide persistent context to the model by adding a `QWEN.md` file to your extension. This is useful for giving the model instructions on how to behave or information about your extension's tools. Note that you may not always need this for extensions built to expose commands and prompts.
+You can provide persistent context to the model by adding a `GLM.md` file to your extension. This is useful for giving the model instructions on how to behave or information about your extension's tools. Note that you may not always need this for extensions built to expose commands and prompts.
 
-1.  Create a file named `QWEN.md` in the root of your extension directory:
+1.  Create a file named `GLM.md` in the root of your extension directory:
 
     ```markdown
     # My First Extension Instructions
@@ -260,13 +260,13 @@ You can provide persistent context to the model by adding a `QWEN.md` file to yo
     You are an expert developer assistant. When the user asks you to fetch posts, use the `fetch_posts` tool. Be concise in your responses.
     ```
 
-2.  Update your `qwen-extension.json` to tell the CLI to load this file:
+2.  Update your `glm-extension.json` to tell the CLI to load this file:
 
     ```json
     {
       "name": "my-first-extension",
       "version": "1.0.0",
-      "contextFileName": "QWEN.md",
+      "contextFileName": "GLM.md",
       "mcpServers": {
         "nodeServer": {
           "command": "node",
@@ -277,7 +277,7 @@ You can provide persistent context to the model by adding a `QWEN.md` file to yo
     }
     ```
 
-Restart the CLI again. The model will now have the context from your `QWEN.md` file in every session where the extension is active.
+Restart the CLI again. The model will now have the context from your `GLM.md` file in every session where the extension is active.
 
 ## Step 7: Releasing Your Extension
 
@@ -287,7 +287,7 @@ For detailed instructions on both methods, please refer to the [Extension Releas
 
 ## Conclusion
 
-You've successfully created a Qwen Code extension! You learned how to:
+You've successfully created a GLM Code extension! You learned how to:
 
 - Bootstrap a new extension from a template.
 - Add custom tools with an MCP server.
@@ -296,4 +296,4 @@ You've successfully created a Qwen Code extension! You learned how to:
 - Provide persistent context to the model.
 - Link your extension for local development.
 
-From here, you can explore more advanced features and build powerful new capabilities into the Qwen Code.
+From here, you can explore more advanced features and build powerful new capabilities into the GLM Code.

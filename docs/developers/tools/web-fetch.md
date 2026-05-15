@@ -1,6 +1,6 @@
 # Web Fetch Tool (`web_fetch`)
 
-This document describes the `web_fetch` tool for Qwen Code.
+This document describes the `web_fetch` tool for GLM Code.
 
 ## Description
 
@@ -18,9 +18,9 @@ Use `web_fetch` to fetch content from a specified URL and process it using an AI
   - `"html"`: Sends `Accept: text/html`. Use when the server requires HTML in the Accept header. Content is still converted to plain text for LLM processing.
   - `"text"`: Sends `Accept: text/plain`. Use when you specifically need plain text content.
 
-## How to use `web_fetch` with Qwen Code
+## How to use `web_fetch` with GLM Code
 
-To use `web_fetch` with Qwen Code, provide a URL and a prompt describing what you want to extract from that URL. The tool will ask for confirmation before fetching the URL. Once confirmed, the tool will fetch the content directly and process it using an AI model.
+To use `web_fetch` with GLM Code, provide a URL and a prompt describing what you want to extract from that URL. The tool will ask for confirmation before fetching the URL. Once confirmed, the tool will fetch the content directly and process it using an AI model.
 
 The tool automatically:
 
@@ -58,7 +58,7 @@ web_fetch(url="https://arxiv.org/abs/2401.0001", prompt="What are the key findin
 Analyze GitHub documentation:
 
 ```
-web_fetch(url="https://github.com/QwenLM/Qwen/blob/main/README.md", prompt="What are the installation steps and main features?")
+web_fetch(url="https://github.com/zai-org/GLM-4.5/blob/main/README.md", prompt="What are the installation steps and main features?")
 ```
 
 Get markdown content (for servers supporting Markdown for Agents):
@@ -78,7 +78,7 @@ web_fetch(url="https://developers.cloudflare.com/fundamentals/reference/markdown
 
 ## Markdown for Agents Support
 
-Qwen Code's `web_fetch` tool implements support for [Cloudflare's Markdown for Agents](https://blog.cloudflare.com/markdown-for-agents/) specification. This feature allows websites to serve markdown content directly to AI agents, significantly reducing token usage compared to parsing HTML.
+GLM Code's `web_fetch` tool implements support for [Cloudflare's Markdown for Agents](https://blog.cloudflare.com/markdown-for-agents/) specification. This feature allows websites to serve markdown content directly to AI agents, significantly reducing token usage compared to parsing HTML.
 
 ### How it works
 

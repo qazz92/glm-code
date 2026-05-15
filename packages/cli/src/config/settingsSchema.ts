@@ -1128,7 +1128,7 @@ const SETTINGS_SCHEMA = {
             requiresRestart: false,
             default: false,
             description:
-              'When true, media (images / audio / video / files) returned by MCP tool calls is split into a follow-up user message instead of being embedded in the tool message. Required for strict OpenAI-compatible servers (e.g., LM Studio) that reject non-text content on `role: "tool"` messages with HTTP 400 "Invalid \'messages\' in payload". Default false preserves the prior behavior for permissive providers. See GLMLM/glm-code#3616.',
+              'When true, media (images / audio / video / files) returned by MCP tool calls is split into a follow-up user message instead of being embedded in the tool message. Required for strict OpenAI-compatible servers (e.g., LM Studio) that reject non-text content on `role: "tool"` messages with HTTP 400 "Invalid \'messages\' in payload". Default false preserves the prior behavior for permissive providers. See qazz92/glm-code#3616.',
             parentKey: 'generationConfig',
             showInDialog: false,
           },

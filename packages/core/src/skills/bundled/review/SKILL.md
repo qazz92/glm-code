@@ -32,8 +32,8 @@ First, parse the `--comment` flag: split the arguments by whitespace, and if any
 To disambiguate the argument type: if the argument is a pure integer, treat it as a PR number. If it's a URL containing `/pull/`, extract the owner/repo/number from the URL. Then determine if the local repo can access this PR:
 
 1. Check if any git remote URL matches the URL's owner/repo: run `git remote -v` and look for a remote whose URL contains the owner/repo (e.g., `openjdk/jdk`). This handles forks — a local clone of `wenshao/jdk` with an `upstream` remote pointing to `openjdk/jdk` can still review `openjdk/jdk` PRs.
-2. If a matching remote is found, proceed with the **normal worktree flow** — use that remote name (instead of hardcoded `origin`) for `git fetch <remote> pull/<number>/head:qwen-review/pr-<number>`. In Step 9, use the owner/repo from the URL for posting comments.
-3. If **no remote matches**, use **lightweight mode**: run `gh pr diff <url>` to get the diff directly. Skip Steps 2 (no local rules), 3 (no local linter), 8 (no local files to fix), 10 (no local cache). In Step 11, skip worktree removal (none was created) but still clean up temp files (`.qwen/tmp/qwen-review-{target}-*`). Also fetch existing PR comments using the URL's owner/repo (`gh api repos/{owner}/{repo}/pulls/{number}/comments`) to avoid duplicating human feedback. In Step 9, use the owner/repo from the URL. Inform the user: "Cross-repo review: running in lightweight mode (no build/test, no linter, no autofix)."
+2. If a matching remote is found, proceed with the **normal worktree flow** — use that remote name (instead of hardcoded `origin`) for `git fetch <remote> pull/<number>/head:glm-review/pr-<number>`. In Step 9, use the owner/repo from the URL for posting comments.
+3. If **no remote matches**, use **lightweight mode**: run `gh pr diff <url>` to get the diff directly. Skip Steps 2 (no local rules), 3 (no local linter), 8 (no local files to fix), 10 (no local cache). In Step 11, skip worktree removal (none was created) but still clean up temp files (`.glm/tmp/glm-review-{target}-*`). Also fetch existing PR comments using the URL's owner/repo (`gh api repos/{owner}/{repo}/pulls/{number}/comments`) to avoid duplicating human feedback. In Step 9, use the owner/repo from the URL. Inform the user: "Cross-repo review: running in lightweight mode (no build/test, no linter, no autofix)."
 
 Otherwise (not a URL, not an integer), treat the argument as a file path.
 
@@ -44,29 +44,29 @@ Based on the remaining arguments:
   - If both diffs are empty, inform the user there are no changes to review and stop here — do not proceed to the review agents
 
 - **PR number or same-repo URL** (e.g., `123` or a URL whose owner/repo matches the current repo — cross-repo URLs are handled by the lightweight mode above):
-  - **Run `qwen review fetch-pr`** to set up the working state in one pass — it cleans any stale worktree, fetches the PR HEAD into `qwen-review/pr-<n>`, queries `gh pr view` for metadata, and creates an ephemeral worktree at `.qwen/tmp/review-pr-<n>`:
+  - **Run `glm review fetch-pr`** to set up the working state in one pass — it cleans any stale worktree, fetches the PR HEAD into `glm-review/pr-<n>`, queries `gh pr view` for metadata, and creates an ephemeral worktree at `.glm/tmp/review-pr-<n>`:
 
     ```bash
-    qwen review fetch-pr <pr_number> <owner>/<repo> \
+    glm review fetch-pr <pr_number> <owner>/<repo> \
       --remote <remote> \
-      --out .qwen/tmp/qwen-review-pr-<pr_number>-fetch.json
+      --out .glm/tmp/glm-review-pr-<pr_number>-fetch.json
     ```
 
-    `<remote>` is the matched remote from the URL-based detection above (e.g. `upstream` for fork workflows), or `origin` by default for pure integer PR numbers. Read `.qwen/tmp/qwen-review-pr-<n>-fetch.json` for: `worktreePath`, `baseRefName`, `headRefName`, `fetchedSha` (use as the **pre-autofix HEAD commit SHA** for Step 9), `isCrossRepository`, `diffStat` (files / additions / deletions). If the command fails (auth, network, PR not found), inform the user and stop.
+    `<remote>` is the matched remote from the URL-based detection above (e.g. `upstream` for fork workflows), or `origin` by default for pure integer PR numbers. Read `.glm/tmp/glm-review-pr-<n>-fetch.json` for: `worktreePath`, `baseRefName`, `headRefName`, `fetchedSha` (use as the **pre-autofix HEAD commit SHA** for Step 9), `isCrossRepository`, `diffStat` (files / additions / deletions). If the command fails (auth, network, PR not found), inform the user and stop.
 
     Worktree isolation: all subsequent steps (linting, agents, build/test, autofix) operate inside `worktreePath`, not the user's working tree. Cache and reports (Step 10) are written to the **main project directory**, not the worktree.
 
-  - **Incremental review check**: if `.qwen/review-cache/pr-<n>.json` exists, read `lastCommitSha` and `lastModelId`. Compare to `fetchedSha` from the fetch report and the current model ID (`{{model}}`):
+  - **Incremental review check**: if `.glm/review-cache/pr-<n>.json` exists, read `lastCommitSha` and `lastModelId`. Compare to `fetchedSha` from the fetch report and the current model ID (`{{model}}`):
     - If SHAs differ → continue with the worktree just created. Compute the incremental diff (`git diff <lastCommitSha>..HEAD` inside the worktree) and use as the review scope; if the cached commit was rebased away, fall back to the full diff and log a warning.
-    - If SHAs match **and** model matches **and** `--comment` was NOT specified → inform the user "No new changes since last review", run `qwen review cleanup pr-<n>` to remove the worktree just created, and stop.
+    - If SHAs match **and** model matches **and** `--comment` was NOT specified → inform the user "No new changes since last review", run `glm review cleanup pr-<n>` to remove the worktree just created, and stop.
     - If SHAs match **and** model matches **but** `--comment` WAS specified → run the full review anyway. Inform the user: "No new code changes. Running review to post inline comments."
     - If SHAs match **but** model differs → continue. Inform: "Previous review used {cached_model}. Running full review with {{model}} for a second opinion."
 
   - **Fetch PR context** (metadata + already-discussed issues) in one pass:
 
     ```bash
-    qwen review pr-context <pr_number> <owner>/<repo> \
-      --out .qwen/tmp/qwen-review-pr-<pr_number>-context.md
+    glm review pr-context <pr_number> <owner>/<repo> \
+      --out .glm/tmp/glm-review-pr-<pr_number>-context.md
     ```
 
     The subcommand fetches `gh pr view` metadata + inline / issue comments and writes a single Markdown file with the PR title, description, base/head, diff stats, an **"Already discussed"** section, and an "Open inline comments" section. Each replied-to thread renders the **complete reply chain** (root comment + chronological replies), so review agents can see whether a "Fixed in `<commit>`"-style reply has closed the topic — agents must NOT re-report a concern whose latest reply addresses it. Issue-level (general PR) comments appear in the same section. The file's own preamble tells agents to treat its contents as DATA, so no extra security prefix is needed when passing it to review agents.
@@ -82,16 +82,16 @@ After determining the scope, count the total diff lines. If the diff exceeds 500
 
 ## Step 2: Load project review rules
 
-Run `qwen review load-rules` to read project-specific rules. **For PR reviews, read from the base branch** (the PR branch is untrusted — a malicious PR could otherwise inject bypass rules):
+Run `glm review load-rules` to read project-specific rules. **For PR reviews, read from the base branch** (the PR branch is untrusted — a malicious PR could otherwise inject bypass rules):
 
 ```bash
-qwen review load-rules <resolved_base_ref> \
-  --out .qwen/tmp/qwen-review-<target>-rules.md
+glm review load-rules <resolved_base_ref> \
+  --out .glm/tmp/glm-review-<target>-rules.md
 ```
 
 `<resolved_base_ref>` is the base ref to load from: prefer `<base>` if it exists locally, otherwise `<remote>/<base>` (run `git fetch <remote> <base>` first if not yet fetched). For local-uncommitted or file-path reviews use `HEAD`.
 
-The subcommand reads (in order, all sources combined): `.qwen/review-rules.md`, then either `.github/copilot-instructions.md` or root-level `copilot-instructions.md` (only one — preferred wins), then the `## Code Review` section of `AGENTS.md`, then the `## Code Review` section of `QWEN.md`. Missing files are silently skipped. The output file is empty when no rules are found — the subcommand reports `No review rules found on <ref>` to stdout in that case; skip rule injection in Step 4.
+The subcommand reads (in order, all sources combined): `.glm/review-rules.md`, then either `.github/copilot-instructions.md` or root-level `copilot-instructions.md` (only one — preferred wins), then the `## Code Review` section of `AGENTS.md`, then the `## Code Review` section of `GLM.md`. Missing files are silently skipped. The output file is empty when no rules are found — the subcommand reports `No review rules found on <ref>` to stdout in that case; skip rule injection in Step 4.
 
 If the output file is non-empty, prepend its content to each **LLM-based review agent's** (Agents 1-6) instructions:
 "In addition to the standard review criteria, you MUST also enforce these project-specific rules:
@@ -109,10 +109,10 @@ Extract the list of changed files from the diff output. For local uncommitted re
 
    ```bash
    echo '<json array of changed files relative to worktree>' \
-     > .qwen/tmp/qwen-review-<target>-changed.json
-   qwen review deterministic <worktree> \
-     --changed-files .qwen/tmp/qwen-review-<target>-changed.json \
-     --out .qwen/tmp/qwen-review-<target>-deterministic.json
+     > .glm/tmp/glm-review-<target>-changed.json
+   glm review deterministic <worktree> \
+     --changed-files .glm/tmp/glm-review-<target>-changed.json \
+     --out .glm/tmp/glm-review-<target>-deterministic.json
    ```
 
    Tools currently covered:
@@ -126,7 +126,7 @@ Extract the list of changed files from the diff output. For local uncommitted re
 
    Read the output JSON. `findings[]` entries are already pre-confirmed (Source: `[typecheck]` for tsc / cargo-clippy / go-vet, `[linter]` for eslint / ruff / golangci-lint, with `severity` mapped to Critical / Nice to have); pass them straight through to Step 5. `toolsRun[]` records exit codes / durations / timeout flags; `toolsSkipped[]` records why a tool didn't run (no config, missing runtime, etc.) — include the skipped tool names in the Step 7 summary.
 
-2. **Additional language tools** (run inline if the project uses them — these aren't covered by `qwen review deterministic` yet):
+2. **Additional language tools** (run inline if the project uses them — these aren't covered by `glm review deterministic` yet):
    - Python: `mypy <changed-files>` if `pyproject.toml` has `[tool.mypy]` / `mypy.ini` exists; `flake8 <changed-files>` if `.flake8` exists
    - Capture, filter to changed files, parse `path:line: severity: msg` format manually
 
@@ -470,24 +470,24 @@ First, determine the repository owner/repo. For **same-repo** reviews, run `gh r
 
 Use the **pre-autofix HEAD commit SHA** captured in Step 1. If not captured, fall back to `gh pr view {pr_number} --json headRefOid --jq '.headRefOid'`.
 
-**Run pre-submission checks**: the bundled `qwen review presubmit` subcommand performs self-PR detection, CI / build status classification, and existing-Qwen-comment classification in one pass — three deterministic gh-API queries collapsed into a single JSON report. Read the report to drive the rest of Step 9.
+**Run pre-submission checks**: the bundled `glm review presubmit` subcommand performs self-PR detection, CI / build status classification, and existing-GLM-comment classification in one pass — three deterministic gh-API queries collapsed into a single JSON report. Read the report to drive the rest of Step 9.
 
 Optionally write the `(path, line)` anchors of the comments you're about to post so existing-comment Overlap can be detected:
 
 ```bash
-echo '[{"path":"src/foo.ts","line":42}, ...]' > .qwen/tmp/qwen-review-{target}-findings.json
+echo '[{"path":"src/foo.ts","line":42}, ...]' > .glm/tmp/glm-review-{target}-findings.json
 ```
 
 Then run:
 
 ```bash
-qwen review presubmit \
+glm review presubmit \
   {pr_number} {commit_sha} {owner}/{repo} \
-  .qwen/tmp/qwen-review-{target}-presubmit.json \
-  [--new-findings .qwen/tmp/qwen-review-{target}-findings.json]
+  .glm/tmp/glm-review-{target}-presubmit.json \
+  [--new-findings .glm/tmp/glm-review-{target}-findings.json]
 ```
 
-Read `.qwen/tmp/qwen-review-{target}-presubmit.json`. Schema:
+Read `.glm/tmp/glm-review-{target}-presubmit.json`. Schema:
 
 ```typescript
 {
@@ -524,11 +524,11 @@ Read `.qwen/tmp/qwen-review-{target}-presubmit.json`. Schema:
 
 - **Self-PR**: GitHub rejects both `APPROVE` and `REQUEST_CHANGES` on your own PR (HTTP 422); `COMMENT` is the only accepted event. The Critical/Suggestion findings still appear as inline `comments` regardless, so substantive feedback is preserved.
 - **CI failure / pending**: the LLM review reads code statically and cannot see runtime test failures. Approving on red CI is misleading; pending CI means the verdict is premature.
-- **Overlap with existing comments**: posting on the same `(path, line)` as an existing Qwen comment produces visual duplicates. Stale-commit and replied-to comments are skipped silently — they're false-positive overlap from line-based matching.
+- **Overlap with existing comments**: posting on the same `(path, line)` as an existing GLM comment produces visual duplicates. Stale-commit and replied-to comments are skipped silently — they're false-positive overlap from line-based matching.
 
 ⚠️ **Findings that can be mapped to a diff line → go in `comments` array (with `line` field). Findings that CANNOT be mapped to a specific diff line → go in `body` field.** Every entry in the `comments` array MUST have a valid `line` number. Do NOT put a comment in the `comments` array without a `line` — it creates an orphaned comment with no code reference.
 
-**Build the review JSON** with `write_file` to create `.qwen/tmp/qwen-review-{target}-review.json`. Every high-confidence Critical/Suggestion finding that can be mapped to a diff line MUST be an entry in the `comments` array:
+**Build the review JSON** with `write_file` to create `.glm/tmp/glm-review-{target}-review.json`. Every high-confidence Critical/Suggestion finding that can be mapped to a diff line MUST be an entry in the `comments` array:
 
 ````json
 {
@@ -539,7 +539,7 @@ Read `.qwen/tmp/qwen-review-{target}-presubmit.json`. Schema:
     {
       "path": "src/file.ts",
       "line": 42,
-      "body": "**[Critical]** issue description\n\n```suggestion\nfix code\n```\n\n_— YOUR_MODEL_ID via Qwen Code /review_"
+      "body": "**[Critical]** issue description\n\n```suggestion\nfix code\n```\n\n_— YOUR_MODEL_ID via GLM Code /review_"
     }
   ]
 }
@@ -550,7 +550,7 @@ Rules:
 - `event`: `APPROVE` (no Critical), `REQUEST_CHANGES` (has Critical), or `COMMENT` (Suggestion only). Do NOT use `COMMENT` when there are Critical findings. **Apply downgrade decisions from the presubmit JSON above**: if `downgradeApprove=true`, submit `COMMENT` instead of `APPROVE`; if `downgradeRequestChanges=true`, submit `COMMENT` instead of `REQUEST_CHANGES`. The Critical/Suggestion content still appears in inline `comments` regardless, so substantive feedback is preserved.
 - `body`: **empty `""`** when there are inline comments. Only put text here if some findings cannot be mapped to diff lines (those go in body as a last resort). Never put section headers, "Review Summary", or analysis in body.
 - `comments`: **ALL** high-confidence Critical/Suggestion findings go here. Skip Nice to have and low-confidence. Each must reference a line in the diff.
-- Comment body format: `**[Severity]** description\n\n```suggestion\nfix\n```\n\n_— YOUR_MODEL_ID via Qwen Code /review_`
+- Comment body format: `**[Severity]** description\n\n```suggestion\nfix\n```\n\n_— YOUR_MODEL_ID via GLM Code /review_`
 - The model name is declared at the top of this prompt. You MUST include it in every footer. Do NOT omit the model name.
 - Use ` ```suggestion ` for one-click fixes; regular code blocks if fix spans multiple locations.
 - Only ONE comment per unique issue.
@@ -559,7 +559,7 @@ Then submit:
 
 ```bash
 gh api repos/{owner}/{repo}/pulls/{pr_number}/reviews \
-  --input .qwen/tmp/qwen-review-{target}-review.json
+  --input .glm/tmp/glm-review-{target}-review.json
 ```
 
 If there are **no confirmed findings**, submit a single-line review. Use `event=APPROVE` by default; if the presubmit JSON has `downgradeApprove=true`, use `event=COMMENT` and prepend the downgrade reasons to the body:
@@ -569,13 +569,13 @@ If there are **no confirmed findings**, submit a single-line review. Use `event=
 gh api repos/{owner}/{repo}/pulls/{pr_number}/reviews \
   -f commit_id="{commit_sha}" \
   -f event="APPROVE" \
-  -f body="No issues found. LGTM! ✅ _— YOUR_MODEL_ID via Qwen Code /review_"
+  -f body="No issues found. LGTM! ✅ _— YOUR_MODEL_ID via GLM Code /review_"
 
 # downgradeApprove=true (self-PR, CI failing, or CI still running):
 gh api repos/{owner}/{repo}/pulls/{pr_number}/reviews \
   -f commit_id="{commit_sha}" \
   -f event="COMMENT" \
-  -f body="No review findings. Downgraded from Approve to Comment: <downgradeReasons joined with '; '>. _— YOUR_MODEL_ID via Qwen Code /review_"
+  -f body="No review findings. Downgraded from Approve to Comment: <downgradeReasons joined with '; '>. _— YOUR_MODEL_ID via GLM Code /review_"
 ```
 
 Clean up the JSON file in Step 11.
@@ -586,13 +586,13 @@ Clean up the JSON file in Step 11.
 
 Save the review results to a Markdown file for future reference:
 
-- Local changes review → `.qwen/reviews/<YYYY-MM-DD>-<HHMMSS>-local.md`
-- PR review → `.qwen/reviews/<YYYY-MM-DD>-<HHMMSS>-pr-<number>.md`
-- File review → `.qwen/reviews/<YYYY-MM-DD>-<HHMMSS>-<filename>.md`
+- Local changes review → `.glm/reviews/<YYYY-MM-DD>-<HHMMSS>-local.md`
+- PR review → `.glm/reviews/<YYYY-MM-DD>-<HHMMSS>-pr-<number>.md`
+- File review → `.glm/reviews/<YYYY-MM-DD>-<HHMMSS>-<filename>.md`
 
 Include hours/minutes/seconds in the filename to avoid overwriting on same-day re-reviews.
 
-Create the `.qwen/reviews/` directory if it doesn't exist. **For PR worktree mode, use absolute paths to the main project directory** (not the worktree) — e.g., `mkdir -p /absolute/path/to/project/.qwen/reviews/`. Relative paths would land inside the worktree and be deleted in Step 11.
+Create the `.glm/reviews/` directory if it doesn't exist. **For PR worktree mode, use absolute paths to the main project directory** (not the worktree) — e.g., `mkdir -p /absolute/path/to/project/.glm/reviews/`. Relative paths would land inside the worktree and be deleted in Step 11.
 
 Report content should include:
 
@@ -606,8 +606,8 @@ Report content should include:
 
 If reviewing a PR, update the review cache for incremental review support:
 
-1. Create `.qwen/review-cache/` directory if it doesn't exist
-2. Write `.qwen/review-cache/pr-<number>.json` with:
+1. Create `.glm/review-cache/` directory if it doesn't exist
+2. Write `.glm/review-cache/pr-<number>.json` with:
 
    ```json
    {
@@ -619,19 +619,19 @@ If reviewing a PR, update the review cache for incremental review support:
    }
    ```
 
-3. Ensure `.qwen/reviews/` and `.qwen/review-cache/` are ignored by `.gitignore` — a broader rule like `.qwen/*` also satisfies this. Only warn the user if those paths are not ignored at all.
+3. Ensure `.glm/reviews/` and `.glm/review-cache/` are ignored by `.gitignore` — a broader rule like `.glm/*` also satisfies this. Only warn the user if those paths are not ignored at all.
 
 ## Step 11: Clean up
 
 Run the bundled cleanup subcommand:
 
 ```bash
-qwen review cleanup <target>
+glm review cleanup <target>
 ```
 
-`<target>` is the same suffix used throughout (`pr-<n>`, `local`, or filename). The command removes the worktree at `.qwen/tmp/review-pr-<n>` (PR targets only), deletes the local branch ref `qwen-review/pr-<n>`, and clears any `.qwen/tmp/qwen-review-<target>-*` side files (review JSON, PR context, presubmit / findings reports). It is idempotent — missing files are silent OK.
+`<target>` is the same suffix used throughout (`pr-<n>`, `local`, or filename). The command removes the worktree at `.glm/tmp/review-pr-<n>` (PR targets only), deletes the local branch ref `glm-review/pr-<n>`, and clears any `.glm/tmp/glm-review-<target>-*` side files (review JSON, PR context, presubmit / findings reports). It is idempotent — missing files are silent OK.
 
-**If Step 8 flagged the worktree for preservation** (autofix commit/push failure), skip Step 11 entirely. The user needs the worktree intact to recover the autofix commit. Inform the user the worktree is preserved at `.qwen/tmp/review-pr-<n>` and they should run `qwen review cleanup pr-<n>` manually after recovering the commit.
+**If Step 8 flagged the worktree for preservation** (autofix commit/push failure), skip Step 11 entirely. The user needs the worktree intact to recover the autofix commit. Inform the user the worktree is preserved at `.glm/tmp/review-pr-<n>` and they should run `glm review cleanup pr-<n>` manually after recovering the commit.
 
 This step runs **after** Step 9 and Step 10 to ensure all review outputs are saved before cleanup.
 

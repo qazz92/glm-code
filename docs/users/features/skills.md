@@ -1,13 +1,13 @@
 # Agent Skills
 
-> Create, manage, and share Skills to extend Qwen Code's capabilities.
+> Create, manage, and share Skills to extend GLM Code's capabilities.
 
-This guide shows you how to create, use, and manage Agent Skills in **Qwen Code**. Skills are modular capabilities that extend the model's effectiveness through organized folders containing instructions (and optionally scripts/resources).
+This guide shows you how to create, use, and manage Agent Skills in **GLM Code**. Skills are modular capabilities that extend the model's effectiveness through organized folders containing instructions (and optionally scripts/resources).
 
 ## Prerequisites
 
-- Qwen Code (recent version)
-- Basic familiarity with Qwen Code ([Quickstart](../quickstart.md))
+- GLM Code (recent version)
+- Basic familiarity with GLM Code ([Quickstart](../quickstart.md))
 
 ## What are Agent Skills?
 
@@ -27,7 +27,7 @@ Use autocomplete to browse available Skills and descriptions.
 
 ### Benefits
 
-- Extend Qwen Code for your workflows
+- Extend GLM Code for your workflows
 - Share expertise across your team via git
 - Reduce repetitive prompting
 - Compose multiple Skills for complex tasks
@@ -38,10 +38,10 @@ Skills are stored as directories containing a `SKILL.md` file.
 
 ### Personal Skills
 
-Personal Skills are available across all your projects. Store them in `~/.qwen/skills/`:
+Personal Skills are available across all your projects. Store them in `~/.glm/skills/`:
 
 ```bash
-mkdir -p ~/.qwen/skills/my-skill-name
+mkdir -p ~/.glm/skills/my-skill-name
 ```
 
 Use personal Skills for:
@@ -52,10 +52,10 @@ Use personal Skills for:
 
 ### Project Skills
 
-Project Skills are shared with your team. Store them in `.qwen/skills/` within your project:
+Project Skills are shared with your team. Store them in `.glm/skills/` within your project:
 
 ```bash
-mkdir -p .qwen/skills/my-skill-name
+mkdir -p .glm/skills/my-skill-name
 ```
 
 Use project Skills for:
@@ -79,7 +79,7 @@ description: Brief description of what this Skill does and when to use it
 # Your Skill Name
 
 ## Instructions
-Provide clear, step-by-step guidance for Qwen Code.
+Provide clear, step-by-step guidance for GLM Code.
 
 ## Examples
 Show concrete examples of using this Skill.
@@ -87,7 +87,7 @@ Show concrete examples of using this Skill.
 
 ### Field requirements
 
-Qwen Code currently validates that:
+GLM Code currently validates that:
 
 - `name` is a non-empty string matching `/^[\p{L}\p{N}_:.-]+$/u` — Unicode letters and digits (CJK / Cyrillic / accented Latin all OK), plus `_`, `:`, `.`, `-`. Whitespace, slashes, brackets and other structurally unsafe characters are rejected at parse time.
 - `description` is a non-empty string
@@ -147,10 +147,10 @@ python scripts/helper.py input.txt
 
 ## View available Skills
 
-Qwen Code discovers Skills from:
+GLM Code discovers Skills from:
 
-- Personal Skills: `~/.qwen/skills/`
-- Project Skills: `.qwen/skills/`
+- Personal Skills: `~/.glm/skills/`
+- Project Skills: `.glm/skills/`
 - Extension Skills: Skills provided by installed extensions
 
 ### Extension Skills
@@ -159,9 +159,9 @@ Extensions can provide custom skills that become available when the extension is
 
 Extension skills are automatically discovered and loaded when the extension is installed and enabled.
 
-To see which extensions provide skills, check the extension's `qwen-extension.json` file for a `skills` field.
+To see which extensions provide skills, check the extension's `glm-extension.json` file for a `skills` field.
 
-To view available Skills, ask Qwen Code directly:
+To view available Skills, ask GLM Code directly:
 
 ```text
 What Skills are available?
@@ -179,13 +179,13 @@ Or inspect the filesystem:
 
 ```bash
 # List personal Skills
-ls ~/.qwen/skills/
+ls ~/.glm/skills/
 
 # List project Skills (if in a project directory)
-ls .qwen/skills/
+ls .glm/skills/
 
 # View a specific Skill's content
-cat ~/.qwen/skills/my-skill/SKILL.md
+cat ~/.glm/skills/my-skill/SKILL.md
 ```
 
 ## Test a Skill
@@ -202,7 +202,7 @@ The model autonomously decides to use your Skill if it matches the request — y
 
 ## Debug a Skill
 
-If Qwen Code doesn't use your Skill, check these common issues:
+If GLM Code doesn't use your Skill, check these common issues:
 
 ### Make the description specific
 
@@ -220,15 +220,15 @@ description: Extract text and tables from PDF files, fill forms, merge documents
 
 ### Verify file path
 
-- Personal Skills: `~/.qwen/skills/<skill-name>/SKILL.md`
-- Project Skills: `.qwen/skills/<skill-name>/SKILL.md`
+- Personal Skills: `~/.glm/skills/<skill-name>/SKILL.md`
+- Project Skills: `.glm/skills/<skill-name>/SKILL.md`
 
 ```bash
 # Personal
-ls ~/.qwen/skills/my-skill/SKILL.md
+ls ~/.glm/skills/my-skill/SKILL.md
 
 # Project
-ls .qwen/skills/my-skill/SKILL.md
+ls .glm/skills/my-skill/SKILL.md
 ```
 
 ### Check YAML syntax
@@ -247,22 +247,22 @@ Ensure:
 
 ### View errors
 
-Run Qwen Code with debug mode to see Skill loading errors:
+Run GLM Code with debug mode to see Skill loading errors:
 
 ```bash
-qwen --debug
+glm --debug
 ```
 
 ## Share Skills with your team
 
 You can share Skills through project repositories:
 
-1. Add the Skill under `.qwen/skills/`
+1. Add the Skill under `.glm/skills/`
 2. Commit and push
 3. Teammates pull the changes
 
 ```bash
-git add .qwen/skills/
+git add .glm/skills/
 git commit -m "Add team Skill for PDF processing"
 git push
 ```
@@ -273,13 +273,13 @@ Edit `SKILL.md` directly:
 
 ```bash
 # Personal Skill
-code ~/.qwen/skills/my-skill/SKILL.md
+code ~/.glm/skills/my-skill/SKILL.md
 
 # Project Skill
-code .qwen/skills/my-skill/SKILL.md
+code .glm/skills/my-skill/SKILL.md
 ```
 
-Changes take effect the next time you start Qwen Code. If Qwen Code is already running, restart it to load the updates.
+Changes take effect the next time you start GLM Code. If GLM Code is already running, restart it to load the updates.
 
 ## Remove a Skill
 
@@ -287,10 +287,10 @@ Delete the Skill directory:
 
 ```bash
 # Personal
-rm -rf ~/.qwen/skills/my-skill
+rm -rf ~/.glm/skills/my-skill
 
 # Project
-rm -rf .qwen/skills/my-skill
+rm -rf .glm/skills/my-skill
 git commit -m "Remove unused Skill"
 ```
 

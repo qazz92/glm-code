@@ -493,11 +493,11 @@ standalone_base_url() {
     fi
 
     if [[ "${version_path}" == "latest" ]]; then
-        echo "https://github.com/GLMLM/glm-code/releases/latest/download"
+        echo "https://github.com/qazz92/glm-code/releases/latest/download"
         return 0
     fi
 
-    echo "https://github.com/GLMLM/glm-code/releases/download/${version_path}"
+    echo "https://github.com/qazz92/glm-code/releases/download/${version_path}"
 }
 
 download_file() {

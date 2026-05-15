@@ -6,7 +6,7 @@ export default {
   terminal: { title: 'glm-code', cwd: '../../..' },
   flow: [
     {
-      type: '/review https://github.com/GLMLM/glm-code/pull/2371',
+      type: '/review https://github.com/qazz92/glm-code/pull/2371',
       streaming: {
         delayMs: 5000,
         intervalMs: 10000, // Every 10s

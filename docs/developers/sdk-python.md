@@ -1,38 +1,38 @@
 # Python SDK
 
-## `qwen-code-sdk`
+## `glm-code-sdk`
 
-`qwen-code-sdk` is an experimental Python SDK for Qwen Code. v1 targets the
+`glm-code-sdk` is an experimental Python SDK for GLM Code. v1 targets the
 existing `stream-json` CLI protocol and keeps the transport surface small and
 testable.
 
 ## Scope
 
-- Package name: `qwen-code-sdk`
-- Import path: `qwen_code_sdk`
+- Package name: `glm-code-sdk`
+- Import path: `glm_code_sdk`
 - Runtime requirement: Python `>=3.10`
-- CLI dependency: external `qwen` executable is required in v1
+- CLI dependency: external `glm` executable is required in v1
 - Transport scope: process transport only
 - Not included in v1: ACP transport, SDK-embedded MCP servers
 
 ## Install
 
 ```bash
-pip install qwen-code-sdk
+pip install glm-code-sdk
 ```
 
 For preview releases:
 
 ```bash
-pip install --pre qwen-code-sdk
+pip install --pre glm-code-sdk
 ```
 
-If `qwen` is not on `PATH`, pass `path_to_qwen_executable` explicitly.
+If `glm` is not on `PATH`, pass `path_to_glm_executable` explicitly.
 
 Before writing SDK code, make sure the CLI works in the same shell:
 
 ```bash
-qwen --version
+glm --version
 ```
 
 ## Quick Start
@@ -40,7 +40,7 @@ qwen --version
 ```python
 import asyncio
 
-from qwen_code_sdk import (
+from glm_code_sdk import (
     is_sdk_assistant_message,
     is_sdk_result_message,
     query,
@@ -72,7 +72,7 @@ async def main() -> None:
         "Explain the repository structure.",
         {
             "cwd": "/path/to/project",
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
         },
     ) as result:
         async for message in result:
@@ -94,14 +94,14 @@ already runs an event loop, such as Jupyter, FastAPI, or pytest-asyncio, call
 Use `query_sync` when your host application is not async:
 
 ```python
-from qwen_code_sdk import is_sdk_result_message, query_sync
+from glm_code_sdk import is_sdk_result_message, query_sync
 
 
 with query_sync(
     "Summarize this repository in one paragraph.",
     {
         "cwd": "/path/to/project",
-        "path_to_qwen_executable": "qwen",
+        "path_to_glm_executable": "glm",
     },
 ) as result:
     for message in result:
@@ -143,7 +143,7 @@ with query_sync(
 | -------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `cwd`                      | `str`                                                      | Working directory for the CLI process.                                                                          |
 | `model`                    | `str`                                                      | Model override for this SDK session.                                                                            |
-| `path_to_qwen_executable`  | `str`                                                      | `qwen`, an explicit binary path, or a `.js` CLI bundle.                                                         |
+| `path_to_glm_executable`  | `str`                                                      | `glm`, an explicit binary path, or a `.js` CLI bundle.                                                         |
 | `permission_mode`          | `default`, `plan`, `auto-edit`, `yolo`                     | Tool execution approval mode. `yolo` auto-approves all tools; use it only in trusted or sandboxed environments. |
 | `can_use_tool`             | async callback                                             | Custom permission callback for tool requests.                                                                   |
 | `env`                      | `dict[str, str]`                                           | Extra environment variables passed to the CLI process.                                                          |
@@ -154,7 +154,7 @@ with query_sync(
 | `core_tools`               | `list[str]`                                                | Restrict the available tool set.                                                                                |
 | `exclude_tools`            | `list[str]`                                                | Exclude matching tools.                                                                                         |
 | `allowed_tools`            | `list[str]`                                                | Allow matching tools without callback approval.                                                                 |
-| `auth_type`                | `openai`, `anthropic`, `qwen-oauth`, `gemini`, `vertex-ai` | Authentication mode passed to the CLI.                                                                          |
+| `auth_type`                | `openai`, `anthropic`, `glm-oauth`, `gemini`, `vertex-ai` | Authentication mode passed to the CLI.                                                                          |
 | `include_partial_messages` | `bool`                                                     | Emit partial assistant stream events.                                                                           |
 | `resume`                   | UUID string                                                | Resume a known session id.                                                                                      |
 | `continue_session`         | `bool`                                                     | Continue the latest CLI session.                                                                                |
@@ -174,12 +174,12 @@ Unsupported in v1:
 ```python
 options = {
     "cwd": "/path/to/project",
-    "path_to_qwen_executable": "qwen",
-    "model": "qwen-plus",
+    "path_to_glm_executable": "glm",
+    "model": "glm-plus",
     "permission_mode": "plan",
     "max_session_turns": 1,
     "env": {
-        "OPENAI_MODEL": "qwen-plus",
+        "OPENAI_MODEL": "glm-plus",
     },
     "timeout": {
         "control_request": 60,
@@ -213,7 +213,7 @@ Example:
 import asyncio
 from pathlib import Path
 
-from qwen_code_sdk import is_sdk_result_message, query
+from glm_code_sdk import is_sdk_result_message, query
 
 PROJECT_ROOT = Path("/path/to/project").resolve()
 
@@ -257,7 +257,7 @@ async def main():
         "Update README.md with a short summary.",
         {
             "cwd": str(PROJECT_ROOT),
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
             "can_use_tool": can_use_tool,
         },
     ) as result:
@@ -283,7 +283,7 @@ For multi-turn sessions, pass an async iterable of `SDKUserMessage` objects:
 ```python
 import asyncio
 
-from qwen_code_sdk import SDKUserMessage, is_sdk_result_message, query
+from glm_code_sdk import SDKUserMessage, is_sdk_result_message, query
 
 SESSION_ID = "123e4567-e89b-12d3-a456-426614174000"
 
@@ -317,7 +317,7 @@ async def main():
         prompts(),
         {
             "cwd": "/path/to/project",
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
             "session_id": SESSION_ID,
         },
     ) as result:
@@ -345,7 +345,7 @@ The returned `Query` object can control the running CLI process:
 ```python
 import asyncio
 
-from qwen_code_sdk import is_sdk_result_message, query
+from glm_code_sdk import is_sdk_result_message, query
 
 
 async def main():
@@ -353,14 +353,14 @@ async def main():
         "Inspect this repository and explain the test layout.",
         {
             "cwd": "/path/to/project",
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
         },
     ) as result:
         commands = await result.supported_commands()
         print(commands)
 
         await result.set_permission_mode("plan")
-        await result.set_model("qwen-plus")
+        await result.set_model("glm-plus")
 
         async for message in result:
             if is_sdk_result_message(message):
@@ -382,7 +382,7 @@ underlying process, and `get_session_id()` to persist a session id for later.
 ```python
 import asyncio
 
-from qwen_code_sdk import is_sdk_result_message, query
+from glm_code_sdk import is_sdk_result_message, query
 
 
 async def main():
@@ -390,7 +390,7 @@ async def main():
     async with query(
         "Continue from this session.",
         {
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
             "resume": "123e4567-e89b-12d3-a456-426614174000",
         },
     ) as known:
@@ -411,14 +411,14 @@ To continue the latest session instead:
 ```python
 import asyncio
 
-from qwen_code_sdk import is_sdk_result_message, query
+from glm_code_sdk import is_sdk_result_message, query
 
 
 async def main():
     async with query(
         "Continue the latest session.",
         {
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
             "continue_session": True,
         },
     ) as latest:
@@ -446,7 +446,7 @@ delegates the selection of the latest session to the CLI.
 - `AbortError`: control request or session was cancelled
 
 ```python
-from qwen_code_sdk import (
+from glm_code_sdk import (
     ProcessExitError,
     ValidationError,
     is_sdk_result_message,
@@ -454,7 +454,7 @@ from qwen_code_sdk import (
 )
 
 try:
-    with query_sync("Say hello", {"path_to_qwen_executable": "qwen"}) as result:
+    with query_sync("Say hello", {"path_to_glm_executable": "glm"}) as result:
         for message in result:
             if is_sdk_result_message(message):
                 if message.get("is_error"):
@@ -465,21 +465,21 @@ try:
 except ValidationError as exc:
     print(f"Invalid SDK options: {exc}")
 except ProcessExitError as exc:
-    print(f"qwen exited with {exc.exit_code}: {exc}")
+    print(f"glm exited with {exc.exit_code}: {exc}")
 ```
 
 ## Troubleshooting
 
 If the SDK cannot start the CLI:
 
-- Verify `qwen --version` works in the target environment
-- Pass `path_to_qwen_executable` if your shell uses `nvm`, `pyenv`, or other
+- Verify `glm --version` works in the target environment
+- Pass `path_to_glm_executable` if your shell uses `nvm`, `pyenv`, or other
   non-standard PATH setup
 - Use `debug=True` or `stderr=print` to surface CLI stderr while debugging
 
 If session control calls time out:
 
-- Check that the target `qwen` version supports `--input-format stream-json`
+- Check that the target `glm` version supports `--input-format stream-json`
 - Increase `timeout.control_request`
 - Verify that no wrapper script is swallowing stdout/stderr
 
@@ -490,16 +490,16 @@ Repository-level helper commands:
 - `npm run test:sdk:python`
 - `npm run lint:sdk:python`
 - `npm run typecheck:sdk:python`
-- `npm run smoke:sdk:python -- --qwen qwen`
+- `npm run smoke:sdk:python -- --glm glm`
 
 ## Real E2E Smoke
 
-For a real runtime check (actual `qwen` process + real model call), run from
+For a real runtime check (actual `glm` process + real model call), run from
 the repository root. The npm helper uses `python3`, so ensure it resolves to a
 Python `>=3.10` interpreter:
 
 ```bash
-npm run smoke:sdk:python -- --qwen qwen
+npm run smoke:sdk:python -- --glm glm
 ```
 
 This script runs:

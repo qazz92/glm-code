@@ -33,14 +33,14 @@ Agent Arena uses significantly more tokens than a single session (each agent has
 Use the `/arena` slash command to launch a session. Specify the models you want to compete and the task:
 
 ```
-/arena --models qwen3.5-plus,glm-5,kimi-k2.5 "Refactor the authentication module to use JWT tokens"
+/arena --models glm-5,glm-5,kimi-k2.5 "Refactor the authentication module to use JWT tokens"
 ```
 
 If you omit `--models`, an interactive model selection dialog appears, letting you pick from your configured providers.
 
 ### What happens when you start
 
-1. **Worktree setup**: Qwen Code creates isolated Git worktrees for each agent at `~/.qwen/arena/<session-id>/worktrees/<model-name>/`. Each worktree mirrors your current working directory state exactly — including staged changes, unstaged changes, and untracked files.
+1. **Worktree setup**: GLM Code creates isolated Git worktrees for each agent at `~/.glm/arena/<session-id>/worktrees/<model-name>/`. Each worktree mirrors your current working directory state exactly — including staged changes, unstaged changes, and untracked files.
 2. **Agent spawning**: Each agent starts in its own worktree with full tool access and its configured model. Agents are launched sequentially but execute in parallel.
 3. **Execution**: All agents work on the task independently with no shared state or communication. You can monitor their progress and interact with any of them.
 4. **Completion**: When all agents finish (or fail), you enter the result comparison phase.
@@ -109,7 +109,7 @@ Arena behavior can be customized in [settings.json](/users/configuration/setting
 ```json
 {
   "arena": {
-    "worktreeBaseDir": "~/.qwen/arena",
+    "worktreeBaseDir": "~/.glm/arena",
     "maxRoundsPerAgent": 50,
     "timeoutSeconds": 600
   }
@@ -118,7 +118,7 @@ Arena behavior can be customized in [settings.json](/users/configuration/setting
 
 | Setting                   | Description                        | Default         |
 | :------------------------ | :--------------------------------- | :-------------- |
-| `arena.worktreeBaseDir`   | Base directory for arena worktrees | `~/.qwen/arena` |
+| `arena.worktreeBaseDir`   | Base directory for arena worktrees | `~/.glm/arena` |
 | `arena.maxRoundsPerAgent` | Maximum reasoning rounds per agent | `50`            |
 | `arena.timeoutSeconds`    | Timeout for each agent in seconds  | `600`           |
 
@@ -129,7 +129,7 @@ Arena behavior can be customized in [settings.json](/users/configuration/setting
 Arena is most valuable when you compare models with meaningfully different strengths. For example:
 
 ```
-/arena --models qwen3.5-plus,glm-5,kimi-k2.5 "Optimize the database query layer"
+/arena --models glm-5,glm-5,kimi-k2.5 "Optimize the database query layer"
 ```
 
 Comparing three versions of the same model family yields less insight than comparing across providers.
@@ -168,7 +168,7 @@ For routine changes like renaming a variable or updating a config file, a single
 
 - Verify that each model in `--models` is properly configured with valid API credentials
 - Check that your working directory is a Git repository (worktrees require Git)
-- Ensure you have write access to the worktree base directory (`~/.qwen/arena/` by default)
+- Ensure you have write access to the worktree base directory (`~/.glm/arena/` by default)
 
 ### Worktree creation fails
 
@@ -200,7 +200,7 @@ Agent Arena is experimental. Current limitations:
 
 ## Comparison with other multi-agent modes
 
-Agent Arena is one of several planned multi-agent modes in Qwen Code. **Agent Team** and **Agent Swarm** are not yet implemented — the table below describes their intended design for reference.
+Agent Arena is one of several planned multi-agent modes in GLM Code. **Agent Team** and **Agent Swarm** are not yet implemented — the table below describes their intended design for reference.
 
 |                   | **Agent Arena**                                        | **Agent Team** (planned)                           | **Agent Swarm** (planned)                                |
 | :---------------- | :----------------------------------------------------- | :------------------------------------------------- | :------------------------------------------------------- |
@@ -216,4 +216,4 @@ Agent Arena is one of several planned multi-agent modes in Qwen Code. **Agent Te
 Explore related approaches for parallel and delegated work:
 
 - **Lightweight delegation**: [Subagents](/users/features/sub-agents) handle focused subtasks within your session — better when you don't need model comparison
-- **Manual parallel sessions**: Run multiple Qwen Code sessions yourself in separate terminals with [Git worktrees](https://git-scm.com/docs/git-worktree) for full manual control
+- **Manual parallel sessions**: Run multiple GLM Code sessions yourself in separate terminals with [Git worktrees](https://git-scm.com/docs/git-worktree) for full manual control

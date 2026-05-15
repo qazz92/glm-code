@@ -53,7 +53,7 @@ debug:
 
 
 run-npx:
-	npx https://github.com/GLMLM/glm-code
+	npx https://github.com/qazz92/glm-code
 
 create-alias:
 	scripts/create_alias.sh

@@ -92,7 +92,7 @@ esbuild
         __dirname,
         'packages/cli/src/patches/is-in-ci.ts',
       ),
-      '@qwen-code/web-templates': path.resolve(
+      '@glm-code/web-templates': path.resolve(
         __dirname,
         'packages/web-templates/src/index.ts',
       ),

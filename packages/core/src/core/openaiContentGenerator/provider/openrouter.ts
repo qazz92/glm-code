@@ -24,7 +24,7 @@ export class OpenRouterOpenAICompatibleProvider extends DefaultOpenAICompatibleP
     // Add OpenRouter-specific headers
     return {
       ...baseHeaders,
-      'HTTP-Referer': 'https://github.com/GLMLM/glm-code.git',
+      'HTTP-Referer': 'https://github.com/qazz92/glm-code.git',
       'X-OpenRouter-Title': 'GLM Code',
     };
   }

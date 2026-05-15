@@ -345,7 +345,7 @@ function buildOpenRouterHeaders() {
   return {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    'HTTP-Referer': 'https://github.com/GLMLM/glm-code.git',
+    'HTTP-Referer': 'https://github.com/qazz92/glm-code.git',
     'X-OpenRouter-Title': 'GLM Code',
   };
 }

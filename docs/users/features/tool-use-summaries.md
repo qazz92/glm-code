@@ -1,6 +1,6 @@
 # Tool-Use Summaries
 
-Qwen Code can generate a short, git-commit-subject-style label after each tool batch completes, summarizing what the batch accomplished. The label appears inline in the transcript and replaces the generic `Tool × N` header in compact mode.
+GLM Code can generate a short, git-commit-subject-style label after each tool batch completes, summarizing what the batch accomplished. The label appears inline in the transcript and replaces the generic `Tool × N` header in compact mode.
 
 This is a UX aid for parallel tool calls: when the model fans out into several `Read` + `Grep` + `Bash` calls at once, the summary tells you the intent at a glance instead of forcing you to scan the tool list.
 
@@ -38,7 +38,7 @@ The individual tool calls are still a keystroke away (`Ctrl+O` to toggle to full
 
 ## How It Works
 
-After a tool batch finalizes, Qwen Code fires a fire-and-forget call to the configured fast model with:
+After a tool batch finalizes, GLM Code fires a fire-and-forget call to the configured fast model with:
 
 - The tool names, truncated arguments, and truncated results (each capped at 300 characters).
 - The assistant's most recent text output (first 200 characters) as an intent prefix.
@@ -78,14 +78,14 @@ The label is generated using the [fast model](./followup-suggestions#fast-model)
 ### Via command
 
 ```
-/model --fast qwen3-coder-flash
+/model --fast glm-4.5-air
 ```
 
 ### Via `settings.json`
 
 ```json
 {
-  "fastModel": "qwen3-coder-flash"
+  "fastModel": "glm-4.5-air"
 }
 ```
 
@@ -102,17 +102,17 @@ These settings can be configured in `settings.json`:
 
 ### Environment override
 
-`QWEN_CODE_EMIT_TOOL_USE_SUMMARIES` overrides the `experimental.emitToolUseSummaries` setting for the current session:
+`GLM_CODE_EMIT_TOOL_USE_SUMMARIES` overrides the `experimental.emitToolUseSummaries` setting for the current session:
 
-- `QWEN_CODE_EMIT_TOOL_USE_SUMMARIES=0` or `=false` — force off.
-- `QWEN_CODE_EMIT_TOOL_USE_SUMMARIES=1` or `=true` — force on.
+- `GLM_CODE_EMIT_TOOL_USE_SUMMARIES=0` or `=false` — force off.
+- `GLM_CODE_EMIT_TOOL_USE_SUMMARIES=1` or `=true` — force on.
 - Unset — use the `experimental.emitToolUseSummaries` setting.
 
 ### Example
 
 ```json
 {
-  "fastModel": "qwen3-coder-flash",
+  "fastModel": "glm-4.5-air",
   "experimental": {
     "emitToolUseSummaries": true
   }
@@ -137,7 +137,7 @@ For batches of 3+ parallel tool calls, pairing this feature with `ui.compactMode
 
 ```json
 {
-  "fastModel": "qwen3-coder-flash",
+  "fastModel": "glm-4.5-air",
   "ui": {
     "compactMode": true
   },
@@ -162,7 +162,7 @@ If your fast model is configured for the same provider/auth as your main session
 If this matters for your workflow, you have two clean options:
 
 - Configure `fastModel` to a model under the same provider as your main session, so the summary call doesn't cross any new auth/data boundary.
-- Disable the feature entirely with `experimental.emitToolUseSummaries: false` (or `QWEN_CODE_EMIT_TOOL_USE_SUMMARIES=0`).
+- Disable the feature entirely with `experimental.emitToolUseSummaries: false` (or `GLM_CODE_EMIT_TOOL_USE_SUMMARIES=0`).
 
 The 300-character per-field cap limits exposure but does not eliminate it — secrets discovered in tool output during the cap window can still be sent. Treat the fast model's data boundary the same way you treat the main model's.
 
@@ -170,7 +170,7 @@ The 300-character per-field cap limits exposure but does not eliminate it — se
 
 One fast-model call per qualifying tool batch. Input is a small fixed system prompt plus the truncated tool inputs/outputs (each capped at 300 characters per field). Output is a single short line (capped at 100 characters, typically 20 tokens or fewer). On a typical fast model this is roughly $0.001 per batch.
 
-If you do not want the extra cost, turn the feature off via `experimental.emitToolUseSummaries: false` or `QWEN_CODE_EMIT_TOOL_USE_SUMMARIES=0`.
+If you do not want the extra cost, turn the feature off via `experimental.emitToolUseSummaries: false` or `GLM_CODE_EMIT_TOOL_USE_SUMMARIES=0`.
 
 ## Related
 

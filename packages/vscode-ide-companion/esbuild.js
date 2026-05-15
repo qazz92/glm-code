@@ -215,16 +215,16 @@ async function main() {
     sourcesContent: false,
     platform: 'browser',
     outfile: 'dist/webview.js',
-    // @glm-code/glm-code-core is a peer dependency of @glm-code/webui.
+    // @glm-code/core is a peer dependency of @glm-code/webui.
     // Since @glm-code/webui marks it as external in its own Vite build, the
     // browser bundle must also mark it external to avoid bundling Node.js-only
     // modules (undici, @grpc/grpc-js, fs, stream, etc.) into the webview.
     // The wildcard ensures deep sub-path imports (e.g.
-    // '@glm-code/glm-code-core/src/core/tokenLimits.js') are also excluded;
+    // '@glm-code/core/src/core/tokenLimits.js') are also excluded;
     // without it esbuild only matches the bare package name and attempts to
     // bundle the sub-path, which triggers "Dynamic require is not supported"
     // at runtime in the browser.
-    external: ['@glm-code/glm-code-core', '@glm-code/glm-code-core/*'],
+    external: ['@glm-code/core', '@glm-code/core/*'],
     logLevel: 'silent',
     plugins: [reactDedupPlugin, cssInjectPlugin, esbuildProblemMatcherPlugin],
     jsx: 'automatic', // Use new JSX transform (React 17+)

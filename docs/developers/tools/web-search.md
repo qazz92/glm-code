@@ -1,6 +1,6 @@
 # Web Search
 
-Qwen Code supports web search capabilities through **MCP (Model Context Protocol)** integrations. Rather than a built-in search tool, web search is provided by connecting to external MCP servers, giving you full flexibility to choose the search service that best fits your needs.
+GLM Code supports web search capabilities through **MCP (Model Context Protocol)** integrations. Rather than a built-in search tool, web search is provided by connecting to external MCP servers, giving you full flexibility to choose the search service that best fits your needs.
 
 ## ⚠️ Breaking Change: Built-in `web_search` Tool Removed
 
@@ -88,7 +88,7 @@ The official web search MCP service provided by Alibaba Cloud Bailian platform, 
 **Method 1: CLI command**
 
 ```bash
-qwen mcp add WebSearch \
+glm mcp add WebSearch \
   -t http \
   "https://dashscope.aliyuncs.com/api/v1/mcps/WebSearch/mcp" \
   -H "Authorization: Bearer ${DASHSCOPE_API_KEY}"
@@ -109,7 +109,7 @@ qwen mcp add WebSearch \
 }
 ```
 
-Replace `${DASHSCOPE_API_KEY}` with your actual API key, or set it as an environment variable so Qwen Code picks it up automatically.
+Replace `${DASHSCOPE_API_KEY}` with your actual API key, or set it as an environment variable so GLM Code picks it up automatically.
 
 ---
 
@@ -134,7 +134,7 @@ A production-ready MCP server providing real-time web search, extract, map, and 
 **Method 1: CLI command (Remote MCP)**
 
 ```bash
-qwen mcp add tavily \
+glm mcp add tavily \
   -t http \
   "https://mcp.tavily.com/mcp/?tavilyApiKey=${TAVILY_API_KEY}"
 ```
@@ -189,7 +189,7 @@ The official web search Remote MCP service provided by ZhipuAI (智谱AI), desig
 **Method 1: CLI command**
 
 ```bash
-qwen mcp add web-search-prime \
+glm mcp add web-search-prime \
   -t http \
   "https://open.bigmodel.cn/api/mcp/web_search_prime/mcp" \
   -H "Authorization: Bearer ${GLM_API_KEY}"

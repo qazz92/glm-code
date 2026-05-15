@@ -1,6 +1,6 @@
-# Qwen Code Keyboard Shortcuts
+# GLM Code Keyboard Shortcuts
 
-This document lists the available keyboard shortcuts in Qwen Code.
+This document lists the available keyboard shortcuts in GLM Code.
 
 ## General
 

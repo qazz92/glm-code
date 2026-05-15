@@ -1,6 +1,6 @@
 # DaemonClient quickstart (TypeScript)
 
-A minimal end-to-end example: start a `qwen serve` daemon in another terminal, then drive it from a Node script with the SDK's `DaemonClient`. See also: [Daemon mode user guide](../../users/qwen-serve.md) and [HTTP protocol reference](../qwen-serve-protocol.md).
+A minimal end-to-end example: start a `glm serve` daemon in another terminal, then drive it from a Node script with the SDK's `DaemonClient`. See also: [Daemon mode user guide](../../users/glm-serve.md) and [HTTP protocol reference](../glm-serve-protocol.md).
 
 ## Setup
 
@@ -8,24 +8,24 @@ In one terminal:
 
 ```bash
 cd your-project/
-qwen serve --port 4170
-# → qwen serve listening on http://127.0.0.1:4170 (mode=http-bridge)
+glm serve --port 4170
+# → glm serve listening on http://127.0.0.1:4170 (mode=http-bridge)
 ```
 
 In another:
 
 ```bash
-npm install @qwen-code/sdk
+npm install @glm-code/sdk
 ```
 
 ## Hello daemon
 
 ```ts
-import { DaemonClient, type DaemonEvent } from '@qwen-code/sdk';
+import { DaemonClient, type DaemonEvent } from '@glm-code/sdk';
 
 const client = new DaemonClient({
   baseUrl: 'http://127.0.0.1:4170',
-  // token: process.env.QWEN_SERVER_TOKEN, // required for non-loopback binds
+  // token: process.env.GLM_SERVER_TOKEN, // required for non-loopback binds
 });
 
 // 1. Confirm we can reach the daemon and gate UI on its features.
@@ -161,14 +161,14 @@ When the daemon was started with a token (any non-loopback bind requires one):
 ```ts
 const client = new DaemonClient({
   baseUrl: 'https://your-host:4170',
-  token: process.env.QWEN_SERVER_TOKEN,
+  token: process.env.GLM_SERVER_TOKEN,
 });
 ```
 
 Wrong / missing tokens return `401` with a uniform body — the SDK throws `DaemonHttpError` on any 4xx/5xx from a route handler.
 
 ```ts
-import { DaemonHttpError } from '@qwen-code/sdk';
+import { DaemonHttpError } from '@glm-code/sdk';
 
 try {
   await client.health();
@@ -194,6 +194,6 @@ Cancel only winds down the **active** prompt — anything you'd already POSTed a
 
 ## What's next
 
-- [HTTP protocol reference](../qwen-serve-protocol.md) — full route spec with status codes
-- [Daemon mode user guide](../../users/qwen-serve.md) — operator-side docs
+- [HTTP protocol reference](../glm-serve-protocol.md) — full route spec with status codes
+- [Daemon mode user guide](../../users/glm-serve.md) — operator-side docs
 - Source: `packages/sdk-typescript/src/daemon/`

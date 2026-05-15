@@ -6,13 +6,13 @@
 
 **Architecture:** Preserve ACP `rawOutput` through the VSCode session/update pipeline into `ToolCallData`, then let the shared web UI router detect `task_execution` payloads and render a dedicated `AgentToolCall` component. Keep the change shared in `packages/webui` so VSCode and `ChatViewer` stay aligned.
 
-**Tech Stack:** TypeScript, React, Vitest, shared `@qwen-code/webui` tool-call components.
+**Tech Stack:** TypeScript, React, Vitest, shared `@glm-code/webui` tool-call components.
 
 ### Task 1: Lock in the failing data-flow behavior
 
 **Files:**
 
-- Modify: `packages/vscode-ide-companion/src/services/qwenSessionUpdateHandler.test.ts`
+- Modify: `packages/vscode-ide-companion/src/services/glmSessionUpdateHandler.test.ts`
 - Create: `packages/vscode-ide-companion/src/webview/hooks/useToolCalls.test.tsx`
 
 **Step 1: Write the failing tests**
@@ -22,7 +22,7 @@
 
 **Step 2: Run test to verify it fails**
 
-Run: `npm test --workspace=packages/vscode-ide-companion -- --run qwenSessionUpdateHandler.test.ts useToolCalls.test.tsx`
+Run: `npm test --workspace=packages/vscode-ide-companion -- --run glmSessionUpdateHandler.test.ts useToolCalls.test.tsx`
 
 Expected: failures because `rawOutput` is not preserved in the current handler/hook pipeline.
 
@@ -48,20 +48,20 @@ Expected: failure because the router only keys off `kind` and no dedicated agent
 **Files:**
 
 - Modify: `packages/vscode-ide-companion/src/types/chatTypes.ts`
-- Modify: `packages/vscode-ide-companion/src/services/qwenSessionUpdateHandler.ts`
+- Modify: `packages/vscode-ide-companion/src/services/glmSessionUpdateHandler.ts`
 - Modify: `packages/vscode-ide-companion/src/webview/hooks/useToolCalls.ts`
 - Modify: `packages/webui/src/components/toolcalls/shared/types.ts`
 
 **Step 1: Implement the minimal data model changes**
 
 - Add optional `rawOutput` to the VSCode session/webview tool-call types.
-- Forward `rawOutput` in `QwenSessionUpdateHandler`.
+- Forward `rawOutput` in `GLMSessionUpdateHandler`.
 - Store/merge `rawOutput` in `useToolCalls`.
 - Expose `rawOutput` in shared web UI tool-call data types.
 
 **Step 2: Run the focused tests**
 
-Run: `npm test --workspace=packages/vscode-ide-companion -- --run qwenSessionUpdateHandler.test.ts useToolCalls.test.tsx`
+Run: `npm test --workspace=packages/vscode-ide-companion -- --run glmSessionUpdateHandler.test.ts useToolCalls.test.tsx`
 
 Expected: pass.
 
@@ -99,7 +99,7 @@ Expected: pass.
 
 **Step 2: Run package verification**
 
-Run: `npm test --workspace=packages/vscode-ide-companion -- --run qwenSessionUpdateHandler.test.ts useToolCalls.test.tsx packages/vscode-ide-companion/src/webview/components/messages/toolcalls/index.test.tsx`
+Run: `npm test --workspace=packages/vscode-ide-companion -- --run glmSessionUpdateHandler.test.ts useToolCalls.test.tsx packages/vscode-ide-companion/src/webview/components/messages/toolcalls/index.test.tsx`
 Run: `npm run check-types --workspace=packages/vscode-ide-companion`
 Run: `npm run typecheck --workspace=packages/webui`
 

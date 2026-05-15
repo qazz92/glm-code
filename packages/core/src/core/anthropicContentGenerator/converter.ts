@@ -67,7 +67,7 @@ export interface ConvertGeminiRequestToAnthropicOptions {
    *
    * Must be gated on the same per-request condition that emits the
    * top-level `thinking` config so disabled-thinking requests don't ship
-   * stray thinking blocks. https://github.com/GLMLM/glm-code/issues/3786
+   * stray thinking blocks. https://github.com/qazz92/glm-code/issues/3786
    */
   injectThinkingOnToolUseTurns?: boolean;
   /**
@@ -758,7 +758,7 @@ export class AnthropicContentConverter {
    * Should be paired with `fillMissingThinkingSignatures` running first
    * so that signature-less `thinking` blocks become compliant in place
    * (preserving their original text), and this pass then sees them as
-   * already-satisfying. https://github.com/GLMLM/glm-code/issues/3786
+   * already-satisfying. https://github.com/qazz92/glm-code/issues/3786
    */
   private injectEmptyThinkingOnToolUseTurns(
     messages: AnthropicMessageParam[],

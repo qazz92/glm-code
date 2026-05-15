@@ -1,22 +1,22 @@
 # Run Prompts on a Schedule
 
-> Use `/loop` and the cron scheduling tools to run prompts repeatedly, poll for status, or set one-time reminders within a Qwen Code session.
+> Use `/loop` and the cron scheduling tools to run prompts repeatedly, poll for status, or set one-time reminders within a GLM Code session.
 
-Scheduled tasks let Qwen Code re-run a prompt automatically on an interval. Use them to poll a deployment, babysit a PR, check back on a long-running build, or remind yourself to do something later in the session.
+Scheduled tasks let GLM Code re-run a prompt automatically on an interval. Use them to poll a deployment, babysit a PR, check back on a long-running build, or remind yourself to do something later in the session.
 
-Tasks are session-scoped: they live in the current Qwen Code process and are gone when you exit. Nothing is written to disk.
+Tasks are session-scoped: they live in the current GLM Code process and are gone when you exit. Nothing is written to disk.
 
-> **Note:** Scheduled tasks are an experimental feature. Enable them with `experimental.cron: true` in your [settings](../configuration/settings.md), or set `QWEN_CODE_ENABLE_CRON=1` in your environment.
+> **Note:** Scheduled tasks are an experimental feature. Enable them with `experimental.cron: true` in your [settings](../configuration/settings.md), or set `GLM_CODE_ENABLE_CRON=1` in your environment.
 
 ## Schedule a recurring prompt with /loop
 
-The `/loop` [bundled skill](skills.md) is the quickest way to schedule a recurring prompt. Pass an optional interval and a prompt, and Qwen Code sets up a cron job that fires in the background while the session stays open.
+The `/loop` [bundled skill](skills.md) is the quickest way to schedule a recurring prompt. Pass an optional interval and a prompt, and GLM Code sets up a cron job that fires in the background while the session stays open.
 
 ```text
 /loop 5m check if the deployment finished and tell me what happened
 ```
 
-Qwen Code parses the interval, converts it to a cron expression, schedules the job, and confirms the cadence and job ID. It then immediately executes the prompt once — you don't have to wait for the first cron fire.
+GLM Code parses the interval, converts it to a cron expression, schedules the job, and confirms the cadence and job ID. It then immediately executes the prompt once — you don't have to wait for the first cron fire.
 
 ### Interval syntax
 
@@ -28,7 +28,7 @@ Intervals are optional. You can lead with them, trail with them, or leave them o
 | Trailing `every` clause | `/loop check the build every 2 hours` | every 2 hours                |
 | No interval             | `/loop check the build`               | defaults to every 10 minutes |
 
-Supported units are `s` for seconds, `m` for minutes, `h` for hours, and `d` for days. Seconds are rounded up to the nearest minute since cron has one-minute granularity. Intervals that don't divide evenly into their unit, such as `7m` or `90m`, are rounded to the nearest clean interval and Qwen Code tells you what it picked.
+Supported units are `s` for seconds, `m` for minutes, `h` for hours, and `d` for days. Seconds are rounded up to the nearest minute since cron has one-minute granularity. Intervals that don't divide evenly into their unit, such as `7m` or `90m`, are rounded to the nearest clean interval and GLM Code tells you what it picked.
 
 ### Loop over another command
 
@@ -38,7 +38,7 @@ The scheduled prompt can itself be a command or skill invocation. This is useful
 /loop 20m /review-pr 1234
 ```
 
-Each time the job fires, Qwen Code runs `/review-pr 1234` as if you had typed it.
+Each time the job fires, GLM Code runs `/review-pr 1234` as if you had typed it.
 
 ### Manage loops
 
@@ -58,7 +58,7 @@ Cancels all scheduled jobs at once.
 
 ## Set a one-time reminder
 
-For one-shot reminders, describe what you want in natural language instead of using `/loop`. Qwen Code schedules a single-fire task that deletes itself after running.
+For one-shot reminders, describe what you want in natural language instead of using `/loop`. GLM Code schedules a single-fire task that deletes itself after running.
 
 ```text
 remind me at 3pm to push the release branch
@@ -68,11 +68,11 @@ remind me at 3pm to push the release branch
 in 45 minutes, check whether the integration tests passed
 ```
 
-Qwen Code pins the fire time to a specific minute and hour using a cron expression and confirms when it will fire.
+GLM Code pins the fire time to a specific minute and hour using a cron expression and confirms when it will fire.
 
 ## Manage scheduled tasks
 
-Ask Qwen Code in natural language to list or cancel tasks, or reference the underlying tools directly.
+Ask GLM Code in natural language to list or cancel tasks, or reference the underlying tools directly.
 
 ```text
 what scheduled tasks do I have?
@@ -82,7 +82,7 @@ what scheduled tasks do I have?
 cancel the deploy check job
 ```
 
-Under the hood, Qwen Code uses these tools:
+Under the hood, GLM Code uses these tools:
 
 | Tool         | Purpose                                                                                                         |
 | :----------- | :-------------------------------------------------------------------------------------------------------------- |
@@ -94,9 +94,9 @@ Each scheduled task has an 8-character ID you can pass to `CronDelete`. A sessio
 
 ## How scheduled tasks run
 
-The scheduler checks every second for due tasks and enqueues them when the session is idle. A scheduled prompt fires between your turns, not while Qwen Code is mid-response. If Qwen Code is busy when a task comes due, the prompt waits until the current turn ends.
+The scheduler checks every second for due tasks and enqueues them when the session is idle. A scheduled prompt fires between your turns, not while GLM Code is mid-response. If GLM Code is busy when a task comes due, the prompt waits until the current turn ends.
 
-All times are interpreted in your local timezone. A cron expression like `0 9 * * *` means 9am wherever you're running Qwen Code, not UTC.
+All times are interpreted in your local timezone. A cron expression like `0 9 * * *` means 9am wherever you're running GLM Code, not UTC.
 
 ### Jitter
 
@@ -134,6 +134,6 @@ Extended syntax like `L`, `W`, `?`, and name aliases such as `MON` or `JAN` is n
 
 Session-scoped scheduling has inherent constraints:
 
-- Tasks only fire while Qwen Code is running and idle. Closing the terminal or letting the session exit cancels everything.
-- No catch-up for missed fires. If a task's scheduled time passes while Qwen Code is busy on a long-running request, it fires once when Qwen Code becomes idle, not once per missed interval.
-- No persistence across restarts. Restarting Qwen Code clears all session-scoped tasks.
+- Tasks only fire while GLM Code is running and idle. Closing the terminal or letting the session exit cancels everything.
+- No catch-up for missed fires. If a task's scheduled time passes while GLM Code is busy on a long-running request, it fires once when GLM Code becomes idle, not once per missed interval.
+- No persistence across restarts. Restarting GLM Code clears all session-scoped tasks.

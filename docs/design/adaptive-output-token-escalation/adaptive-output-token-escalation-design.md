@@ -81,7 +81,7 @@ The effective `max_tokens` is resolved in the following priority order:
 | Priority    | Source                                               | Value (known model)          | Value (unknown model) | Escalation behavior                             |
 | ----------- | ---------------------------------------------------- | ---------------------------- | --------------------- | ----------------------------------------------- |
 | 1 (highest) | User config (`samplingParams.max_tokens`)            | `min(userValue, modelLimit)` | `userValue`           | No escalation                                   |
-| 2           | Environment variable (`QWEN_CODE_MAX_OUTPUT_TOKENS`) | `min(envValue, modelLimit)`  | `envValue`            | No escalation                                   |
+| 2           | Environment variable (`GLM_CODE_MAX_OUTPUT_TOKENS`) | `min(envValue, modelLimit)`  | `envValue`            | No escalation                                   |
 | 3 (lowest)  | Capped default                                       | `min(modelLimit, 8K)`        | `min(32K, 8K)` = 8K   | Escalates to model limit (64K floor) + recovery |
 
 A "known model" is one that has an explicit entry in `OUTPUT_PATTERNS` (checked via `hasExplicitOutputLimit()`). For known models, the effective value is always capped at the model's declared output limit to avoid API errors. Unknown models (custom deployments, self-hosted endpoints) pass the user's value through directly, since the backend may support larger limits.
@@ -156,7 +156,7 @@ The effective escalated limit is `max(ESCALATED_MAX_TOKENS, tokenLimit(model, 'o
 | ---------------- | --------------- |
 | Claude Opus 4.6  | 131,072 (128K)  |
 | GPT-5 / o-series | 131,072 (128K)  |
-| Qwen3.x          | 65,536 (64K)    |
+| GLM3.x          | 65,536 (64K)    |
 | Unknown models   | 64,000 (floor)  |
 
 ## Design decisions
