@@ -16,7 +16,7 @@
    VSCode Theme Variables
    =========================== */
 :root {
-  /* Qwen Brand Colors - these override webui defaults */
+  /* GLM Brand Colors - these override webui defaults */
   --app-glm-theme: #615fff;
   --app-glm-clay-button-orange: #4f46e5;
   --app-glm-ivory: #f5f5ff;

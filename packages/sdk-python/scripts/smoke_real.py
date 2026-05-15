@@ -82,9 +82,9 @@ def parse_args() -> argparse.Namespace:
         description="Run real glm_code_sdk smoke tests using glm CLI",
     )
     parser.add_argument(
-        "--qwen",
+        "--glm",
         default="glm",
-        help="Path or command for glm executable (default: qwen)",
+        help="Path or command for glm executable (default: glm)",
     )
     parser.add_argument(
         "--cwd",
