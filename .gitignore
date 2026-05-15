@@ -83,3 +83,4 @@ tmp/
 
 # OMC state files
 .omc/
+.omx/
