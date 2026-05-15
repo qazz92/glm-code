@@ -19,6 +19,7 @@ import {
 } from './fanout.js';
 import {
   createPipeline,
+  startPhase,
   advancePhase,
   completePhase,
   failPhase,
@@ -27,6 +28,7 @@ import {
   isPipelineComplete,
   getModelForPhase,
   type PipelineState,
+  type PipelinePhase,
 } from './pipeline.js';
 import { RateScheduler, type ModelSlot } from './rate-scheduler.js';
 import {
@@ -119,6 +121,8 @@ function shouldAutoPromote(state: {
 export class Orchestrator {
   private readonly scheduler: RateScheduler;
   private activePipeline?: PipelineState;
+  private lastClassification?: TaskClassification;
+  private lastModelOverride?: string;
   private baseLlmClient?: BaseLlmClient;
   private sessionStartTime: number = Date.now();
   private totalSteps: number = 0;
@@ -268,6 +272,7 @@ export class Orchestrator {
         this.activePipeline = createPipeline();
         debugLogger.info('Created new execution pipeline');
       }
+      startPhase(this.activePipeline);
       pipeline = this.activePipeline;
       const pipelineInstruction = buildPipelineInstruction(pipeline);
       if (pipelineInstruction) {
@@ -278,10 +283,14 @@ export class Orchestrator {
     // Pipeline model override: when a pipeline is active, use the phase-specific model.
     if (this.activePipeline) {
       modelOverride = getModelForPhase(this.activePipeline.currentPhase);
+      this.lastModelOverride = modelOverride;
       debugLogger.info(
         `Pipeline phase '${this.activePipeline.currentPhase}' → model override: ${modelOverride}`,
       );
+    } else {
+      this.lastModelOverride = undefined;
     }
+    this.lastClassification = classification;
 
     // Checkpoint for LONG_HORIZON tasks at the right cadence.
     if (
@@ -295,6 +304,12 @@ export class Orchestrator {
         lastUserPrompt: prompt,
         filesModified: [],
         workflowState: this.activePipeline?.currentPhase,
+        ...this.buildCheckpointRecoveryPayload(
+          effectiveSize,
+          classification,
+          modelOverride ?? null,
+          fanout,
+        ),
       };
       saveCheckpoint(checkpoint);
       debugLogger.info(`Saved checkpoint at turn ${context.turnCount}`);
@@ -358,6 +373,20 @@ export class Orchestrator {
   }
 
   /**
+   * Get the currently active pipeline, if any.
+   */
+  getActivePipeline(): PipelineState | undefined {
+    return this.activePipeline;
+  }
+
+  /**
+   * Get the current active pipeline phase, if any.
+   */
+  getCurrentPipelinePhase(): PipelinePhase | undefined {
+    return this.activePipeline?.currentPhase;
+  }
+
+  /**
    * Mark the current pipeline phase as failed.
    * Returns true if a retry is available.
    */
@@ -387,6 +416,7 @@ export class Orchestrator {
    */
   resetPipeline(): void {
     this.activePipeline = undefined;
+    this.lastModelOverride = undefined;
   }
 
   /** Reset session state. Call when a new session starts. */
@@ -395,10 +425,55 @@ export class Orchestrator {
     this.totalSteps = 0;
     this.hasAutoPromoted = false;
     this.activePipeline = undefined;
+    this.lastClassification = undefined;
+    this.lastModelOverride = undefined;
   }
 
   /** Current slot usage for observability. */
   getSlotUsage(): Array<{ model: string; used: number; max: number }> {
     return this.scheduler.getUsage();
+  }
+
+  /**
+   * Recovery payload suitable for Checkpoint. Exposed so the outer client can
+   * include orchestrator state in its generic turn checkpoints too.
+   */
+  getCheckpointRecoveryPayload(): Pick<
+    Checkpoint,
+    'orchestrator_state' | 'active_workers' | 'rate_limits'
+  > {
+    return this.buildCheckpointRecoveryPayload(
+      this.lastClassification?.size ?? null,
+      this.lastClassification ?? null,
+      this.lastModelOverride ?? null,
+    );
+  }
+
+  private buildCheckpointRecoveryPayload(
+    decision: TaskSize | null,
+    classification: TaskClassification | null,
+    modelOverride: string | null,
+    fanout?: FanoutResult,
+  ): Pick<Checkpoint, 'orchestrator_state' | 'active_workers' | 'rate_limits'> {
+    return {
+      orchestrator_state: {
+        decision,
+        pipeline_state: this.activePipeline ?? null,
+        classification,
+        model_override: modelOverride,
+      },
+      active_workers: fanout?.subtasks.map((subtask) => ({
+        id: subtask.id,
+        model: modelOverride ?? 'inherit',
+        task: subtask.description,
+        state: 'planned',
+        elapsed_ms: 0,
+      })),
+      rate_limits: Object.fromEntries(
+        this.scheduler
+          .getUsage()
+          .map((slot) => [slot.model, { used: slot.used, max: slot.max }]),
+      ),
+    };
   }
 }
