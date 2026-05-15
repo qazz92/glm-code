@@ -7,8 +7,16 @@
  * and RateScheduler into a single entry point consumed by the session loop.
  */
 
-import { classifyTask, type TaskClassification, type TaskSize } from './task-classifier.js';
-import { planFanout, buildFanoutInstruction, type FanoutResult } from './fanout.js';
+import {
+  classifyTask,
+  type TaskClassification,
+  type TaskSize,
+} from './task-classifier.js';
+import {
+  planFanout,
+  buildFanoutInstruction,
+  type FanoutResult,
+} from './fanout.js';
 import {
   createPipeline,
   advancePhase,
@@ -21,7 +29,11 @@ import {
   type PipelineState,
 } from './pipeline.js';
 import { RateScheduler, type ModelSlot } from './rate-scheduler.js';
-import { shouldCheckpoint, saveCheckpoint, type Checkpoint } from './checkpoint.js';
+import {
+  shouldCheckpoint,
+  saveCheckpoint,
+  type Checkpoint,
+} from './checkpoint.js';
 import { shouldSplitStep, formatSplitInstruction } from './step-limiter.js';
 import { askOrchestrator, type OrchestratorInput } from './orchestrator-llm.js';
 import type { BaseLlmClient } from '../core/baseLlmClient.js';
@@ -66,6 +78,33 @@ export interface OrchestratorResult {
   modelOverride?: string;
 }
 
+/** Thresholds for auto-promoting to LONG_HORIZON. */
+const AUTO_PROMOTE_THRESHOLDS = {
+  minSteps: 20,
+  maxDurationMs: 3_600_000, // 1 hour
+  fileAwareMinSteps: 10,
+  fileAwareMinFiles: 3,
+} as const;
+
+/**
+ * Check if the current session should auto-promote to LONG_HORIZON.
+ * One-time promotion — once triggered, won't re-trigger.
+ */
+function shouldAutoPromote(state: {
+  stepCount: number;
+  sessionDurationMs: number;
+  filesTouched: number;
+  currentSize: TaskSize;
+}): boolean {
+  if (state.currentSize === 'LONG_HORIZON') return false;
+  return (
+    state.stepCount >= AUTO_PROMOTE_THRESHOLDS.minSteps ||
+    state.sessionDurationMs >= AUTO_PROMOTE_THRESHOLDS.maxDurationMs ||
+    (state.filesTouched >= AUTO_PROMOTE_THRESHOLDS.fileAwareMinFiles &&
+      state.stepCount >= AUTO_PROMOTE_THRESHOLDS.fileAwareMinSteps)
+  );
+}
+
 /**
  * Facade that coordinates task classification, fanout planning,
  * pipeline routing, and rate scheduling.
@@ -81,6 +120,9 @@ export class Orchestrator {
   private readonly scheduler: RateScheduler;
   private activePipeline?: PipelineState;
   private baseLlmClient?: BaseLlmClient;
+  private sessionStartTime: number = Date.now();
+  private totalSteps: number = 0;
+  private hasAutoPromoted: boolean = false;
 
   constructor(slots?: ModelSlot[]) {
     this.scheduler = new RateScheduler(slots);
@@ -114,12 +156,17 @@ export class Orchestrator {
         contextPercent: 0,
         activeWorkers: [],
         modelQuota: Object.fromEntries(
-          this.scheduler.getUsage().map((s) => [s.model, { used: s.used, max: s.max }]),
+          this.scheduler
+            .getUsage()
+            .map((s) => [s.model, { used: s.used, max: s.max }]),
         ),
       };
 
       try {
-        const llmResult = await askOrchestrator(orchestratorInput, this.baseLlmClient);
+        const llmResult = await askOrchestrator(
+          orchestratorInput,
+          this.baseLlmClient,
+        );
         classification = llmResult.classification;
         debugLogger.info(
           `LLM classified prompt as ${classification.size} (decision: ${llmResult.decision.decision})`,
@@ -151,7 +198,10 @@ export class Orchestrator {
    * This method is synchronous and side-effect-free aside from rate-slot
    * bookkeeping — safe to call in the hot path before every LLM turn.
    */
-  orchestrate(prompt: string, context: OrchestratorContext): OrchestratorResult {
+  orchestrate(
+    prompt: string,
+    context: OrchestratorContext,
+  ): OrchestratorResult {
     const classification = classifyTask(prompt);
     debugLogger.info(
       `Classified prompt as ${classification.size} (confidence ${classification.confidence.toFixed(2)}): ${classification.reason}`,
@@ -168,16 +218,37 @@ export class Orchestrator {
     classification: TaskClassification,
   ): OrchestratorResult {
     // Rate-limit aware model selection.
-    const { model, isFallback: isModelFallback } = this.scheduler.acquireSlot(context.model);
+    const { model, isFallback: isModelFallback } = this.scheduler.acquireSlot(
+      context.model,
+    );
 
     let systemInstruction = '';
     let fanout: FanoutResult | undefined;
     let pipeline: PipelineState | undefined;
     let modelOverride: string | undefined;
 
+    // Auto-promote to LONG_HORIZON based on step/time thresholds
+    let effectiveSize = classification.size;
+    this.totalSteps = context.turnCount;
+    if (
+      !this.hasAutoPromoted &&
+      shouldAutoPromote({
+        stepCount: this.totalSteps,
+        sessionDurationMs: Date.now() - this.sessionStartTime,
+        filesTouched: context.filesTouched ?? 0,
+        currentSize: effectiveSize,
+      })
+    ) {
+      effectiveSize = 'LONG_HORIZON' as TaskSize;
+      this.hasAutoPromoted = true;
+      debugLogger.info(
+        `Auto-promoted to LONG_HORIZON (step=${this.totalSteps}, files=${context.filesTouched ?? 0})`,
+      );
+    }
+
     const isLarge =
-      classification.size === ('LARGE' satisfies TaskSize) ||
-      classification.size === ('LONG_HORIZON' satisfies TaskSize);
+      effectiveSize === ('LARGE' satisfies TaskSize) ||
+      effectiveSize === ('LONG_HORIZON' satisfies TaskSize);
 
     // Fanout for LARGE / LONG_HORIZON tasks.
     if (isLarge) {
@@ -192,7 +263,7 @@ export class Orchestrator {
     }
 
     // Pipeline routing for LONG_HORIZON tasks.
-    if (classification.size === ('LONG_HORIZON' satisfies TaskSize)) {
+    if (effectiveSize === ('LONG_HORIZON' satisfies TaskSize)) {
       if (!this.activePipeline) {
         this.activePipeline = createPipeline();
         debugLogger.info('Created new execution pipeline');
@@ -214,7 +285,7 @@ export class Orchestrator {
 
     // Checkpoint for LONG_HORIZON tasks at the right cadence.
     if (
-      classification.size === ('LONG_HORIZON' satisfies TaskSize) &&
+      effectiveSize === ('LONG_HORIZON' satisfies TaskSize) &&
       shouldCheckpoint(context.turnCount)
     ) {
       const checkpoint: Checkpoint = {
@@ -271,7 +342,9 @@ export class Orchestrator {
   advancePipeline(): PipelineState | undefined {
     if (!this.activePipeline) return undefined;
     this.activePipeline = advancePhase(this.activePipeline);
-    debugLogger.info(`Pipeline advanced to phase: ${this.activePipeline.currentPhase}`);
+    debugLogger.info(
+      `Pipeline advanced to phase: ${this.activePipeline.currentPhase}`,
+    );
     return this.activePipeline;
   }
 
@@ -313,6 +386,14 @@ export class Orchestrator {
    * Reset the active pipeline, clearing all phase state.
    */
   resetPipeline(): void {
+    this.activePipeline = undefined;
+  }
+
+  /** Reset session state. Call when a new session starts. */
+  resetSession(): void {
+    this.sessionStartTime = Date.now();
+    this.totalSteps = 0;
+    this.hasAutoPromoted = false;
     this.activePipeline = undefined;
   }
 

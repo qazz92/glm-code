@@ -18,6 +18,31 @@ export interface Checkpoint {
   lastUserPrompt: string;
   filesModified: string[];
   workflowState?: string;
+
+  // Full orchestrator state for crash recovery
+  orchestrator_state?: {
+    decision: string | null;
+    pipeline_state: unknown | null;
+    classification: unknown | null;
+    model_override: string | null;
+  };
+  active_workers?: Array<{
+    id: string;
+    model: string;
+    task: string;
+    state: string;
+    elapsed_ms: number;
+  }>;
+  context_state?: {
+    messages_head_id: string | null;
+    compact_summary_id: string | null;
+    memory_loaded: string[];
+    tokens_used: number;
+    tokens_budget: number;
+    context_percent: number;
+  };
+  rate_limits?: Record<string, { used: number; max: number }>;
+  files_dirty?: string[];
 }
 
 const CHECKPOINT_DIR_NAME = 'checkpoints';
@@ -36,7 +61,10 @@ export function saveCheckpoint(checkpoint: Checkpoint): void {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
-  const filePath = path.join(dir, `${checkpoint.sessionId}-${checkpoint.turnNumber}.json`);
+  const filePath = path.join(
+    dir,
+    `${checkpoint.sessionId}-${checkpoint.turnNumber}.json`,
+  );
   fs.writeFileSync(filePath, JSON.stringify(checkpoint, null, 2));
 }
 
@@ -54,7 +82,8 @@ export function findLatestCheckpoint(sessionId: string): Checkpoint | null {
   const dir = getCheckpointDir();
   if (!fs.existsSync(dir)) return null;
 
-  const files = fs.readdirSync(dir)
+  const files = fs
+    .readdirSync(dir)
     .filter((f) => f.startsWith(`${sessionId}-`) && f.endsWith('.json'))
     .sort()
     .reverse();
@@ -76,12 +105,32 @@ export function cleanupCheckpoints(sessionId: string, keepCount = 3): void {
   const dir = getCheckpointDir();
   if (!fs.existsSync(dir)) return;
 
-  const files = fs.readdirSync(dir)
+  const files = fs
+    .readdirSync(dir)
     .filter((f) => f.startsWith(`${sessionId}-`))
     .sort();
 
   const toDelete = files.slice(0, Math.max(0, files.length - keepCount));
   for (const f of toDelete) {
-    try { fs.unlinkSync(path.join(dir, f)); } catch { /* ignore */ }
+    try {
+      fs.unlinkSync(path.join(dir, f));
+    } catch {
+      /* ignore */
+    }
   }
+}
+
+/**
+ * Load the latest checkpoint and validate it has recoverable state.
+ */
+export function loadLatestCheckpoint(sessionId: string): Checkpoint | null {
+  const checkpoint = findLatestCheckpoint(sessionId);
+  if (checkpoint === null) return null;
+  if (
+    typeof checkpoint.sessionId !== 'string' ||
+    typeof checkpoint.turnNumber !== 'number'
+  ) {
+    return null;
+  }
+  return checkpoint;
 }

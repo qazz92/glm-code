@@ -1,5 +1,9 @@
 # AGENTS.md
 
+> **⚠️ CRITICAL**: The `repos/` directory contains **reference/research files only**.
+> It is NOT our source code. Never modify files under `repos/`.
+> Our actual source code lives under the `packages/` directory.
+
 This file provides guidance to Qwen Code when working with code in this
 repository.
 

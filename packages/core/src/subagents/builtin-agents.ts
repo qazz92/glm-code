@@ -49,6 +49,9 @@ Notes:
 - Agent threads always have their cwd reset between bash calls, as a result please only use absolute file paths.
 - In your final response, share file paths (always absolute, never relative) that are relevant to the task. Include code snippets only when the exact text is load-bearing (e.g., a bug you found, a function signature the caller asked for) — do not recap code you merely read.
 - For clear communication with the user the assistant MUST avoid using emojis.`,
+      thinking: 'medium',
+      depth: 3,
+      maxOutputTokens: 8192,
     },
     {
       name: 'Explore',
@@ -108,6 +111,9 @@ Notes:
         ToolNames.LSP,
         ToolNames.ASK_USER_QUESTION,
       ],
+      thinking: 'off',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'statusline-setup',
@@ -265,6 +271,9 @@ Guidelines:
 - If the script includes git commands, prefix them with GIT_OPTIONAL_LOCKS=0 to avoid index.lock contention (e.g. GIT_OPTIONAL_LOCKS=0 git branch --show-current)
 - IMPORTANT: At the end of your response, remind the user that they can ask GLM Code to make further changes to the status line at any time.
 `,
+      thinking: 'off',
+      depth: 1,
+      maxOutputTokens: 2048,
     },
     {
       name: 'planner',
@@ -286,6 +295,9 @@ Guidelines:
 - Reference absolute file paths in your plan
 - Never create files yourself — output the plan as your response
 - For clear communication, avoid using emojis`,
+      thinking: 'high',
+      depth: 2,
+      maxOutputTokens: 8192,
     },
     {
       name: 'architect',
@@ -307,6 +319,9 @@ Guidelines:
 - Flag backward-compatibility concerns and migration paths
 - Reference absolute file paths for all affected modules
 - For clear communication, avoid using emojis`,
+      thinking: 'high',
+      depth: 2,
+      maxOutputTokens: 8192,
     },
     {
       name: 'executor',
@@ -329,6 +344,9 @@ Guidelines:
 - After each change, verify with ${ToolDisplayNames.SHELL} (build, typecheck) if applicable
 - Remove dead code you encounter, but do not broaden scope beyond the task
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'verifier',
@@ -351,6 +369,9 @@ Guidelines:
 - If tests fail, report the exact failure message and file — do not paraphrase
 - Verify edge cases separately from the happy path
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'critic',
@@ -373,6 +394,9 @@ Guidelines:
 - Note performance concerns: unnecessary allocations, O(n^2) where O(n) is possible, redundant work
 - Do not flag style preferences as CRITICAL or MAJOR — reserve those for MINOR
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'code-reviewer',
@@ -394,6 +418,9 @@ Guidelines:
 - Check that new public APIs have documentation and that breaking changes are flagged
 - Verify that tests actually cover the new behavior, not just the happy path
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'code-simplifier',
@@ -416,6 +443,9 @@ Guidelines:
 - Merge near-identical logic instead of keeping parallel implementations
 - Do not introduce new abstractions to replace the ones you remove
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'security-reviewer',
@@ -438,6 +468,9 @@ Guidelines:
 - Check authorization — ensure users can only access their own resources
 - Rate findings by severity: CRITICAL (exploitable), HIGH (likely exploitable), MEDIUM (potential), LOW (defense-in-depth)
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'test-engineer',
@@ -461,6 +494,9 @@ Guidelines:
 - Do not mock internal modules — mock external dependencies only (network, filesystem, time)
 - Each test should be independent and deterministic
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'qa-tester',
@@ -483,6 +519,9 @@ Guidelines:
 - Report issues with exact reproduction steps and observed output
 - Do not modify source code — report issues, do not fix them
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'debugger',
@@ -505,6 +544,9 @@ Guidelines:
 - Once root cause is identified, state it precisely: which line, which condition, why it fails
 - Suggest the minimal fix — do not refactor surrounding code
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'tracer',
@@ -528,6 +570,9 @@ Guidelines:
 - When one hypothesis has strong supporting evidence and others are refuted, conclude
 - If evidence is ambiguous, state what additional information would resolve the ambiguity
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'analyst',
@@ -550,6 +595,9 @@ Guidelines:
 - Keep questions focused and specific — avoid open-ended fishing expeditions
 - If the user's request conflicts with existing system behavior, flag it explicitly
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'scientist',
@@ -573,6 +621,9 @@ Guidelines:
 - Note limitations and potential biases in the data
 - Present results in a structured format with clear headers
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'designer',
@@ -596,6 +647,9 @@ Guidelines:
 - Optimize for performance: lazy loading, efficient selectors, minimal DOM mutations
 - Test the rendered output in the browser when possible
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'document-specialist',
@@ -619,6 +673,9 @@ Guidelines:
 - Only document what exists — do not document planned features or aspirational behavior
 - Cross-reference related functions and concepts
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
     {
       name: 'writer',
@@ -642,6 +699,9 @@ Guidelines:
 - Include practical examples, not just abstract descriptions
 - Keep paragraphs short — one idea per paragraph
 - For clear communication, avoid using emojis`,
+      thinking: 'medium',
+      depth: 2,
+      maxOutputTokens: 4096,
     },
   ];
 
@@ -699,4 +759,20 @@ Guidelines:
   static getBuiltinAgentNames(): string[] {
     return this.BUILTIN_AGENTS.map((agent) => agent.name);
   }
+}
+
+/**
+ * Resolve the effective model for an agent.
+ * Priority: agent.model → action model → session default.
+ */
+export function resolveAgentModel(
+  agentConfig: SubagentConfig,
+  sessionModel: string,
+): string {
+  if (agentConfig.model) {
+    // 'fast' is a special keyword that maps to the fast model
+    if (agentConfig.model === 'fast') return sessionModel; // Config.getFastModel() handled at runtime
+    return agentConfig.model;
+  }
+  return sessionModel;
 }

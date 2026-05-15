@@ -119,6 +119,14 @@ export interface SubagentConfig {
    * For extension-level subagents: the name of the providing extension
    */
   extensionName?: string;
+  /** Optional thinking effort level for this agent. */
+  thinking?: string;
+
+  /** Optional depth limit (1-3) for nested agent spawning. */
+  depth?: number;
+
+  /** Optional output token limit. Default 4096. */
+  maxOutputTokens?: number;
 }
 
 /**

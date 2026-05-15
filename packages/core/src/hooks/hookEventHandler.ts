@@ -49,6 +49,25 @@ import { checkDelegationNeed } from './delegation-enforcer.js';
 const debugLogger = createDebugLogger('TRUSTED_HOOKS');
 
 /**
+ * Check if all hooks should be disabled via DISABLE_GLM_HOOKS=1.
+ */
+function shouldSkipAllHooks(): boolean {
+  return process.env['DISABLE_GLM_HOOKS'] === '1';
+}
+
+/**
+ * Check if a specific hook should be skipped via GLM_SKIP_HOOKS comma list.
+ */
+function shouldSkipHook(hookName: string): boolean {
+  const skipList = process.env['GLM_SKIP_HOOKS'];
+  if (!skipList) return false;
+  return skipList
+    .split(',')
+    .map((s) => s.trim())
+    .includes(hookName);
+}
+
+/**
  * Hook event bus that coordinates hook execution across the system
  */
 export class HookEventHandler {
@@ -245,9 +264,7 @@ export class HookEventHandler {
         : JSON.stringify(toolResponse);
     const delegationHint = checkDelegationNeed(responseText);
     if (delegationHint) {
-      debugLogger.info(
-        `Delegation suggestion: ${delegationHint.reason}`,
-      );
+      debugLogger.info(`Delegation suggestion: ${delegationHint.reason}`);
     }
 
     const input: PostToolUseInput = {
@@ -511,6 +528,12 @@ export class HookEventHandler {
     signal?: AbortSignal,
   ): Promise<AggregatedHookResult> {
     try {
+      // Kill switch: DISABLE_GLM_HOOKS=1 disables all hooks
+      if (shouldSkipAllHooks()) {
+        debugLogger.info('All hooks disabled via DISABLE_GLM_HOOKS=1');
+        return { success: true, allOutputs: [], errors: [], totalDuration: 0 };
+      }
+
       // Create execution plan from registry hooks
       const plan = this.hookPlanner.createExecutionPlan(eventName, context);
 
@@ -543,6 +566,16 @@ export class HookEventHandler {
           return true;
         });
       }
+
+      // Filter out individual hooks skipped via GLM_SKIP_HOOKS
+      allHookConfigs = allHookConfigs.filter((config) => {
+        const hookName = this.getHookName(config);
+        if (shouldSkipHook(hookName)) {
+          debugLogger.info(`Hook ${hookName} skipped via GLM_SKIP_HOOKS`);
+          return false;
+        }
+        return true;
+      });
 
       if (allHookConfigs.length === 0) {
         return {

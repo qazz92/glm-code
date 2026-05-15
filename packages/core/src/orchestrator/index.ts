@@ -1,4 +1,8 @@
-export { classifyTask, type TaskClassification, type TaskSize } from './task-classifier.js';
+export {
+  classifyTask,
+  type TaskClassification,
+  type TaskSize,
+} from './task-classifier.js';
 export {
   planFanout,
   buildFanoutInstruction,
@@ -33,6 +37,7 @@ export {
   shouldCheckpoint,
   findLatestCheckpoint,
   cleanupCheckpoints,
+  loadLatestCheckpoint,
 } from './checkpoint.js';
 export {
   Orchestrator,
@@ -50,9 +55,7 @@ export {
   type ToolResultInfo,
   type DelegationSuggestion,
 } from './delegation-heuristics.js';
-export {
-  buildContractPrompt,
-} from './subagent-contract.js';
+export { buildContractPrompt } from './subagent-contract.js';
 export {
   WorkerState,
   WorkerStateMachine,
@@ -69,12 +72,12 @@ export {
   type ThresholdLevel,
   POOLS,
 } from './quota-tracker.js';
- export {
-   TokenEconomicsTracker,
-   getTokenEconomicsTracker,
-   _resetTokenEconomicsTracker,
-   type TokenMetrics,
- } from './token-economics.js';
+export {
+  TokenEconomicsTracker,
+  getTokenEconomicsTracker,
+  _resetTokenEconomicsTracker,
+  type TokenMetrics,
+} from './token-economics.js';
 export {
   RateLimiter,
   getRateLimiter,

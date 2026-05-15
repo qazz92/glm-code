@@ -16,7 +16,10 @@
  *   6. user_turn — current user message (changes every turn)
  */
 
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import { createDebugLogger } from '../utils/debugLogger.js';
+import { Storage } from '../config/storage.js';
 
 const debugLogger = createDebugLogger('context');
 
@@ -113,7 +116,9 @@ export function createTypedBlock(
  * annotations. Each block gets `cache_control: { type: 'ephemeral' }`
  * to enable prompt caching at every boundary.
  */
-export function toContextBlocks(typedBlocks: TypedContextBlock[]): ContextBlock[] {
+export function toContextBlocks(
+  typedBlocks: TypedContextBlock[],
+): ContextBlock[] {
   const result: ContextBlock[] = [];
   for (const block of typedBlocks) {
     if (!block.content) continue;
@@ -179,6 +184,90 @@ export function buildSixLayerContext(parts: {
 }
 
 // ---------------------------------------------------------------------------
+// Hindsight memory injection (first-turn only)
+// ---------------------------------------------------------------------------
+
+/** Maximum total size of the hindsight block in characters (~2K tokens). */
+const HINDSIGHT_MAX_CHARS = 8192;
+/** Maximum size of a single memory file in characters. */
+const HINDSIGHT_FILE_CAP = 2000;
+/** Maximum number of memory bank files to load. */
+const HINDSIGHT_MAX_FILES = 5;
+
+/**
+ * Build a `<memories>` XML block from memory bank and project memory files.
+ * Designed for first-turn injection — provides persistent context the LLM
+ * has "learned" from previous sessions.
+ *
+ * @param projectDir - The project root directory
+ * @returns XML string wrapped in `<memories>...</memories>` or empty string
+ */
+export async function buildHindsightBlock(projectDir: string): Promise<string> {
+  const memories: string[] = [];
+
+  // 1. Load memory bank files from ~/.glm/memory/bank/
+  try {
+    const bankDir = path.join(Storage.getGlobalGLMDir(), 'memory', 'bank');
+    if (fs.existsSync(bankDir)) {
+      const entries = fs.readdirSync(bankDir).filter((f) => f.endsWith('.md'));
+      const sorted = entries.sort().slice(0, HINDSIGHT_MAX_FILES);
+      for (const f of sorted) {
+        const content = fs.readFileSync(path.join(bankDir, f), 'utf-8');
+        memories.push(content.slice(0, HINDSIGHT_FILE_CAP));
+      }
+    }
+  } catch (err) {
+    debugLogger.warn(`Failed to load memory bank: ${err}`);
+  }
+
+  // 2. Load project memory from .glm/memory.json
+  try {
+    const projectMemPath = path.join(projectDir, '.glm', 'memory.json');
+    if (fs.existsSync(projectMemPath)) {
+      memories.push(fs.readFileSync(projectMemPath, 'utf-8'));
+    }
+  } catch (err) {
+    debugLogger.warn(`Failed to load project memory: ${err}`);
+  }
+
+  if (memories.length === 0) return '';
+
+  // Cap total block at HINDSIGHT_MAX_CHARS
+  let block = `<memories>\n${memories.join('\n---\n')}\n</memories>`;
+  if (block.length > HINDSIGHT_MAX_CHARS) {
+    block = block.slice(0, HINDSIGHT_MAX_CHARS) + '\n</memories>';
+  }
+
+  debugLogger.info(
+    `Hindsight block: ${memories.length} sources, ${block.length} chars`,
+  );
+
+  return block;
+}
+
+/**
+ * Build a `history` context block with hindsight memory prepended.
+ * Only prepends on first turn (turnCount === 0).
+ *
+ * @param history - The existing history content
+ * @param projectDir - The project root directory
+ * @param turnCount - Current turn number (0 = first turn)
+ * @returns Modified history string with hindsight block prepended, or original
+ */
+export async function injectHindsightMemory(
+  history: string,
+  projectDir: string,
+  turnCount: number,
+): Promise<string> {
+  if (turnCount > 0) return history;
+
+  const hindsight = await buildHindsightBlock(projectDir);
+  if (!hindsight) return history;
+
+  return `${hindsight}\n\n${history}`;
+}
+
+// ---------------------------------------------------------------------------
 // Cache hit rate tracking
 // ---------------------------------------------------------------------------
 
@@ -218,7 +307,8 @@ export function extractCacheHitRate(usage: {
  */
 export function formatBudgetSummary(budget: ContextBudget): string {
   const lines = budget.blocks.map(
-    (b) => `  ${b.type.padEnd(12)} ${String(b.tokenEstimate).padStart(6)} tokens`,
+    (b) =>
+      `  ${b.type.padEnd(12)} ${String(b.tokenEstimate).padStart(6)} tokens`,
   );
   return [
     `Context: ${budget.usagePercent}% (${budget.totalTokens.toLocaleString()}/${budget.maxTokens.toLocaleString()} tokens)`,
@@ -236,9 +326,6 @@ export function formatBudgetSummary(budget: ContextBudget): string {
 /**
  * @deprecated Use createTypedBlock instead. Kept for existing callers.
  */
-export function createBlock(
-  type: string,
-  content: string,
-): TypedContextBlock {
+export function createBlock(type: string, content: string): TypedContextBlock {
   return createTypedBlock(type as BlockType, content);
 }
