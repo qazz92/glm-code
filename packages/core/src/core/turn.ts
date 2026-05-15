@@ -9,6 +9,7 @@ import {
   type Part,
   type PartListUnion,
   type GenerateContentResponse,
+  type GenerateContentConfig,
   type FunctionCall,
   type FunctionDeclaration,
   type GenerateContentResponseUsageMetadata,
@@ -270,6 +271,7 @@ export class Turn {
     model: string,
     req: PartListUnion,
     signal: AbortSignal,
+    generationConfig: GenerateContentConfig = {},
   ): AsyncGenerator<ServerGeminiStreamEvent> {
     try {
       // Note: This assumes `sendMessageStream` yields events like
@@ -279,6 +281,7 @@ export class Turn {
         {
           message: req,
           config: {
+            ...generationConfig,
             abortSignal: signal,
           },
         },

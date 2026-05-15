@@ -44,3 +44,6 @@ export {
   type ModelConfigResolutionResult,
   type ModelConfigValidationResult,
 } from './modelConfigResolver.js';
+
+export * from './action-registry.js';
+export * from './thinking-config.js';
