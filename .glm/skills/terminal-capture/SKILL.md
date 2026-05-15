@@ -53,7 +53,7 @@ export default {
   name: '/about',
   spawn: ['node', 'dist/cli.js', '--yolo'],
   // cwd is relative to this config file's location.
-  terminal: { title: 'qwen-code', cwd: '../../..' },
+  terminal: { title: 'glm-code', cwd: '../../..' },
   flow: [
     { type: 'Hi, can you help me understand this codebase?' },
     { type: '/about' },

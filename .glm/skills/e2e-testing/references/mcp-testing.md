@@ -4,12 +4,12 @@ How to set up and run end-to-end tests involving MCP tool servers.
 
 ## Where MCP Config Goes
 
-MCP servers are configured in `.qwen/settings.json` under `mcpServers`. This is
+MCP servers are configured in `.glm/settings.json` under `mcpServers`. This is
 the **only** location that works for E2E testing.
 
 Common mistakes that waste time:
 
-- `.mcp.json` — Claude Code convention, not Qwen Code
+- `.mcp.json` — Claude Code convention, not GLM Code
 - `settings.local.json` — schema validation rejects `mcpServers` here
 - `--mcp-config` CLI flag — does not exist
 
@@ -19,8 +19,8 @@ The CLI needs a git repo to load project settings. Create a temp directory:
 
 ```bash
 mkdir -p /tmp/test-dir && cd /tmp/test-dir && git init -q
-mkdir -p .qwen
-cat > .qwen/settings.json << 'EOF'
+mkdir -p .glm
+cat > .glm/settings.json << 'EOF'
 {
   "mcpServers": {
     "my-server": {
@@ -36,7 +36,7 @@ EOF
 Run from that directory:
 
 ```bash
-cd /tmp/test-dir && <qwen> "prompt" \
+cd /tmp/test-dir && <glm> "prompt" \
   --approval-mode yolo --output-format json
 ```
 
@@ -80,6 +80,6 @@ Check the `type: "system"` init message in JSON output:
 
 If `mcp_servers` is empty:
 
-- You're not running from the directory containing `.qwen/settings.json`
+- You're not running from the directory containing `.glm/settings.json`
 - The directory is not a git repo (`git init` missing)
 - The server command/path is wrong (check stderr with `2>&1`)

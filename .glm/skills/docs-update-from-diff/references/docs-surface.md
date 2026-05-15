@@ -9,7 +9,7 @@ Use this file to choose the correct destination page under `docs/`.
 - `docs/users/features/*.md` Good for user-visible features such as skills,
   MCP, sandbox, sub-agents, commands, checkpointing, and approval modes.
 - `docs/users/configuration/*.md` Good for settings, auth, model providers,
-  themes, trusted folders, `.qwen` files, and similar configuration topics.
+  themes, trusted folders, `.glm` files, and similar configuration topics.
 - `docs/users/integration-*.md` and `docs/users/ide-integration/*.md` Good for
   IDEs, GitHub Actions, and editor companion behavior.
 - `docs/users/extension/*.md` Good for extension authoring and extension usage.

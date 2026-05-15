@@ -6,7 +6,7 @@
  * Usage:
  *   1. Edit TOOL_DEFINITIONS to define your tools
  *   2. Edit handleToolCall() to implement tool behavior
- *   3. Configure in .qwen/settings.json and run via the CLI
+ *   3. Configure in .glm/settings.json and run via the CLI
  *
  * Sanity check without the CLI:
  *   printf '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","capabilities":{},"clientInfo":{"name":"test","version":"1.0"}}}\n' | node mcp-test-server.js

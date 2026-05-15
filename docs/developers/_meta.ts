@@ -20,7 +20,7 @@ export default {
 
   'channel-plugins': 'Channel Plugin Guide',
   tools: 'Tools',
-  'glm-serve-protocol': 'glm serve HTTP protocol',
+  'qwen-serve-protocol': 'glm serve HTTP protocol',
 
   examples: {
     display: 'hidden',
