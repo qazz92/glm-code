@@ -50,8 +50,6 @@ import {
   shouldCheckpoint,
   saveCheckpoint,
 } from '../orchestrator/checkpoint.js';
-import { hasPhaseCompletionMarker } from '../orchestrator/pipeline.js';
-import { ProcessRecycler } from './process-recycler.js';
 import { CommitAttributionService } from '../services/commitAttribution.js';
 import { evaluateDelegationNeed } from '../orchestrator/delegation-heuristics.js';
 import type { DelegationSuggestion } from '../orchestrator/delegation-heuristics.js';
@@ -226,9 +224,6 @@ export class GeminiClient {
 
   /** Orchestrator: classifies prompts and routes to fanout/pipeline/scheduler. */
   private readonly orchestrator = new Orchestrator();
-
-  /** Process recycler: checks memory pressure at safe turn boundaries. */
-  private readonly processRecycler = new ProcessRecycler();
 
   /** Last delegation suggestion from evaluateDelegationNeed (for diagnostics). */
   private lastDelegationSuggestion: DelegationSuggestion | null = null;
