@@ -5,6 +5,7 @@ from collections.abc import Callable
 from typing import Any, cast
 
 import pytest
+
 from glm_code_sdk.errors import AbortError, ControlRequestTimeoutError
 from glm_code_sdk.json_lines import parse_json_line
 from glm_code_sdk.query import Query
