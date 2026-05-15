@@ -20,7 +20,12 @@ import type {
   ToolConfirmationPayload,
 } from '../tools/tools.js';
 import { ToolConfirmationOutcome } from '../tools/tools.js';
-import { buildPermissionRules } from '../permissions/rule-parser.js';
+import {
+  buildPermissionRules,
+  splitCompoundCommand,
+} from '../permissions/rule-parser.js';
+import { extractShellOperations } from '../permissions/shell-semantics.js';
+import { getToolTier } from '../permissions/tool-tiers.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Context building
@@ -52,7 +57,9 @@ export function buildPermissionCheckContext(
   // Extract file path — tools use 'file_path' or 'path' (LS / grep / glob).
   let filePath =
     typeof toolParams['file_path'] === 'string'
-      ? toolParams['file_path']
+      ? path.isAbsolute(toolParams['file_path'])
+        ? toolParams['file_path']
+        : path.resolve(targetDir, toolParams['file_path'])
       : undefined;
   if (filePath === undefined && typeof toolParams['path'] === 'string') {
     // LS uses absolute paths; grep/glob may be relative to targetDir.
@@ -79,6 +86,76 @@ export function buildPermissionCheckContext(
         : undefined;
 
   return { toolName, command, cwd, filePath, domain, specifier };
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Workspace containment helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Return true when `candidatePath` resolves to `workspaceRoot` or one of its
+ * descendants.  This avoids prefix bugs such as `/repo2` matching `/repo`.
+ */
+export function isPathInsideWorkspace(
+  candidatePath: string | undefined,
+  workspaceRoot: string,
+): boolean {
+  if (!candidatePath || !workspaceRoot) return false;
+
+  const root = path.resolve(workspaceRoot);
+  const candidate = path.resolve(candidatePath);
+  const relative = path.relative(root, candidate);
+
+  return (
+    relative === '' ||
+    (relative.length > 0 &&
+      !relative.startsWith('..') &&
+      !path.isAbsolute(relative))
+  );
+}
+
+/**
+ * Determine whether a Tier-B auto approval is constrained to the workspace.
+ *
+ * Direct file tools must target an in-workspace path. Shell-like tools are only
+ * treated as workspace-bound when we can statically extract known virtual file
+ * operations and every operation stays in the workspace. Unknown shell commands,
+ * external network operations, and outside-workspace paths stay confirm-gated.
+ */
+export function isWorkspaceBoundPermissionContext(
+  pmCtx: PermissionCheckContext,
+  workspaceRoot: string,
+): boolean {
+  if (!workspaceRoot) return false;
+
+  if (pmCtx.toolName === 'run_shell_command' || pmCtx.toolName === 'monitor') {
+    const cwd = pmCtx.cwd ?? workspaceRoot;
+    if (!isPathInsideWorkspace(cwd, workspaceRoot)) return false;
+    if (!pmCtx.command?.trim()) return false;
+
+    const operations = splitCompoundCommand(pmCtx.command).flatMap((command) =>
+      extractShellOperations(command, cwd),
+    );
+
+    if (operations.length === 0) return false;
+
+    return operations.every((operation) => {
+      if (operation.domain) return false;
+      if (getToolTier(operation.virtualTool) === 'C') return false;
+      return isPathInsideWorkspace(operation.filePath, workspaceRoot);
+    });
+  }
+
+  if (pmCtx.filePath) {
+    return isPathInsideWorkspace(pmCtx.filePath, workspaceRoot);
+  }
+
+  if (pmCtx.cwd) {
+    return isPathInsideWorkspace(pmCtx.cwd, workspaceRoot);
+  }
+
+  return false;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
