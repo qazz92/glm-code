@@ -5,6 +5,24 @@
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
+// Suppress Node.js 24 deprecation warnings from third-party deps (e.g. @opentelemetry uses url.parse).
+// Remove when upstream deps migrate to WHATWG URL API.
+const originalEmit = process.emit;
+process.emit = function (event: string, warning: unknown, ...args: unknown[]) {
+  if (
+    event === 'warning' &&
+    typeof warning === 'object' &&
+    warning !== null &&
+    'name' in warning &&
+    (warning as { name: string }).name === 'DeprecationWarning' &&
+    typeof (warning as { message?: string }).message === 'string' &&
+    (warning as { message: string }).message.includes('url.parse')
+  ) {
+    return false;
+  }
+  return originalEmit.call(process, event as never, warning, ...(args as never[]));
+};
+
 
 import { initStartupProfiler } from './src/utils/startupProfiler.js';
 
