@@ -82,7 +82,9 @@ const DEFAULT_TIER: PermissionTier = 'C';
  */
 export function getToolTier(toolName: string): PermissionTier {
   if (toolName.startsWith('mcp__')) return 'C';
-  return TOOL_TIERS[toolName] ?? TOOL_TIERS[toolName.toLowerCase()] ?? DEFAULT_TIER;
+  return (
+    TOOL_TIERS[toolName] ?? TOOL_TIERS[toolName.toLowerCase()] ?? DEFAULT_TIER
+  );
 }
 
 /**

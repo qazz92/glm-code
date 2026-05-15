@@ -1339,11 +1339,11 @@ export class CoreToolScheduler {
           let confirmationDetails: ToolCallConfirmationDetails | undefined;
 
           if (
-              !needsConfirmation(finalPermission, approvalMode, reqInfo.name, {
-                pmCtx,
-                workspaceRoot: this.config.getTargetDir?.() ?? '',
-              })
-            ) {
+            !needsConfirmation(finalPermission, approvalMode, reqInfo.name, {
+              pmCtx,
+              workspaceRoot: this.config.getTargetDir?.() ?? '',
+            })
+          ) {
             this.setToolCallOutcome(
               reqInfo.callId,
               ToolConfirmationOutcome.ProceedAlways,
@@ -1914,12 +1914,13 @@ export class CoreToolScheduler {
           }
         }
 
-
         // Idempotency check: return cached result if available
         const cacheKey = IdempotencyCache.makeKey(toolName, toolInput);
         const cached = this.idempotencyCache.get(cacheKey);
         if (cached !== null) {
-          debugLogger.debug(`Idempotency cache hit for ${toolName}`, { callId });
+          debugLogger.debug(`Idempotency cache hit for ${toolName}`, {
+            callId,
+          });
           const cachedResponse: ToolCallResponseInfo = {
             callId,
             responseParts: convertToFunctionResponse(toolName, callId, cached),

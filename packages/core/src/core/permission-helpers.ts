@@ -88,7 +88,6 @@ export function buildPermissionCheckContext(
   return { toolName, command, cwd, filePath, domain, specifier };
 }
 
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Workspace containment helpers
 // ─────────────────────────────────────────────────────────────────────────────

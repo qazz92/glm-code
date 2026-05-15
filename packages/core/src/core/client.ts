@@ -46,7 +46,10 @@ import {
   COMPRESSION_TOKEN_THRESHOLD,
 } from '../services/chatCompressionService.js';
 import { LoopDetectionService } from '../services/loopDetectionService.js';
-import { shouldCheckpoint, saveCheckpoint } from '../orchestrator/checkpoint.js';
+import {
+  shouldCheckpoint,
+  saveCheckpoint,
+} from '../orchestrator/checkpoint.js';
 import { hasPhaseCompletionMarker } from '../orchestrator/pipeline.js';
 import { ProcessRecycler } from './process-recycler.js';
 import { CommitAttributionService } from '../services/commitAttribution.js';
@@ -124,9 +127,7 @@ import {
 } from '../models/thinking-config.js';
 import { getQuotaTracker, type Pool } from '../orchestrator/quota-tracker.js';
 import { getRateLimiter } from '../orchestrator/rate-limiter.js';
-import {
-  getStreamingPreserver,
-} from './streaming-preservation.js';
+import { getStreamingPreserver } from './streaming-preservation.js';
 
 const MAX_TURNS = 100;
 
@@ -213,7 +214,9 @@ export class GeminiClient {
   private filesTouched = 0;
 
   /** Distillation scheduler — periodic session insight extraction. */
-  private distillationScheduler: import('../memory/distillation.js').DistillationScheduler | null = null;
+  private distillationScheduler:
+    | import('../memory/distillation.js').DistillationScheduler
+    | null = null;
   private lastPromptId: string | undefined = undefined;
   private lastSentIdeContext: IdeContext | undefined;
   private forceFullIdeContext = true;
@@ -294,16 +297,18 @@ export class GeminiClient {
   private startDistillationScheduler(): void {
     const sessionId = this.config.getSessionId();
     // Lazy import to avoid circular deps at module load
-    import('../memory/distillation.js').then(({ DistillationScheduler }) => {
-      this.distillationScheduler = new DistillationScheduler(
-        sessionId,
-        () => this.getRecentTurnSummaries(),
-        (prompt: string) => this.callLlmForDistillation(prompt),
-      );
-      this.distillationScheduler.start();
-    }).catch((err: unknown) => {
-      debugLogger.warn('Failed to start distillation scheduler:', err);
-    });
+    import('../memory/distillation.js')
+      .then(({ DistillationScheduler }) => {
+        this.distillationScheduler = new DistillationScheduler(
+          sessionId,
+          () => this.getRecentTurnSummaries(),
+          (prompt: string) => this.callLlmForDistillation(prompt),
+        );
+        this.distillationScheduler.start();
+      })
+      .catch((err: unknown) => {
+        debugLogger.warn('Failed to start distillation scheduler:', err);
+      });
   }
 
   /** Extract recent turn summaries for distillation. */
@@ -319,7 +324,10 @@ export class GeminiClient {
       .map((entry) => {
         const parts = entry.parts ?? [];
         const text = parts
-          .filter((p): p is { text: string } => 'text' in p && typeof p.text === 'string')
+          .filter(
+            (p): p is { text: string } =>
+              'text' in p && typeof p.text === 'string',
+          )
           .map((p) => p.text)
           .join('\n');
         return { role: entry.role ?? 'unknown', content: text.slice(0, 2000) };
@@ -995,12 +1003,12 @@ export class GeminiClient {
     this.lastDelegationSuggestion = evaluateDelegationNeed(
       {
         toolName,
-        resultSize: typeof args?.['resultSize'] === 'number'
-          ? args['resultSize']
-          : 0,
-        matchCount: typeof args?.['matchCount'] === 'number'
-          ? args['matchCount']
-          : undefined,
+        resultSize:
+          typeof args?.['resultSize'] === 'number' ? args['resultSize'] : 0,
+        matchCount:
+          typeof args?.['matchCount'] === 'number'
+            ? args['matchCount']
+            : undefined,
       },
       contextPercent,
     );
@@ -1203,7 +1211,6 @@ export class GeminiClient {
 
         this.sessionTurnCount++;
 
-
         // Long-horizon checkpoint: save state snapshot every 10 turns
         if (shouldCheckpoint(this.sessionTurnCount)) {
           saveCheckpoint({
@@ -1213,7 +1220,9 @@ export class GeminiClient {
             lastUserPrompt: partToString(request),
             filesModified: [],
           });
-          debugLogger.debug(`Checkpoint saved at turn ${this.sessionTurnCount}`);
+          debugLogger.debug(
+            `Checkpoint saved at turn ${this.sessionTurnCount}`,
+          );
         }
         if (
           this.config.getMaxSessionTurns() > 0 &&
@@ -1400,13 +1409,16 @@ export class GeminiClient {
         // to fan out or follow the pipeline. For rate-limited models, switch to a fallback.
         // Uses async LLM-based classification when available; falls back to regex.
         const promptText = partToString(request);
-        const orchestratorResult = await this.orchestrator.orchestrateAsync(promptText, {
-          model,
-          turnCount: this.sessionTurnCount,
-          sessionId: this.config.getSessionId(),
-          projectRoot: this.config.getProjectRoot(),
-          filesTouched: this.filesTouched,
-        });
+        const orchestratorResult = await this.orchestrator.orchestrateAsync(
+          promptText,
+          {
+            model,
+            turnCount: this.sessionTurnCount,
+            sessionId: this.config.getSessionId(),
+            projectRoot: this.config.getProjectRoot(),
+            filesTouched: this.filesTouched,
+          },
+        );
         if (orchestratorResult.isModelFallback) {
           model = orchestratorResult.model;
           resolvedModel = model;
@@ -1453,7 +1465,10 @@ export class GeminiClient {
 
       for await (const event of resultStream) {
         // Accumulate content chunks for partial preservation.
-        if (event.type === GeminiEventType.Content && typeof event.value === 'string') {
+        if (
+          event.type === GeminiEventType.Content &&
+          typeof event.value === 'string'
+        ) {
           preserver.onChunk(event.value);
         }
 
@@ -1491,7 +1506,9 @@ export class GeminiClient {
           // Preserve partial content on error/abort.
           const partial = preserver.cancel();
           if (partial) {
-            debugLogger.info(`Preserved ${partial.content.length} chars of partial stream content`);
+            debugLogger.info(
+              `Preserved ${partial.content.length} chars of partial stream content`,
+            );
           }
 
           // Record quota usage from the error (best-effort).
@@ -1527,7 +1544,9 @@ export class GeminiClient {
         const summaryParts: string[] = ['Pipeline complete. Phase results:'];
         const slotUsage = this.orchestrator.getSlotUsage();
         for (const slot of slotUsage) {
-          summaryParts.push(`  ${slot.model}: ${slot.used}/${slot.max} slots used`);
+          summaryParts.push(
+            `  ${slot.model}: ${slot.used}/${slot.max} slots used`,
+          );
         }
         debugLogger.info('Pipeline completed all phases');
         this.orchestrator.resetPipeline();
@@ -1821,15 +1840,19 @@ export class GeminiClient {
           }
 
           // Classify 429 errors via RateLimiter.
-          const httpError = error as { status?: number; headers?: Record<string, string> };
+          const httpError = error as {
+            status?: number;
+            headers?: Record<string, string>;
+          };
           if (httpError.status === 429 && httpError.headers) {
             const decision = getRateLimiter().handle429Response(
               httpError.status,
               httpError.headers,
             );
-            debugLogger.info(`429 classified: type=${decision.type} retryAfter=${decision.retryAfter}`);
+            debugLogger.info(
+              `429 classified: type=${decision.type} retryAfter=${decision.retryAfter}`,
+            );
           }
-
 
           safeSetStatus(span, {
             code: SpanStatusCode.ERROR,
