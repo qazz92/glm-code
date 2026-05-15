@@ -1,18 +1,18 @@
-# qwen-code-sdk
+# glm-code-sdk
 
-Experimental Python SDK for programmatic access to Qwen Code through the
+Experimental Python SDK for programmatic access to GLM Code through the
 `stream-json` protocol.
 
 ## Installation
 
 ```bash
-pip install qwen-code-sdk
+pip install glm-code-sdk
 ```
 
 For preview releases, enable pre-release resolution:
 
 ```bash
-pip install --pre qwen-code-sdk
+pip install --pre glm-code-sdk
 ```
 
 ## Requirements
@@ -21,12 +21,12 @@ pip install --pre qwen-code-sdk
 - External `qwen` CLI installed and available in `PATH`
 
 You can also point the SDK at an explicit CLI binary or script with
-`path_to_qwen_executable`.
+`path_to_glm_executable`.
 
 Before using the SDK, verify that the CLI works in the same environment:
 
 ```bash
-qwen --version
+glm --version
 ```
 
 ## Quick Start
@@ -34,7 +34,7 @@ qwen --version
 ```python
 import asyncio
 
-from qwen_code_sdk import (
+from glm_code_sdk import (
     is_sdk_assistant_message,
     is_sdk_result_message,
     query,
@@ -66,7 +66,7 @@ async def main() -> None:
         "List the top-level packages in this repository.",
         {
             "cwd": "/path/to/project",
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
         },
     ) as result:
         async for message in result:
@@ -86,14 +86,14 @@ already runs an event loop, such as Jupyter, FastAPI, or pytest-asyncio, call
 ## Sync API
 
 ```python
-from qwen_code_sdk import is_sdk_result_message, query_sync
+from glm_code_sdk import is_sdk_result_message, query_sync
 
 
 with query_sync(
     "Say hello",
     {
         "cwd": "/path/to/project",
-        "path_to_qwen_executable": "qwen",
+        "path_to_glm_executable": "glm",
     },
 ) as result:
     for message in result:
@@ -120,12 +120,12 @@ for multi-turn sessions.
 ```python
 options = {
     "cwd": "/path/to/project",
-    "path_to_qwen_executable": "qwen",
-    "model": "qwen-plus",
+    "path_to_glm_executable": "glm",
+    "model": "glm-4.5",
     "permission_mode": "plan",
     "max_session_turns": 1,
     "env": {
-        "OPENAI_MODEL": "qwen-plus",
+        "OPENAI_MODEL": "glm-4.5",
     },
     "timeout": {
         "control_request": 60,
@@ -138,7 +138,7 @@ options = {
 Common fields:
 
 - `cwd`: working directory used by the CLI
-- `path_to_qwen_executable`: `qwen`, an absolute binary path, or a `.js` CLI
+- `path_to_glm_executable`: `qwen`, an absolute binary path, or a `.js` CLI
   bundle
 - `model`: model override for this session
 - `permission_mode`: one of `default`, `plan`, `auto-edit`, or `yolo`; `yolo`
@@ -162,7 +162,7 @@ Use a stable UUID for `session_id` when you want to correlate messages:
 ```python
 import asyncio
 
-from qwen_code_sdk import SDKUserMessage, is_sdk_result_message, query
+from glm_code_sdk import SDKUserMessage, is_sdk_result_message, query
 
 SESSION_ID = "123e4567-e89b-12d3-a456-426614174000"
 
@@ -190,7 +190,7 @@ async def main():
         prompts(),
         {
             "cwd": "/path/to/project",
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
             "session_id": SESSION_ID,
         },
     ) as result:
@@ -217,7 +217,7 @@ call.
 import asyncio
 from pathlib import Path
 
-from qwen_code_sdk import is_sdk_result_message, query
+from glm_code_sdk import is_sdk_result_message, query
 
 PROJECT_ROOT = Path("/path/to/project").resolve()
 
@@ -261,7 +261,7 @@ async def main():
         "Update README.md with a one paragraph summary.",
         {
             "cwd": str(PROJECT_ROOT),
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
             "can_use_tool": can_use_tool,
         },
     ) as result:
@@ -293,7 +293,7 @@ Control methods can be called while a session is active:
 ```python
 import asyncio
 
-from qwen_code_sdk import is_sdk_result_message, query
+from glm_code_sdk import is_sdk_result_message, query
 
 
 async def main():
@@ -301,14 +301,14 @@ async def main():
         "Inspect this project and wait for my next instruction.",
         {
             "cwd": "/path/to/project",
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
         },
     ) as result:
         commands = await result.supported_commands()
         print(commands)
 
         await result.set_permission_mode("plan")
-        await result.set_model("qwen-plus")
+        await result.set_model("glm-4.5")
 
         async for message in result:
             if is_sdk_result_message(message):
@@ -330,7 +330,7 @@ the underlying process.
 ```python
 import asyncio
 
-from qwen_code_sdk import is_sdk_result_message, query
+from glm_code_sdk import is_sdk_result_message, query
 
 
 async def main():
@@ -338,7 +338,7 @@ async def main():
     async with query(
         "Continue from the previous state.",
         {
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
             "resume": "123e4567-e89b-12d3-a456-426614174000",
         },
     ) as result:
@@ -359,14 +359,14 @@ To continue the latest session instead:
 ```python
 import asyncio
 
-from qwen_code_sdk import is_sdk_result_message, query
+from glm_code_sdk import is_sdk_result_message, query
 
 
 async def main():
     async with query(
         "Continue the last session.",
         {
-            "path_to_qwen_executable": "qwen",
+            "path_to_glm_executable": "glm",
             "continue_session": True,
         },
     ) as latest:
@@ -393,7 +393,7 @@ SDK raises `ValidationError` if these session options are combined.
 - `AbortError`: query or control request was cancelled
 
 ```python
-from qwen_code_sdk import (
+from glm_code_sdk import (
     ProcessExitError,
     ValidationError,
     is_sdk_result_message,
@@ -401,7 +401,7 @@ from qwen_code_sdk import (
 )
 
 try:
-    with query_sync("Say hello", {"path_to_qwen_executable": "qwen"}) as result:
+    with query_sync("Say hello", {"path_to_glm_executable": "glm"}) as result:
         for message in result:
             if is_sdk_result_message(message):
                 if message.get("is_error"):
@@ -412,7 +412,7 @@ try:
 except ValidationError as exc:
     print(f"Invalid SDK options: {exc}")
 except ProcessExitError as exc:
-    print(f"qwen exited with {exc.exit_code}: {exc}")
+    print(f"glm exited with {exc.exit_code}: {exc}")
 ```
 
 ## Current Scope

@@ -34,7 +34,7 @@ class SyncQuery:
         self._loop = asyncio.new_event_loop()
         self._thread = threading.Thread(
             target=self._run_loop,
-            name="qwen-sdk-sync-loop",
+            name="glm-sdk-sync-loop",
             daemon=True,
         )
         self._thread.start()

@@ -5,7 +5,7 @@ from collections.abc import AsyncIterator, Callable
 from typing import Any
 
 import pytest
-from qwen_code_sdk import (
+from glm_code_sdk import (
     ProcessExitError,
     SDKUserMessage,
     is_sdk_assistant_message,
@@ -45,11 +45,11 @@ def _tool_result_error_flag(message: dict[str, Any]) -> bool:
 
 
 @pytest.mark.asyncio
-async def test_single_turn_query(fake_qwen_path: str) -> None:
+async def test_single_turn_query(fake_glm_path: str) -> None:
     result = query(
         "hello world",
         {
-            "path_to_qwen_executable": fake_qwen_path,
+            "path_to_glm_executable": fake_glm_path,
         },
     )
     messages = await _collect_messages(result)
@@ -65,11 +65,11 @@ async def test_single_turn_query(fake_qwen_path: str) -> None:
 
 
 @pytest.mark.asyncio
-async def test_include_partial_messages(fake_qwen_path: str) -> None:
+async def test_include_partial_messages(fake_glm_path: str) -> None:
     result = query(
         "stream partial",
         {
-            "path_to_qwen_executable": fake_qwen_path,
+            "path_to_glm_executable": fake_glm_path,
             "include_partial_messages": True,
         },
     )
@@ -83,11 +83,11 @@ async def test_include_partial_messages(fake_qwen_path: str) -> None:
 
 
 @pytest.mark.asyncio
-async def test_default_permission_callback_denies_tool_use(fake_qwen_path: str) -> None:
+async def test_default_permission_callback_denies_tool_use(fake_glm_path: str) -> None:
     result = query(
         "use tool now",
         {
-            "path_to_qwen_executable": fake_qwen_path,
+            "path_to_glm_executable": fake_glm_path,
         },
     )
     messages = await _collect_messages(result)
@@ -103,7 +103,7 @@ async def test_default_permission_callback_denies_tool_use(fake_qwen_path: str) 
 
 
 @pytest.mark.asyncio
-async def test_permission_callback_can_allow_tool_use(fake_qwen_path: str) -> None:
+async def test_permission_callback_can_allow_tool_use(fake_glm_path: str) -> None:
     async def can_use_tool(
         tool_name: str,
         tool_input: dict[str, Any],
@@ -117,7 +117,7 @@ async def test_permission_callback_can_allow_tool_use(fake_qwen_path: str) -> No
     result = query(
         "create file with use tool",
         {
-            "path_to_qwen_executable": fake_qwen_path,
+            "path_to_glm_executable": fake_glm_path,
             "can_use_tool": can_use_tool,
         },
     )
@@ -134,11 +134,11 @@ async def test_permission_callback_can_allow_tool_use(fake_qwen_path: str) -> No
 
 
 @pytest.mark.asyncio
-async def test_unknown_control_requests_are_rejected(fake_qwen_path: str) -> None:
+async def test_unknown_control_requests_are_rejected(fake_glm_path: str) -> None:
     result = query(
         "request unknown control",
         {
-            "path_to_qwen_executable": fake_qwen_path,
+            "path_to_glm_executable": fake_glm_path,
         },
     )
     messages = await _collect_messages(result)
@@ -149,7 +149,7 @@ async def test_unknown_control_requests_are_rejected(fake_qwen_path: str) -> Non
 
 
 @pytest.mark.asyncio
-async def test_dynamic_controls_and_status(fake_qwen_path: str) -> None:
+async def test_dynamic_controls_and_status(fake_glm_path: str) -> None:
     release_input = asyncio.Event()
 
     async def prompts() -> AsyncIterator[SDKUserMessage]:
@@ -167,7 +167,7 @@ async def test_dynamic_controls_and_status(fake_qwen_path: str) -> None:
     result = query(
         prompts(),
         {
-            "path_to_qwen_executable": fake_qwen_path,
+            "path_to_glm_executable": fake_glm_path,
             "session_id": VALID_UUID,
         },
     )
@@ -206,11 +206,11 @@ async def test_dynamic_controls_and_status(fake_qwen_path: str) -> None:
 
 
 @pytest.mark.asyncio
-async def test_session_id_resume_and_continue(fake_qwen_path: str) -> None:
+async def test_session_id_resume_and_continue(fake_glm_path: str) -> None:
     explicit = query(
         "hello explicit",
         {
-            "path_to_qwen_executable": fake_qwen_path,
+            "path_to_glm_executable": fake_glm_path,
             "session_id": VALID_UUID,
         },
     )
@@ -222,7 +222,7 @@ async def test_session_id_resume_and_continue(fake_qwen_path: str) -> None:
     resumed = query(
         "hello resume",
         {
-            "path_to_qwen_executable": fake_qwen_path,
+            "path_to_glm_executable": fake_glm_path,
             "resume": RESUME_UUID,
         },
     )
@@ -234,7 +234,7 @@ async def test_session_id_resume_and_continue(fake_qwen_path: str) -> None:
     continued = query(
         "hello continue",
         {
-            "path_to_qwen_executable": fake_qwen_path,
+            "path_to_glm_executable": fake_glm_path,
             "continue_session": True,
         },
     )
@@ -247,11 +247,11 @@ async def test_session_id_resume_and_continue(fake_qwen_path: str) -> None:
 
 
 @pytest.mark.asyncio
-async def test_non_zero_process_exit_is_propagated(fake_qwen_path: str) -> None:
+async def test_non_zero_process_exit_is_propagated(fake_glm_path: str) -> None:
     result = query(
         "please exit nonzero",
         {
-            "path_to_qwen_executable": fake_qwen_path,
+            "path_to_glm_executable": fake_glm_path,
         },
     )
 
@@ -262,11 +262,11 @@ async def test_non_zero_process_exit_is_propagated(fake_qwen_path: str) -> None:
 
 
 @pytest.mark.asyncio
-async def test_async_context_manager(fake_qwen_path: str) -> None:
+async def test_async_context_manager(fake_glm_path: str) -> None:
     async with query(
         "hello context",
         {
-            "path_to_qwen_executable": fake_qwen_path,
+            "path_to_glm_executable": fake_glm_path,
         },
     ) as result:
         messages = await _collect_messages(result)

@@ -1,11 +1,11 @@
-# Qwen Code Companion
+# GLM Code Companion
 
-[![Version](https://img.shields.io/visual-studio-marketplace/v/qwenlm.qwen-code-vscode-ide-companion)](https://marketplace.visualstudio.com/items?itemName=qwenlm.qwen-code-vscode-ide-companion)
-[![VS Code Installs](https://img.shields.io/visual-studio-marketplace/i/qwenlm.qwen-code-vscode-ide-companion)](https://marketplace.visualstudio.com/items?itemName=qwenlm.qwen-code-vscode-ide-companion)
-[![Open VSX Downloads](https://img.shields.io/open-vsx/dt/qwenlm/qwen-code-vscode-ide-companion)](https://open-vsx.org/extension/qwenlm/qwen-code-vscode-ide-companion)
-[![Rating](https://img.shields.io/visual-studio-marketplace/r/qwenlm.qwen-code-vscode-ide-companion)](https://marketplace.visualstudio.com/items?itemName=qwenlm.qwen-code-vscode-ide-companion)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/glm-code.glm-code-vscode-ide-companion)](https://marketplace.visualstudio.com/items?itemName=glm-code.glm-code-vscode-ide-companion)
+[![VS Code Installs](https://img.shields.io/visual-studio-marketplace/i/glm-code.glm-code-vscode-ide-companion)](https://marketplace.visualstudio.com/items?itemName=glm-code.glm-code-vscode-ide-companion)
+[![Open VSX Downloads](https://img.shields.io/open-vsx/dt/qwenlm/glm-code-vscode-ide-companion)](https://open-vsx.org/extension/qwenlm/glm-code-vscode-ide-companion)
+[![Rating](https://img.shields.io/visual-studio-marketplace/r/glm-code.glm-code-vscode-ide-companion)](https://marketplace.visualstudio.com/items?itemName=glm-code.glm-code-vscode-ide-companion)
 
-Seamlessly integrate [Qwen Code](https://github.com/GLMLabs/qwen-code) into Visual Studio Code with native IDE features and an intuitive chat interface. This extension bundles everything you need — no additional installation required.
+Seamlessly integrate [GLM Code](https://github.com/qazz92/glm-code) into Visual Studio Code with native IDE features and an intuitive chat interface. This extension bundles everything you need — no additional installation required.
 
 ## Demo
 
@@ -16,9 +16,9 @@ Seamlessly integrate [Qwen Code](https://github.com/GLMLabs/qwen-code) into Visu
 
 ## Features
 
-- **Native IDE experience**: Dedicated Qwen Code Chat panel accessed via the Qwen icon in the editor title bar
+- **Native IDE experience**: Dedicated GLM Code Chat panel accessed via the GLM icon in the editor title bar
 - **Native diffing**: Review, edit, and accept changes in VS Code's diff view
-- **Auto-accept edits mode**: Automatically apply Qwen's changes as they're made
+- **Auto-accept edits mode**: Automatically apply GLM Code's changes as they're made
 - **File management**: @-mention files or attach files and images using the system file picker
 - **Conversation history & multiple sessions**: Access past conversations and run multiple sessions simultaneously
 - **Open file & selection context**: Share active files, cursor position, and selections for more precise help
@@ -29,33 +29,33 @@ Seamlessly integrate [Qwen Code](https://github.com/GLMLabs/qwen-code) into Visu
 
 ## Quick Start
 
-1. **Install** from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=qwenlm.qwen-code-vscode-ide-companion) or [Open VSX Registry](https://open-vsx.org/extension/qwenlm/qwen-code-vscode-ide-companion)
+1. **Install** from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=glm-code.glm-code-vscode-ide-companion) or [Open VSX Registry](https://open-vsx.org/extension/qwenlm/glm-code-vscode-ide-companion)
 
 2. **Open the Chat panel** using one of these methods:
-   - Click the **Qwen icon** in the top-right corner of the editor
-   - Run `Qwen Code: Open` from the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`)
+   - Click the **GLM icon** in the top-right corner of the editor
+   - Run `GLM Code: Open` from the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`)
 
-3. **Start chatting** — Ask Qwen to help with coding tasks, explain code, fix bugs, or write new features
+3. **Start chatting** — Ask GLM Code to help with coding tasks, explain code, fix bugs, or write new features
 
 ## Commands
 
 | Command                          | Description                                            |
 | -------------------------------- | ------------------------------------------------------ |
-| `Qwen Code: Open`                | Open the Qwen Code Chat panel                          |
-| `Qwen Code: Run`                 | Launch a classic terminal session with the bundled CLI |
-| `Qwen Code: Accept Current Diff` | Accept the currently displayed diff                    |
-| `Qwen Code: Close Diff Editor`   | Close/reject the current diff                          |
+| `GLM Code: Open`                | Open the GLM Code Chat panel                          |
+| `GLM Code: Run`                 | Launch a classic terminal session with the bundled CLI |
+| `GLM Code: Accept Current Diff` | Accept the currently displayed diff                    |
+| `GLM Code: Close Diff Editor`   | Close/reject the current diff                          |
 
 ## Feedback & Issues
 
-- 🐛 [Report bugs](https://github.com/GLMLabs/qwen-code/issues/new?template=bug_report.yml&labels=bug,vscode-ide-companion)
-- 💡 [Request features](https://github.com/GLMLabs/qwen-code/issues/new?template=feature_request.yml&labels=enhancement,vscode-ide-companion)
-- 📖 [Documentation](https://qwenlm.github.io/qwen-code-docs/)
-- 📋 [Changelog](https://github.com/GLMLabs/qwen-code/releases)
+- 🐛 [Report bugs](https://github.com/qazz92/glm-code/issues/new?template=bug_report.yml&labels=bug,vscode-ide-companion)
+- 💡 [Request features](https://github.com/qazz92/glm-code/issues/new?template=feature_request.yml&labels=enhancement,vscode-ide-companion)
+- 📖 [Documentation](https://github.com/qazz92/glm-code/)
+- 📋 [Changelog](https://github.com/qazz92/glm-code/releases)
 
 ## Contributing
 
-We welcome contributions! See our [Contributing Guide](https://github.com/GLMLabs/qwen-code/blob/main/CONTRIBUTING.md) for details on:
+We welcome contributions! See our [Contributing Guide](https://github.com/qazz92/glm-code/blob/main/CONTRIBUTING.md) for details on:
 
 - Setting up the development environment
 - Building and debugging the extension locally
@@ -63,8 +63,8 @@ We welcome contributions! See our [Contributing Guide](https://github.com/GLMLab
 
 ## Terms of Service and Privacy Notice
 
-By installing this extension, you agree to the [Terms of Service](https://qwenlm.github.io/qwen-code-docs/en/users/support/tos-privacy/).
+By installing this extension, you agree to the [Terms of Service](https://github.com/qazz92/glm-code/en/users/support/tos-privacy/).
 
 ## License
 
-[Apache-2.0](https://github.com/GLMLabs/qwen-code/blob/main/LICENSE)
+[Apache-2.0](https://github.com/qazz92/glm-code/blob/main/LICENSE)

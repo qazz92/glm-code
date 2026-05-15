@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import Any, cast
 
 import pytest
-from qwen_code_sdk.errors import ValidationError
-from qwen_code_sdk.types import QueryOptions, TimeoutOptions
-from qwen_code_sdk.validation import validate_query_options
+from glm_code_sdk.errors import ValidationError
+from glm_code_sdk.types import QueryOptions, TimeoutOptions
+from glm_code_sdk.validation import validate_query_options
 
 VALID_UUID = "123e4567-e89b-12d3-a456-426614174000"
 
@@ -144,11 +144,11 @@ def test_rejects_invalid_max_session_turns() -> None:
         validate_query_options(QueryOptions(max_session_turns=-2))
 
 
-def test_rejects_empty_qwen_executable_path() -> None:
+def test_rejects_empty_glm_executable_path() -> None:
     with pytest.raises(
-        ValidationError, match="path_to_qwen_executable cannot be empty"
+        ValidationError, match="path_to_glm_executable cannot be empty"
     ):
-        validate_query_options(QueryOptions(path_to_qwen_executable="   "))
+        validate_query_options(QueryOptions(path_to_glm_executable="   "))
 
 
 def test_timeout_rejects_non_numeric_value() -> None:

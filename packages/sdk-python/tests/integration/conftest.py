@@ -9,8 +9,8 @@ import pytest
 
 
 @pytest.fixture()
-def fake_qwen_path(tmp_path: Path) -> str:
-    script_path = tmp_path / "fake_qwen.py"
+def fake_glm_path(tmp_path: Path) -> str:
+    script_path = tmp_path / "fake_glm.py"
     script_path.write_text(
         textwrap.dedent(
             """
@@ -51,7 +51,7 @@ def fake_qwen_path(tmp_path: Path) -> str:
                     "mcp_servers": [],
                     "model": state["model"],
                     "permission_mode": state["permission_mode"],
-                    "qwen_code_version": "fake-1.0.0",
+                    "glm_code_version": "fake-1.0.0",
                     "capabilities": {
                         "canSetModel": True,
                         "canSetPermissionMode": True,

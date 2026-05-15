@@ -1,7 +1,7 @@
 {
   "name": "@glm-code/sdk",
   "version": "0.0.1",
-  "description": "TypeScript SDK for programmatic access to qwen-code CLI",
+  "description": "TypeScript SDK for programmatic access to glm CLI",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -33,8 +33,8 @@
     "prepack": "npm run build && npm run bundle:cli"
   },
   "keywords": [
-    "qwen",
-    "qwen-code",
+    "glm",
+    "glm-code",
     "ai",
     "code-assistant",
     "sdk",
@@ -65,11 +65,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/GLMLM/qwen-code.git",
+    "url": "https://github.com/qazz92/glm-code.git",
     "directory": "packages/sdk-typescript"
   },
   "bugs": {
-    "url": "https://github.com/GLMLM/qwen-code/issues"
+    "url": "https://github.com/qazz92/glm-code/issues"
   },
-  "homepage": "https://qwenlm.github.io/qwen-code-docs/"
+  "homepage": "https://github.com/qazz92/glm-code/"
 }

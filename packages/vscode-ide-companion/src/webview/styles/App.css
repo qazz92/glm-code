@@ -1,14 +1,14 @@
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  *
  * VSCode IDE Companion - Theme Variables
  * 
  * This file ONLY contains CSS variable definitions that map VSCode design tokens
- * to the --app-* variables used by @qwen-code/webui components.
+ * to the --app-* variables used by @glm-code/webui components.
  * 
- * Component styles are in @qwen-code/webui package and use these variables.
+ * Component styles are in @glm-code/webui package and use these variables.
  * No class overrides needed - just set the variables correctly.
  */
 
@@ -17,15 +17,15 @@
    =========================== */
 :root {
   /* Qwen Brand Colors - these override webui defaults */
-  --app-qwen-theme: #615fff;
-  --app-qwen-clay-button-orange: #4f46e5;
-  --app-qwen-ivory: #f5f5ff;
-  --app-qwen-slate: #141420;
-  --app-qwen-green: #6bcf7f;
+  --app-glm-theme: #615fff;
+  --app-glm-clay-button-orange: #4f46e5;
+  --app-glm-ivory: #f5f5ff;
+  --app-glm-slate: #141420;
+  --app-glm-green: #6bcf7f;
 
   /* Primary color - components use var(--app-primary) */
-  --app-primary: var(--app-qwen-theme);
-  --app-primary-hover: var(--app-qwen-clay-button-orange);
+  --app-primary: var(--app-glm-theme);
+  --app-primary-hover: var(--app-glm-clay-button-orange);
 
   /* Spacing */
   --app-spacing-small: 4px;
@@ -97,11 +97,11 @@
   --app-ghost-button-hover-background: var(--vscode-toolbar-hoverBackground);
   --app-button-foreground: var(
     --vscode-button-foreground,
-    var(--app-qwen-ivory)
+    var(--app-glm-ivory)
   );
   --app-button-background: var(
     --vscode-button-background,
-    var(--app-qwen-clay-button-orange)
+    var(--app-glm-clay-button-orange)
   );
   --app-button-hover-background: var(--vscode-button-hoverBackground);
 

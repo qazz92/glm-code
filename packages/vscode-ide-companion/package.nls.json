@@ -1,5 +1,5 @@
 {
-  "qwen-code.copyMessage.title": "Copy Message",
-  "qwen-code.copyAllMessages.title": "Copy All Messages",
-  "qwen-code.copyLastReply.title": "Copy Last Reply"
+  "glm-code.copyMessage.title": "Copy Message",
+  "glm-code.copyAllMessages.title": "Copy All Messages",
+  "glm-code.copyLastReply.title": "Copy Last Reply"
 }

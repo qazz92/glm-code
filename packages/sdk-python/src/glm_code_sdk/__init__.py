@@ -1,4 +1,4 @@
-"""qwen_code_sdk package exports."""
+"""glm_code_sdk package exports."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from .errors import (
     AbortError,
     ControlRequestTimeoutError,
     ProcessExitError,
-    QwenSDKError,
+    GLMSDKError,
     ValidationError,
 )
 from .protocol import (
@@ -79,7 +79,7 @@ __all__ = [
     "Query",
     "QueryOptions",
     "QueryOptionsDict",
-    "QwenSDKError",
+    "GLMSDKError",
     "SDKAssistantMessage",
     "SDKMessage",
     "SDKPartialAssistantMessage",
