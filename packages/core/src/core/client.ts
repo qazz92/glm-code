@@ -114,6 +114,14 @@ import {
   withSpan,
 } from '../telemetry/tracer.js';
 import { Orchestrator } from '../orchestrator/orchestrator.js';
+import {
+  getActiveAction,
+  getActiveActionConfig,
+} from '../models/action-registry.js';
+import {
+  buildThinkingConfig,
+  getThinkingLevel,
+} from '../models/thinking-config.js';
 import { getQuotaTracker, type Pool } from '../orchestrator/quota-tracker.js';
 import { getRateLimiter } from '../orchestrator/rate-limiter.js';
 import {
@@ -1306,9 +1314,30 @@ export class GeminiClient {
 
       const turn = new Turn(this.getChat(), prompt_id);
 
-      // Determine the model to use for this turn
-      let model = options?.modelOverride ?? this.config.getModel();
+      // Determine the model and per-turn generation options from the
+      // active action preset. An explicit modelOverride remains highest
+      // priority; the default action preserves the configured model.
+      const activeAction = getActiveAction();
+      const activeActionConfig = getActiveActionConfig();
+      let model =
+        options?.modelOverride ??
+        (activeAction === 'default'
+          ? this.config.getModel()
+          : activeActionConfig.model);
       resolvedModel = model;
+
+      const generationConfig: GenerateContentConfig = {
+        temperature: activeActionConfig.temperature,
+      };
+      const explicitThinkingLevel = getThinkingLevel();
+      const effectiveThinkingLevel =
+        explicitThinkingLevel === 'inherit'
+          ? activeActionConfig.thinking
+          : explicitThinkingLevel;
+      const thinkingConfig = buildThinkingConfig(effectiveThinkingLevel);
+      if (thinkingConfig) {
+        generationConfig.thinkingConfig = thinkingConfig;
+      }
 
       // append system reminders to the request
       let requestToSent = await flatMapTextParts(request, async (text) => [
@@ -1411,7 +1440,12 @@ export class GeminiClient {
         this.lastDelegationSuggestion = null;
       }
 
-      const resultStream = turn.run(model, requestToSent, signal);
+      const resultStream = turn.run(
+        model,
+        requestToSent,
+        signal,
+        generationConfig,
+      );
 
       // StreamingPreserver: begin tracking for partial content preservation.
       const preserver = getStreamingPreserver();
