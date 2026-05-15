@@ -27,16 +27,30 @@ export type RecyclerState = 'idle' | 'pending' | 'recycling';
 /** Callback to invoke when a recycle should happen. */
 export type RecycleCallback = () => Promise<void>;
 
+export interface ProcessRecyclerOptions {
+  /** Heap threshold in megabytes. Defaults to 512MB. */
+  heapLimitMb?: number;
+  /** Injectable memory usage reader for deterministic tests. */
+  memoryUsage?: () => NodeJS.MemoryUsage;
+}
+
 /**
  * Process recycler that monitors memory and schedules graceful restarts.
  */
 export class ProcessRecycler {
   private state: RecyclerState = 'idle';
   private readonly recycleCallback?: RecycleCallback;
+  private readonly heapLimitMb: number;
+  private readonly memoryUsage: () => NodeJS.MemoryUsage;
   private inFlightLlmCall = false;
 
-  constructor(recycleCallback?: RecycleCallback) {
+  constructor(
+    recycleCallback?: RecycleCallback,
+    options: ProcessRecyclerOptions = {},
+  ) {
     this.recycleCallback = recycleCallback;
+    this.heapLimitMb = options.heapLimitMb ?? HEAP_LIMIT_MB;
+    this.memoryUsage = options.memoryUsage ?? process.memoryUsage.bind(process);
   }
 
   /**
@@ -60,12 +74,12 @@ export class ProcessRecycler {
   checkAfterTurn(): void {
     if (this.state !== 'idle') return;
 
-    const mem = process.memoryUsage();
+    const mem = this.memoryUsage();
     const heapMb = Math.round(mem.heapUsed / (1024 * 1024));
 
-    if (heapMb > HEAP_LIMIT_MB) {
+    if (heapMb > this.heapLimitMb) {
       debugLogger.warn(
-        `Heap at ${heapMb}MB exceeds limit of ${HEAP_LIMIT_MB}MB — scheduling recycle`,
+        `Heap at ${heapMb}MB exceeds limit of ${this.heapLimitMb}MB — scheduling recycle`,
       );
       this.state = 'pending';
 
@@ -84,7 +98,7 @@ export class ProcessRecycler {
    * Get the current memory usage summary.
    */
   getMemoryStats(): { heapUsedMb: number; heapTotalMb: number; rssMb: number } {
-    const mem = process.memoryUsage();
+    const mem = this.memoryUsage();
     return {
       heapUsedMb: Math.round(mem.heapUsed / (1024 * 1024)),
       heapTotalMb: Math.round(mem.heapTotal / (1024 * 1024)),

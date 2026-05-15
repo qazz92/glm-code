@@ -110,13 +110,31 @@ export function createPipeline(maxRetries = 3): PipelineState {
 }
 
 /**
+ * Mark the current phase as running without clobbering existing output.
+ */
+export function startPhase(state: PipelineState): PipelineState {
+  const current = state.phases[state.currentPhase];
+  if (current.status === 'pending') {
+    state.phases[state.currentPhase] = {
+      ...current,
+      status: 'running',
+      startedAt: Date.now(),
+    };
+    debugLogger.info(`Phase '${state.currentPhase}' started`);
+  }
+  return state;
+}
+
+/**
  * Advance to the next phase.
  */
 export function advancePhase(state: PipelineState): PipelineState {
   const currentIndex = PHASE_ORDER.indexOf(state.currentPhase);
   if (currentIndex < PHASE_ORDER.length - 1) {
     state.currentPhase = PHASE_ORDER[currentIndex + 1];
-    state.phases[state.currentPhase].status = 'pending';
+    if (state.phases[state.currentPhase].status !== 'completed') {
+      state.phases[state.currentPhase].status = 'pending';
+    }
   }
   return state;
 }
@@ -169,13 +187,21 @@ export function buildPipelineInstruction(state: PipelineState): string {
   const phase = state.currentPhase;
   const agent = getCurrentAgentRole(state);
   const completionMarker = getPhaseCompletionMarker(phase);
+  const currentIndex = PHASE_ORDER.indexOf(phase);
+  const priorOutputs = PHASE_ORDER.slice(0, currentIndex)
+    .map((priorPhase) => {
+      const result = state.phases[priorPhase];
+      return result?.output
+        ? `Previous ${priorPhase} output:\n${result.output}`
+        : '';
+    })
+    .filter(Boolean)
+    .join('\n\n');
 
   return [
     `SYSTEM: Pipeline execution — Phase: ${phase} (Agent: ${agent})`,
     `Progress: ${PHASE_ORDER.indexOf(phase) + 1}/${PHASE_ORDER.length}`,
-    state.phases[phase]?.output
-      ? `Previous phase output: ${state.phases[phase].output}`
-      : '',
+    priorOutputs,
     `Focus ONLY on the ${phase} phase. Do not execute other phases.`,
     `When the ${phase} phase acceptance criteria are fully satisfied, end your response with exactly: ${completionMarker}`,
     `If the ${phase} phase is not complete, omit ${PHASE_COMPLETION_MARKER} and explain what remains.`,
