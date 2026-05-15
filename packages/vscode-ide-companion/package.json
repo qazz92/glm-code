@@ -299,7 +299,7 @@
     "@typescript-eslint/eslint-plugin": "^8.31.1",
     "@typescript-eslint/parser": "^8.31.1",
     "autoprefixer": "^10.4.22",
-    "esbuild": "^0.25.3",
+    "esbuild": "^0.28.0",
     "eslint": "^9.25.1",
     "eslint-plugin-react-hooks": "^5.2.0",
     "npm-run-all2": "^8.0.2",
@@ -309,7 +309,7 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "@agentclientprotocol/sdk": "^0.14.1",
+    "@agentclientprotocol/sdk": "^0.21.1",
     "@glm-code/webui": "*",
     "@modelcontextprotocol/sdk": "^1.25.1",
     "cors": "^2.8.5",
