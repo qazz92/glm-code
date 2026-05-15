@@ -94,3 +94,5 @@ tmp/
 # code graph skills
 .venv
 .codegraph
+
+.github/workflows/
