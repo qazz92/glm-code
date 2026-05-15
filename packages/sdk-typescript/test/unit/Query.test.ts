@@ -526,11 +526,9 @@ describe('Query', () => {
 
         expect(response).toBeDefined();
         expect(response?.response.subtype).toBe('success');
-        if (response?.response.subtype === 'success') {
-          expect(response.response.response).toMatchObject({
-            behavior: 'allow',
-          });
-        }
+        expect(response?.response.response).toMatchObject({
+          behavior: 'allow',
+        });
       });
 
       await query.close();
@@ -554,11 +552,9 @@ describe('Query', () => {
 
         expect(response).toBeDefined();
         expect(response?.response.subtype).toBe('success');
-        if (response?.response.subtype === 'success') {
-          expect(response.response.response).toMatchObject({
-            behavior: 'deny',
-          });
-        }
+        expect(response?.response.response).toMatchObject({
+          behavior: 'deny',
+        });
       });
 
       await query.close();
@@ -580,11 +576,9 @@ describe('Query', () => {
 
         expect(response).toBeDefined();
         expect(response?.response.subtype).toBe('success');
-        if (response?.response.subtype === 'success') {
-          expect(response.response.response).toMatchObject({
-            behavior: 'deny',
-          });
-        }
+        expect(response?.response.response).toMatchObject({
+          behavior: 'deny',
+        });
       });
 
       await query.close();
@@ -618,11 +612,9 @@ describe('Query', () => {
 
           expect(response).toBeDefined();
           expect(response?.response.subtype).toBe('success');
-          if (response?.response.subtype === 'success') {
-            expect(response.response.response).toMatchObject({
-              behavior: 'deny',
-            });
-          }
+          expect(response?.response.response).toMatchObject({
+            behavior: 'deny',
+          });
         },
         { timeout: 15000 },
       );
@@ -648,11 +640,9 @@ describe('Query', () => {
 
         expect(response).toBeDefined();
         expect(response?.response.subtype).toBe('success');
-        if (response?.response.subtype === 'success') {
-          expect(response.response.response).toMatchObject({
-            behavior: 'deny',
-          });
-        }
+        expect(response?.response.response).toMatchObject({
+          behavior: 'deny',
+        });
       });
 
       await query.close();
@@ -679,12 +669,11 @@ describe('Query', () => {
         const response = findControlResponse(responses, 'perm-req-6');
 
         expect(response).toBeDefined();
-        if (response?.response.subtype === 'success') {
-          expect(response.response.response).toMatchObject({
-            behavior: 'allow',
-            updatedInput: { arg: 'modified' },
-          });
-        }
+        expect(response?.response.subtype).toBe('success');
+        expect(response?.response.response).toMatchObject({
+          behavior: 'allow',
+          updatedInput: { arg: 'modified' },
+        });
       });
 
       await query.close();
@@ -712,13 +701,12 @@ describe('Query', () => {
         const response = findControlResponse(responses, 'perm-req-7');
 
         expect(response).toBeDefined();
-        if (response?.response.subtype === 'success') {
-          expect(response.response.response).toMatchObject({
-            behavior: 'deny',
-            message: 'Denied by user',
-            interrupt: true,
-          });
-        }
+        expect(response?.response.subtype).toBe('success');
+        expect(response?.response.response).toMatchObject({
+          behavior: 'deny',
+          message: 'Denied by user',
+          interrupt: true,
+        });
       });
 
       await query.close();
