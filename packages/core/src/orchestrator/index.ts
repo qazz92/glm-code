@@ -11,6 +11,7 @@ export {
 } from './fanout.js';
 export {
   createPipeline,
+  startPhase,
   advancePhase,
   completePhase,
   failPhase,
@@ -18,7 +19,10 @@ export {
   buildPipelineInstruction,
   isPipelineComplete,
   getModelForPhase,
+  getPhaseCompletionMarker,
+  hasPhaseCompletionMarker,
   PHASE_MODEL_MAP,
+  PHASE_COMPLETION_MARKER,
   type PipelineState,
   type PipelinePhase,
   type PhaseResult,

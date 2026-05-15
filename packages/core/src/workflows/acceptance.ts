@@ -24,28 +24,77 @@ export interface AcceptanceResult {
   summary: string;
 }
 
+function hasTrueEvidence(
+  state: WorkflowState,
+  ...keys: string[]
+): boolean {
+  return keys.some((key) => state.data[key] === true);
+}
+
+async function gitDiffContainsTodo(cwd: string): Promise<boolean> {
+  const { execFile } = await import('node:child_process');
+  const { promisify } = await import('node:util');
+  const execFileAsync = promisify(execFile);
+
+  const { stdout } = await execFileAsync(
+    'git',
+    ['diff', '--unified=0', '--', '.'],
+    {
+      cwd,
+      // Keep acceptance checks bounded. Large diffs should be checked by
+      // targeted test/lint phases, not by buffering unbounded output here.
+      maxBuffer: 1024 * 1024,
+    },
+  );
+
+  return stdout
+    .split(/\r?\n/)
+    .some((line) => /^\+[^+].*\b(?:TODO|FIXME)\b/i.test(line));
+}
+
 /**
  * Evaluate an acceptance criterion against current state.
  */
 export async function evaluateAcceptance(
   criterion: string,
-  _state: WorkflowState,
+  state: WorkflowState,
   cwd: string,
 ): Promise<AcceptanceCheck> {
   try {
     // tests-pass: check if last test run succeeded
     if (criterion === 'tests-pass') {
-      return { type: criterion, passed: true, message: 'Test check delegated to runtime' };
+      const passed = hasTrueEvidence(state, 'testsPass', 'lastTestRunPassed');
+      return {
+        type: criterion,
+        passed,
+        message: passed
+          ? 'Recorded test run passed'
+          : 'No recorded passing test run; failing closed',
+      };
     }
 
     // lsp-clean: tsc --noEmit should have no errors
     if (criterion === 'lsp-clean') {
-      return { type: criterion, passed: true, message: 'LSP check delegated to runtime' };
+      const passed = hasTrueEvidence(state, 'lspClean', 'typecheckPassed');
+      return {
+        type: criterion,
+        passed,
+        message: passed
+          ? 'Recorded LSP/typecheck result is clean'
+          : 'No recorded clean LSP/typecheck result; failing closed',
+      };
     }
 
     // no-todo-in-diff: check git diff for TODO/FIXME
     if (criterion === 'no-todo-in-diff') {
-      return { type: criterion, passed: true, message: 'TODO check delegated to runtime' };
+      const hasTodo = await gitDiffContainsTodo(cwd);
+      return {
+        type: criterion,
+        passed: !hasTodo,
+        message: hasTodo
+          ? 'TODO/FIXME found in added diff lines'
+          : 'No TODO/FIXME found in added diff lines',
+      };
     }
 
     // file-exists(path)
@@ -65,12 +114,25 @@ export async function evaluateAcceptance(
 
     // phase-completed
     if (criterion === 'phase-completed') {
-      return { type: criterion, passed: true, message: 'Phase marked as completed' };
+      const passed =
+        state.phase === 'completed' ||
+        hasTrueEvidence(state, 'phaseCompleted', 'currentPhaseCompleted');
+      return {
+        type: criterion,
+        passed,
+        message: passed
+          ? 'Phase completion evidence recorded'
+          : 'Phase completion evidence missing; failing closed',
+      };
     }
 
-    // Unknown criterion — pass by default
+    // Unknown criterion — fail closed.
     debugLogger.warn(`Unknown acceptance criterion: ${criterion}`);
-    return { type: criterion, passed: true, message: `Unknown criterion '${criterion}' — auto-passed` };
+    return {
+      type: criterion,
+      passed: false,
+      message: `Unknown criterion '${criterion}' is not implemented; failing closed`,
+    };
   } catch (err) {
     return {
       type: criterion,
