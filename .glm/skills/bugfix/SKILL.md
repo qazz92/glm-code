@@ -14,11 +14,11 @@ regressions.
 ## Input
 
 A GitHub issue URL or number. Slash-command arguments are appended to this skill
-body by Qwen Code.
+body by GLM Code.
 
 ## Artifact Path
 
-Use `.qwen/issues/` in this repo. In the steps below, `<issue-file>` means the
+Use `.glm/issues/` in this repo. In the steps below, `<issue-file>` means the
 selected issue markdown file.
 
 ## Step 1: Read The Issue
@@ -27,7 +27,7 @@ Create the artifact directory if needed, then pipe the issue directly into a
 markdown file using `gh`:
 
 ```bash
-mkdir -p .qwen/issues
+mkdir -p .glm/issues
 gh issue view <number> \
   --json number,title,body \
   -t '# Issue #{{.number}}: {{.title}}
@@ -43,7 +43,7 @@ _Pending - to be filled by the test engineer._
 ## Verification report
 
 _Pending - to be filled by the test engineer._
-' > .qwen/issues/issue-<number>.md
+' > .glm/issues/issue-<number>.md
 ```
 
 ## Step 2: Reproduce

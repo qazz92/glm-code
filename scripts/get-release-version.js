@@ -17,7 +17,7 @@ import {
 } from './lib/release-helpers.js';
 
 function getVersionFromNPM(distTag) {
-  const command = `npm view @qwen-code/qwen-code version --tag=${distTag}`;
+  const command = `npm view @glm-code/glm-code version --tag=${distTag}`;
   try {
     return execSync(command).toString().trim();
   } catch (error) {
@@ -29,7 +29,7 @@ function getVersionFromNPM(distTag) {
 }
 
 function getAllVersionsFromNPM() {
-  const command = `npm view @qwen-code/qwen-code versions --json`;
+  const command = `npm view @glm-code/glm-code versions --json`;
   try {
     const versionsJson = execSync(command).toString().trim();
     return JSON.parse(versionsJson);
@@ -40,7 +40,7 @@ function getAllVersionsFromNPM() {
 }
 
 function isVersionDeprecated(version) {
-  const command = `npm view @qwen-code/qwen-code@${version} deprecated`;
+  const command = `npm view @glm-code/glm-code@${version} deprecated`;
   try {
     const output = execSync(command).toString().trim();
     return output.length > 0;
@@ -121,7 +121,7 @@ function detectRollbackAndGetBaseline(npmDistTag) {
 function doesVersionExist(version) {
   // Check NPM
   try {
-    const command = `npm view @qwen-code/qwen-code@${version} version 2>/dev/null`;
+    const command = `npm view @glm-code/glm-code@${version} version 2>/dev/null`;
     const output = execSync(command).toString().trim();
     if (output === version) {
       console.error(`Version ${version} already exists on NPM.`);

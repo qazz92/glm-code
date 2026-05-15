@@ -8,10 +8,10 @@ import type { ScenarioConfig } from '../scenario-runner.js';
 export default {
   name: 'streaming-bugfix-2833',
   spawn: ['node', 'dist/cli.js', '--yolo'],
-  terminal: { title: 'qwen-code', cwd: '../../..' },
+  terminal: { title: 'glm-code', cwd: '../../..' },
   flow: [
     {
-      type: '/qc:bugfix https://github.com/QwenLM/qwen-code/issues/2833',
+      type: '/qc:bugfix https://github.com/GLMLM/glm-code/issues/2833',
       // Bugfix workflow is long-running (20+ minutes), capture throughout
       streaming: {
         delayMs: 10000, // Wait 10s for initial prompt processing

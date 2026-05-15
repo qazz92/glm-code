@@ -1,6 +1,6 @@
-# Installation Guide for Qwen Code with Source Tracking
+# Installation Guide for GLM Code with Source Tracking
 
-This guide describes the source-tracking installation scripts for Qwen Code.
+This guide describes the source-tracking installation scripts for GLM Code.
 The scripts prefer standalone release archives and can fall back to npm when a
 standalone archive is not available.
 
@@ -11,9 +11,9 @@ The installers are intentionally lightweight:
 - They try a standalone archive first by default.
 - They do not install Node.js, NVM, or any other Node version manager.
 - They do not edit npm config or shell profiles.
-- They do not start `qwen` automatically after installation.
-- They store source information in `~/.qwen/source.json` or
-  `%USERPROFILE%\.qwen\source.json` when `--source` is provided.
+- They do not start `glm` automatically after installation.
+- They store source information in `~/.glm/source.json` or
+  `%USERPROFILE%\.glm\source.json` when `--source` is provided.
 
 Standalone archives include a private Node.js runtime, so users do not need a
 local Node.js installation on the standalone path. Node.js 20 or newer and npm
@@ -22,26 +22,26 @@ are only required when the installer falls back to npm or when
 
 ## Installation Scripts
 
-- Linux/macOS: `install-qwen-with-source.sh`
-- Windows: `install-qwen-with-source.bat`
+- Linux/macOS: `install-glm-with-source.sh`
+- Windows: `install-glm-with-source.bat`
 
 ## Release Artifacts
 
 GitHub releases publish these standalone archives:
 
-- `qwen-code-darwin-arm64.tar.gz`
-- `qwen-code-darwin-x64.tar.gz`
-- `qwen-code-linux-arm64.tar.gz`
-- `qwen-code-linux-x64.tar.gz`
-- `qwen-code-win-x64.zip`
+- `glm-code-darwin-arm64.tar.gz`
+- `glm-code-darwin-x64.tar.gz`
+- `glm-code-linux-arm64.tar.gz`
+- `glm-code-linux-x64.tar.gz`
+- `glm-code-win-x64.zip`
 - `SHA256SUMS`
 
 Archive layout:
 
 ```text
-qwen-code/
-  bin/qwen
-  bin/qwen.cmd
+glm-code/
+  bin/glm
+  bin/glm.cmd
   lib/cli.js
   node/
   package.json
@@ -62,20 +62,20 @@ The default method is `detect`:
 You can force a method:
 
 ```bash
-bash install-qwen-with-source.sh --method standalone
-bash install-qwen-with-source.sh --method npm
+bash install-glm-with-source.sh --method standalone
+bash install-glm-with-source.sh --method npm
 ```
 
 ```bat
-install-qwen-with-source.bat --method standalone
-install-qwen-with-source.bat --method npm
+install-glm-with-source.bat --method standalone
+install-glm-with-source.bat --method npm
 ```
 
 ## Optional Native Modules
 
-The standalone archives bundle Qwen Code and a private Node.js runtime. They do
+The standalone archives bundle GLM Code and a private Node.js runtime. They do
 not currently install npm optional native modules such as `node-pty` and
-`@teddyzhu/clipboard`. Qwen Code is designed to degrade when these optional
+`@teddyzhu/clipboard`. GLM Code is designed to degrade when these optional
 modules are absent, but terminal pty behavior and clipboard image support may
 not be identical to an npm installation.
 
@@ -86,59 +86,59 @@ modules for the current machine.
 
 ```bash
 # Default: standalone archive with npm fallback
-bash install-qwen-with-source.sh
+bash install-glm-with-source.sh
 
 # Record a source value
-bash install-qwen-with-source.sh --source github
+bash install-glm-with-source.sh --source github
 
 # Use npm explicitly
-bash install-qwen-with-source.sh --method npm --registry https://registry.npmjs.org
+bash install-glm-with-source.sh --method npm --registry https://registry.npmjs.org
 
 # Use the Aliyun standalone mirror
-bash install-qwen-with-source.sh --mirror aliyun
+bash install-glm-with-source.sh --mirror aliyun
 
 # Install an offline archive
 # SHA256SUMS must be in the same directory.
-bash install-qwen-with-source.sh --archive ./qwen-code-linux-x64.tar.gz
+bash install-glm-with-source.sh --archive ./glm-code-linux-x64.tar.gz
 ```
 
 Standalone installs to:
 
-- Runtime: `~/.local/lib/qwen-code`
-- Shim: `~/.local/bin/qwen`
+- Runtime: `~/.local/lib/glm-code`
+- Shim: `~/.local/bin/glm`
 
-Override with `QWEN_INSTALL_ROOT`, `QWEN_INSTALL_LIB_PARENT`,
-`QWEN_INSTALL_LIB_DIR`, or `QWEN_INSTALL_BIN_DIR` when needed.
+Override with `GLM_INSTALL_ROOT`, `GLM_INSTALL_LIB_PARENT`,
+`GLM_INSTALL_LIB_DIR`, or `GLM_INSTALL_BIN_DIR` when needed.
 
 ## Windows Usage
 
 ```bat
 REM Default: standalone archive with npm fallback
-install-qwen-with-source.bat
+install-glm-with-source.bat
 
 REM Record a source value
-install-qwen-with-source.bat --source github
+install-glm-with-source.bat --source github
 
 REM Use npm explicitly
-install-qwen-with-source.bat --method npm --registry https://registry.npmjs.org
+install-glm-with-source.bat --method npm --registry https://registry.npmjs.org
 
 REM Use the Aliyun standalone mirror
-install-qwen-with-source.bat --mirror aliyun
+install-glm-with-source.bat --mirror aliyun
 
 REM Install an offline archive
 REM SHA256SUMS must be in the same directory.
-install-qwen-with-source.bat --archive qwen-code-win-x64.zip
+install-glm-with-source.bat --archive glm-code-win-x64.zip
 ```
 
 Standalone installs to:
 
-- Runtime: `%LOCALAPPDATA%\qwen-code\qwen-code`
-- Shim: `%LOCALAPPDATA%\qwen-code\bin\qwen.cmd`
+- Runtime: `%LOCALAPPDATA%\glm-code\glm-code`
+- Shim: `%LOCALAPPDATA%\glm-code\bin\glm.cmd`
 
-Override with `QWEN_INSTALL_ROOT`, `QWEN_INSTALL_LIB_DIR`, or
-`QWEN_INSTALL_BIN_DIR` when needed.
+Override with `GLM_INSTALL_ROOT`, `GLM_INSTALL_LIB_DIR`, or
+`GLM_INSTALL_BIN_DIR` when needed.
 
-Restart the terminal if `qwen` is not immediately available on PATH.
+Restart the terminal if `glm` is not immediately available on PATH.
 
 ## Mirrors and Overrides
 
@@ -154,15 +154,15 @@ Options:
 
 Environment variables:
 
-- `QWEN_INSTALL_METHOD`
-- `QWEN_INSTALL_MIRROR`
-- `QWEN_INSTALL_BASE_URL`
-- `QWEN_INSTALL_ARCHIVE`
-- `QWEN_INSTALL_VERSION`
-- `QWEN_NPM_REGISTRY`
+- `GLM_INSTALL_METHOD`
+- `GLM_INSTALL_MIRROR`
+- `GLM_INSTALL_BASE_URL`
+- `GLM_INSTALL_ARCHIVE`
+- `GLM_INSTALL_VERSION`
+- `GLM_NPM_REGISTRY`
 
 Use `--base-url` for private mirrors. The URL must contain
-`qwen-code-<target>` archives and `SHA256SUMS` in the same directory. Custom
+`glm-code-<target>` archives and `SHA256SUMS` in the same directory. Custom
 base URLs must use `https://`.
 
 For Aliyun OSS/CDN, release publishing must upload byte-identical artifacts to
@@ -191,8 +191,8 @@ When `--source` or `-s` is provided, the installer writes:
 
 Locations:
 
-- Linux/macOS: `~/.qwen/source.json`
-- Windows: `%USERPROFILE%\.qwen\source.json`
+- Linux/macOS: `~/.glm/source.json`
+- Windows: `%USERPROFILE%\.glm\source.json`
 
 The telemetry logger reads this file when available. Missing, invalid, or
 unreadable source files are ignored.
@@ -202,13 +202,13 @@ unreadable source files are ignored.
 If source tracking is not needed and Node.js 20 or newer is already available:
 
 ```bash
-npm install -g @qwen-code/qwen-code@latest
+npm install -g @glm-code/glm-code@latest
 ```
 
-Homebrew users can also install Qwen Code with:
+Homebrew users can also install GLM Code with:
 
 ```bash
-brew install qwen-code
+brew install glm-code
 ```
 
 ## Troubleshooting
@@ -234,10 +234,10 @@ fails with a permission error, fix the npm global install location or use a
 user-owned Node.js installation, then rerun:
 
 ```bash
-npm install -g @qwen-code/qwen-code@latest --registry https://registry.npmmirror.com
+npm install -g @glm-code/glm-code@latest --registry https://registry.npmmirror.com
 ```
 
-### qwen Is Not on PATH After Installation
+### glm Is Not on PATH After Installation
 
 Restart the terminal first. For standalone installs, add the shim directory:
 
@@ -255,5 +255,5 @@ export PATH="$(npm prefix -g)/bin:$PATH"
 On Windows standalone installs, add this directory to PATH:
 
 ```bat
-%LOCALAPPDATA%\qwen-code\bin
+%LOCALAPPDATA%\glm-code\bin
 ```

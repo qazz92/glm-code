@@ -76,7 +76,7 @@
   "v1VersionStringSettings": {
     "$version": "2",
     "theme": "light",
-    "model": "qwen-plus",
+    "model": "glm-plus",
     "disableAutoUpdate": "false",
     "disableLoadingPhrases": "TRUE",
     "ui": {

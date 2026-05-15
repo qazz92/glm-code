@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -35,7 +35,7 @@ const itOnWindows = process.platform === 'win32' ? it : it.skip;
 describe('installation scripts', () => {
   it('keeps the Linux/macOS installer lightweight', () => {
     const script = readScript(
-      'scripts/installation/install-qwen-with-source.sh',
+      'scripts/installation/install-glm-with-source.sh',
     );
 
     expect(script).not.toContain('install_nvm');
@@ -46,7 +46,7 @@ describe('installation scripts', () => {
     expect(script).not.toContain('clean_npmrc_conflict');
     expect(script).not.toContain('.npmrc');
     expect(script).not.toContain('.npm-global');
-    expect(script).not.toMatch(/^\s*exec\s+qwen\s*$/m);
+    expect(script).not.toMatch(/^\s*exec\s+glm\s*$/m);
     expect(script).not.toContain('--print-env');
     expect(script).not.toContain('brew install node@20');
     expect(script).toContain('brew install node');
@@ -55,14 +55,14 @@ describe('installation scripts', () => {
     );
     expect(script).toContain('Node.js 20 or newer is required');
     expect(script).toContain(
-      'npm install -g @qwen-code/qwen-code@latest --registry',
+      'npm install -g @glm-code/glm-code@latest --registry',
     );
-    expect(script).toContain('You can now run: qwen');
+    expect(script).toContain('You can now run: glm');
   });
 
   it('supports code-server-style standalone install on Linux/macOS', () => {
     const script = readScript(
-      'scripts/installation/install-qwen-with-source.sh',
+      'scripts/installation/install-glm-with-source.sh',
     );
 
     expect(script).toContain('--method METHOD');
@@ -80,7 +80,7 @@ describe('installation scripts', () => {
     );
     expect(script).toContain('validate_archive_contents()');
     expect(script).toContain('Archive contains unsafe path');
-    expect(script).toContain('qwen-code-${target}');
+    expect(script).toContain('glm-code-${target}');
     expect(script).toContain('*.tar.xz)');
     expect(script).toContain('METHOD="${METHOD:-detect}"');
     expect(script).toContain('must start with https://');
@@ -90,15 +90,15 @@ describe('installation scripts', () => {
     expect(script).toContain(
       'Standalone install failed. Retry with --method npm',
     );
-    expect(script).not.toContain('ln -sf "${INSTALL_LIB_DIR}/bin/qwen"');
+    expect(script).not.toContain('ln -sf "${INSTALL_LIB_DIR}/bin/glm"');
     expect(script).toContain('shell_quote()');
     expect(script).toContain('exec ${quoted_qwen_bin} "\\$@"');
     expect(script).toContain('validate_version()');
     expect(script).toContain('validate_install_path');
     expect(script).toContain('validate_https_url "${NPM_REGISTRY}"');
-    expect(script).toContain('qwen-code/node/bin/node');
+    expect(script).toContain('glm-code/node/bin/node');
     expect(script).toContain('Archive contains symlinks; refusing to install');
-    expect(script).toContain('not a Qwen Code standalone install');
+    expect(script).toContain('not a GLM Code standalone install');
     expect(script).toContain(
       'Return 2 only when a standalone archive is unavailable',
     );
@@ -116,7 +116,7 @@ describe('installation scripts', () => {
 
   it('keeps the Windows installer lightweight', () => {
     const script = readScript(
-      'scripts/installation/install-qwen-with-source.bat',
+      'scripts/installation/install-glm-with-source.bat',
     );
 
     expect(script).not.toContain('InstallNodeJSDirectly');
@@ -125,7 +125,7 @@ describe('installation scripts', () => {
     expect(script).not.toContain('Invoke-WebRequest');
     expect(script).not.toContain('PowerShell (Administrator)');
     expect(script).not.toContain('echo INFO: Installation source: %SOURCE%');
-    expect(script).not.toMatch(/^\s*call\s+qwen\s*$/m);
+    expect(script).not.toMatch(/^\s*call\s+glm\s*$/m);
     expect(script).toContain(':ValidateSource');
     expect(script).toContain(':PrintUsage');
     expect(script).toContain('findstr /R');
@@ -135,14 +135,14 @@ describe('installation scripts', () => {
     expect(script).toContain('Node.js 20 or newer is required');
     expect(script).toContain('Please install Node.js');
     expect(script).toContain(
-      'npm install -g @qwen-code/qwen-code@latest --registry',
+      'npm install -g @glm-code/glm-code@latest --registry',
     );
-    expect(script).toContain('You can now run: qwen');
+    expect(script).toContain('You can now run: glm');
   });
 
   it('supports code-server-style standalone install on Windows', () => {
     const script = readScript(
-      'scripts/installation/install-qwen-with-source.bat',
+      'scripts/installation/install-glm-with-source.bat',
     );
 
     expect(script).toContain('--method METHOD');
@@ -159,15 +159,15 @@ describe('installation scripts', () => {
     expect(script).toContain('if "!CHECKSUM_NAME!"=="!ARCHIVE_NAME!"');
     expect(script).not.toContain('findstr /C:"!ARCHIVE_NAME!"');
     expect(script).not.toContain('certutil -hashfile');
-    expect(script).toContain('qwen-code-win-x64.zip');
+    expect(script).toContain('glm-code-win-x64.zip');
     expect(script).toContain('Expand-Archive');
-    expect(script).toContain('$env:QWEN_DOWNLOAD_URL');
-    expect(script).toContain('$env:QWEN_ARCHIVE_FILE');
+    expect(script).toContain('$env:GLM_DOWNLOAD_URL');
+    expect(script).toContain('$env:GLM_ARCHIVE_FILE');
     expect(script).toContain(
-      'if defined QWEN_INSTALL_ROOT set "INSTALL_BASE=!QWEN_INSTALL_ROOT!"',
+      'if defined GLM_INSTALL_ROOT set "INSTALL_BASE=!GLM_INSTALL_ROOT!"',
     );
-    expect(script).not.toContain('%QWEN_INSTALL_ROOT%');
-    expect(script).toContain('set "QWEN_VALIDATE_INSTALL_BASE=!INSTALL_BASE!"');
+    expect(script).not.toContain('%GLM_INSTALL_ROOT%');
+    expect(script).toContain('set "GLM_VALIDATE_INSTALL_BASE=!INSTALL_BASE!"');
     expect(script).toContain(
       'installer options contain unsafe command characters',
     );
@@ -181,7 +181,7 @@ describe('installation scripts', () => {
     );
     expect(script).toContain("$ErrorActionPreference = 'Stop'; try");
     expect(script).toContain(
-      '[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $request = [Net.WebRequest]::Create($env:QWEN_CHECK_URL)',
+      '[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $request = [Net.WebRequest]::Create($env:GLM_CHECK_URL)',
     );
     expect(script).toContain('must start with https://');
     expect(script).toContain('Falling back to npm installation');
@@ -190,9 +190,9 @@ describe('installation scripts', () => {
     expect(script).toContain(
       'Standalone install failed. Retry with --method npm',
     );
-    expect(script).toContain('qwen-code\\node\\node.exe');
+    expect(script).toContain('glm-code\\node\\node.exe');
     expect(script).toContain('Archive contains symlinks or reparse points');
-    expect(script).toContain('QWEN_INSTALL_ROOT');
+    expect(script).toContain('GLM_INSTALL_ROOT');
     expect(script).toContain('npm fallback also failed');
   });
 });
@@ -211,7 +211,7 @@ describe('standalone release packaging', () => {
     expect(existsSync('scripts/build-standalone-release.js')).toBe(true);
 
     const packageScript = readScript('scripts/create-standalone-package.js');
-    expect(packageScript).toContain('Copyright 2025 Qwen Team');
+    expect(packageScript).toContain('Copyright 2025 GLM Team');
     expect(packageScript).toContain("'bundled/qc-helper/docs'");
     expect(packageScript).toContain('DIST_ALLOWED_ENTRIES');
     expect(packageScript).toContain('Unexpected dist asset');
@@ -228,7 +228,7 @@ describe('standalone release packaging', () => {
     expect(packageScript).toContain('Compress-Archive');
 
     const releaseScript = readScript('scripts/build-standalone-release.js');
-    expect(releaseScript).toContain('Copyright 2025 Qwen Team');
+    expect(releaseScript).toContain('Copyright 2025 GLM Team');
     expect(releaseScript).toContain('https://nodejs.org/dist/v${nodeVersion}');
     expect(releaseScript).toContain('SHASUMS256.txt');
     expect(releaseScript).toContain('verifyNodeArchive');
@@ -238,7 +238,7 @@ describe('standalone release packaging', () => {
     expect(releaseScript).toContain('nodeArchiveExtension');
     expect(releaseScript).toContain('fs.createReadStream');
     expect(releaseScript).toContain('expectedArchiveNames');
-    expect(releaseScript).toContain('qwen-code-${qwenTarget}');
+    expect(releaseScript).toContain('glm-code-${qwenTarget}');
     expect(releaseScript).toContain('scripts/create-standalone-package.js');
     expect(releaseScript).toContain('--skip-checksums');
     expect(releaseScript).toContain('writeSha256Sums(outDir)');
@@ -276,12 +276,12 @@ describe('standalone release packaging', () => {
     const { assertStandaloneOutput, RELEASE_TARGETS } = await import(
       standaloneReleaseScriptUrl
     );
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-release-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-release-test-'));
 
     try {
       const lines = RELEASE_TARGETS.map(({ qwenTarget }) => {
         const extension = qwenTarget === 'win-x64' ? 'zip' : 'tar.gz';
-        return `${'a'.repeat(64)}  qwen-code-${qwenTarget}.${extension}`;
+        return `${'a'.repeat(64)}  glm-code-${qwenTarget}.${extension}`;
       });
       writeFileSync(path.join(tmpDir, 'SHA256SUMS'), `${lines.join('\n')}\n`);
 
@@ -289,7 +289,7 @@ describe('standalone release packaging', () => {
 
       writeFileSync(
         path.join(tmpDir, 'SHA256SUMS'),
-        `${lines.join('\n')}\n${'b'.repeat(64)}  qwen-code-extra.tar.gz\n`,
+        `${lines.join('\n')}\n${'b'.repeat(64)}  glm-code-extra.tar.gz\n`,
       );
       expect(() => assertStandaloneOutput(tmpDir)).toThrow(/Extra/);
     } finally {
@@ -299,7 +299,7 @@ describe('standalone release packaging', () => {
 
   it('rejects a runtime archive without a Node executable', () => {
     const createdDist = ensureMinimalDist();
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-package-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-package-test-'));
 
     try {
       const target = process.platform === 'win32' ? 'win-x64' : 'linux-x64';
@@ -335,7 +335,7 @@ describe('standalone release packaging', () => {
 
   it('packages a win-x64 standalone archive', () => {
     const createdDist = ensureMinimalDist();
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-package-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-package-test-'));
 
     try {
       const outDir = path.join(tmpDir, 'out');
@@ -355,20 +355,20 @@ describe('standalone release packaging', () => {
         { stdio: 'pipe' },
       );
 
-      const archive = path.join(outDir, 'qwen-code-win-x64.zip');
+      const archive = path.join(outDir, 'glm-code-win-x64.zip');
       const extractDir = path.join(tmpDir, 'extract');
       mkdirSync(extractDir, { recursive: true });
       extractZipForTest(archive, extractDir);
 
-      expect(existsSync(path.join(extractDir, 'qwen-code'))).toBe(true);
+      expect(existsSync(path.join(extractDir, 'glm-code'))).toBe(true);
       expect(
-        existsSync(path.join(extractDir, 'qwen-code', 'bin', 'qwen.cmd')),
+        existsSync(path.join(extractDir, 'glm-code', 'bin', 'glm.cmd')),
       ).toBe(true);
       expect(
-        existsSync(path.join(extractDir, 'qwen-code', 'node', 'node.exe')),
+        existsSync(path.join(extractDir, 'glm-code', 'node', 'node.exe')),
       ).toBe(true);
       expect(readScript(path.join(outDir, 'SHA256SUMS'))).toContain(
-        'qwen-code-win-x64.zip',
+        'glm-code-win-x64.zip',
       );
     } finally {
       rmSync(tmpDir, { recursive: true, force: true });
@@ -380,7 +380,7 @@ describe('standalone release packaging', () => {
 
   itOnUnix('dereferences safe Node.js runtime symlinks', () => {
     const createdDist = ensureMinimalDist();
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-package-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-package-test-'));
 
     try {
       const archive = packageFakeStandalone(tmpDir, {
@@ -392,7 +392,7 @@ describe('standalone release packaging', () => {
       const npmShim = path.join(
         installRoot,
         'lib',
-        'qwen-code',
+        'glm-code',
         'node',
         'bin',
         'npm',
@@ -409,7 +409,7 @@ describe('standalone release packaging', () => {
 
   itOnUnix('rejects Node.js runtime symlinks that escape the archive', () => {
     const createdDist = ensureMinimalDist();
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-package-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-package-test-'));
 
     try {
       expect(() =>
@@ -441,7 +441,7 @@ describe('standalone release packaging', () => {
 
   itOnUnix('rejects Node.js runtime symlink cycles', () => {
     const createdDist = ensureMinimalDist();
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-package-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-package-test-'));
 
     try {
       expect(() =>
@@ -473,7 +473,7 @@ describe('standalone release packaging', () => {
 
   it('rejects unexpected dist assets', () => {
     const createdDist = ensureMinimalDist();
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-package-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-package-test-'));
 
     try {
       writeFileSync('dist/debug-cache.tmp', 'debug\n');
@@ -511,15 +511,15 @@ describe('standalone release packaging', () => {
     expect(workflow).toContain('npm run package:standalone:release --');
     expect(workflow).not.toContain('verify_node_checksum()');
     expect(workflow).not.toContain('download_node()');
-    expect(workflow).toContain('dist/standalone/qwen-code-*');
+    expect(workflow).toContain('dist/standalone/glm-code-*');
     expect(workflow).toContain('dist/standalone/SHA256SUMS');
   });
 
   it('does not whitelist internal planning documents in gitignore', () => {
     const gitignore = readScript('.gitignore');
 
-    expect(gitignore).not.toContain('!.qwen/design/');
-    expect(gitignore).not.toContain('!.qwen/e2e-tests/');
+    expect(gitignore).not.toContain('!.glm/design/');
+    expect(gitignore).not.toContain('!.glm/e2e-tests/');
   });
 
   it('documents optional native module parity for standalone installs', () => {
@@ -536,7 +536,7 @@ describe('Linux/macOS installer end-to-end', () => {
     'installs a local standalone archive with checksum verification',
     () => {
       const createdDist = ensureMinimalDist();
-      const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+      const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
       try {
         const archive = packageFakeStandalone(tmpDir);
@@ -544,17 +544,17 @@ describe('Linux/macOS installer end-to-end', () => {
         const home = path.join(tmpDir, 'home');
         runUnixInstaller(archive, installRoot, home);
 
-        expect(existsSync(path.join(installRoot, 'bin', 'qwen'))).toBe(true);
+        expect(existsSync(path.join(installRoot, 'bin', 'glm'))).toBe(true);
         expect(
           existsSync(
-            path.join(installRoot, 'lib', 'qwen-code', 'node', 'bin', 'node'),
+            path.join(installRoot, 'lib', 'glm-code', 'node', 'bin', 'node'),
           ),
         ).toBe(true);
-        expect(readScript(path.join(home, '.qwen', 'source.json'))).toContain(
+        expect(readScript(path.join(home, '.glm', 'source.json'))).toContain(
           '"source": "smoke"',
         );
 
-        const version = execFileSync(path.join(installRoot, 'bin', 'qwen'), [
+        const version = execFileSync(path.join(installRoot, 'bin', 'glm'), [
           '--version',
         ])
           .toString()
@@ -571,7 +571,7 @@ describe('Linux/macOS installer end-to-end', () => {
 
   itOnUnix('shell-quotes custom install paths in the generated wrapper', () => {
     const createdDist = ensureMinimalDist();
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
     try {
       const archive = packageFakeStandalone(tmpDir);
@@ -580,15 +580,15 @@ describe('Linux/macOS installer end-to-end', () => {
       const installLibDir = path.join(
         installRoot,
         'lib',
-        'qwen-code$(touch qwen-pwned)',
+        'glm-code$(touch glm-pwned)',
       );
 
       runUnixInstaller(archive, installRoot, home, 'standalone', {
-        QWEN_INSTALL_LIB_DIR: installLibDir,
+        GLM_INSTALL_LIB_DIR: installLibDir,
       });
 
       const version = execFileSync(
-        path.join(installRoot, 'bin', 'qwen'),
+        path.join(installRoot, 'bin', 'glm'),
         ['--version'],
         {
           cwd: tmpDir,
@@ -597,7 +597,7 @@ describe('Linux/macOS installer end-to-end', () => {
         .toString()
         .trim();
       expect(version).toBe('0.0.0-smoke');
-      expect(existsSync(path.join(tmpDir, 'qwen-pwned'))).toBe(false);
+      expect(existsSync(path.join(tmpDir, 'glm-pwned'))).toBe(false);
     } finally {
       rmSync(tmpDir, { recursive: true, force: true });
       if (createdDist) {
@@ -608,7 +608,7 @@ describe('Linux/macOS installer end-to-end', () => {
 
   itOnUnix('rejects a tampered local archive', () => {
     const createdDist = ensureMinimalDist();
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
     try {
       const archive = packageFakeStandalone(tmpDir);
@@ -631,7 +631,7 @@ describe('Linux/macOS installer end-to-end', () => {
 
   itOnUnix('rejects a local archive when SHA256SUMS is missing', () => {
     const createdDist = ensureMinimalDist();
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
     try {
       const archive = packageFakeStandalone(tmpDir);
@@ -653,7 +653,7 @@ describe('Linux/macOS installer end-to-end', () => {
   });
 
   itOnUnix('rejects standalone archives containing symlinks', () => {
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
     try {
       const archive = createSymlinkStandaloneArchive(tmpDir);
@@ -673,7 +673,7 @@ describe('Linux/macOS installer end-to-end', () => {
   itOnUnix(
     'rejects standalone archives containing path traversal entries',
     () => {
-      const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+      const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
       try {
         const archive = createTraversalStandaloneArchive(tmpDir);
@@ -693,18 +693,18 @@ describe('Linux/macOS installer end-to-end', () => {
 
   itOnUnix('refuses to overwrite a non-managed install directory', () => {
     const createdDist = ensureMinimalDist();
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
     try {
       const archive = packageFakeStandalone(tmpDir);
       const installRoot = path.join(tmpDir, 'install');
-      const installDir = path.join(installRoot, 'lib', 'qwen-code');
+      const installDir = path.join(installRoot, 'lib', 'glm-code');
       mkdirSync(installDir, { recursive: true });
       writeFileSync(path.join(installDir, 'important.txt'), 'keep me\n');
 
       expect(() =>
         runUnixInstaller(archive, installRoot, path.join(tmpDir, 'home')),
-      ).toThrow(/not a Qwen Code standalone install/);
+      ).toThrow(/not a GLM Code standalone install/);
       expect(readScript(path.join(installDir, 'important.txt'))).toBe(
         'keep me\n',
       );
@@ -718,7 +718,7 @@ describe('Linux/macOS installer end-to-end', () => {
 
   itOnUnix('does not fall back to npm when detect finds a bad archive', () => {
     const createdDist = ensureMinimalDist();
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
     try {
       const archive = packageFakeStandalone(tmpDir);
@@ -750,7 +750,7 @@ describe('Linux/macOS installer end-to-end', () => {
   itOnUnix(
     'falls back to npm in detect mode when archive is unavailable',
     () => {
-      const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+      const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
       try {
         const fakeBin = path.join(tmpDir, 'bin');
@@ -784,29 +784,29 @@ describe('Linux/macOS installer end-to-end', () => {
             '#!/usr/bin/env sh',
             'case "$1" in',
             '  -v) echo 10.0.0 ;;',
-            '  prefix) echo "$QWEN_FAKE_NPM_PREFIX" ;;',
-            '  install) printf "%s\\n" "$*" > "$QWEN_FAKE_NPM_LOG" ;;',
+            '  prefix) echo "$GLM_FAKE_NPM_PREFIX" ;;',
+            '  install) printf "%s\\n" "$*" > "$GLM_FAKE_NPM_LOG" ;;',
             'esac',
             'exit 0',
             '',
           ].join('\n'),
         );
         writeFileSync(
-          path.join(fakeBin, 'qwen'),
+          path.join(fakeBin, 'glm'),
           '#!/usr/bin/env sh\necho 0.0.0-npm\n',
         );
-        for (const command of ['curl', 'node', 'npm', 'qwen']) {
+        for (const command of ['curl', 'node', 'npm', 'glm']) {
           chmodSync(path.join(fakeBin, command), 0o755);
         }
 
         const output = execFileSync(
           'bash',
           [
-            'scripts/installation/install-qwen-with-source.sh',
+            'scripts/installation/install-glm-with-source.sh',
             '--method',
             'detect',
             '--base-url',
-            'https://example.invalid/qwen-code',
+            'https://example.invalid/glm-code',
             '--source',
             'smoke',
           ],
@@ -815,8 +815,8 @@ describe('Linux/macOS installer end-to-end', () => {
               ...process.env,
               HOME: home,
               PATH: `${fakeBin}:${process.env.PATH}`,
-              QWEN_FAKE_NPM_LOG: npmLog,
-              QWEN_FAKE_NPM_PREFIX: path.join(tmpDir, 'npm-prefix'),
+              GLM_FAKE_NPM_LOG: npmLog,
+              GLM_FAKE_NPM_PREFIX: path.join(tmpDir, 'npm-prefix'),
             },
             stdio: 'pipe',
           },
@@ -824,7 +824,7 @@ describe('Linux/macOS installer end-to-end', () => {
 
         expect(output).toContain('Falling back to npm installation');
         expect(readScript(npmLog)).toContain(
-          'install -g @qwen-code/qwen-code@latest --registry',
+          'install -g @glm-code/glm-code@latest --registry',
         );
       } finally {
         rmSync(tmpDir, { recursive: true, force: true });
@@ -833,7 +833,7 @@ describe('Linux/macOS installer end-to-end', () => {
   );
 
   itOnUnix('preserves context when npm fallback also fails', () => {
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
     try {
       const fakeBin = path.join(tmpDir, 'bin');
@@ -846,11 +846,11 @@ describe('Linux/macOS installer end-to-end', () => {
         execFileSync(
           'bash',
           [
-            'scripts/installation/install-qwen-with-source.sh',
+            'scripts/installation/install-glm-with-source.sh',
             '--method',
             'detect',
             '--base-url',
-            'https://example.invalid/qwen-code',
+            'https://example.invalid/glm-code',
             '--source',
             'smoke',
           ],
@@ -885,7 +885,7 @@ describe('Windows installer end-to-end', () => {
   itOnWindows(
     'installs a local standalone archive with checksum verification',
     () => {
-      const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+      const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
       try {
         const archive = createFakeWindowsStandaloneArchive(tmpDir);
@@ -893,18 +893,18 @@ describe('Windows installer end-to-end', () => {
         const home = path.join(tmpDir, 'home');
         runWindowsInstaller(archive, installRoot, home);
 
-        expect(existsSync(path.join(installRoot, 'bin', 'qwen.cmd'))).toBe(
+        expect(existsSync(path.join(installRoot, 'bin', 'glm.cmd'))).toBe(
           true,
         );
         expect(
-          existsSync(path.join(installRoot, 'qwen-code', 'node', 'node.exe')),
+          existsSync(path.join(installRoot, 'glm-code', 'node', 'node.exe')),
         ).toBe(true);
-        expect(readScript(path.join(home, '.qwen', 'source.json'))).toContain(
+        expect(readScript(path.join(home, '.glm', 'source.json'))).toContain(
           '"source": "smoke"',
         );
 
         const version = runWindowsCommand(
-          `call "${path.join(installRoot, 'bin', 'qwen.cmd')}" --version`,
+          `call "${path.join(installRoot, 'bin', 'glm.cmd')}" --version`,
           { USERPROFILE: home },
         )
           .toString()
@@ -917,7 +917,7 @@ describe('Windows installer end-to-end', () => {
   );
 
   itOnWindows('rejects a tampered local archive', () => {
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
     try {
       const archive = createFakeWindowsStandaloneArchive(tmpDir);
@@ -936,7 +936,7 @@ describe('Windows installer end-to-end', () => {
   });
 
   itOnWindows('rejects unsafe environment-derived install paths', () => {
-    const tmpDir = mkdtempSync(path.join(tmpdir(), 'qwen-install-test-'));
+    const tmpDir = mkdtempSync(path.join(tmpdir(), 'glm-install-test-'));
 
     try {
       const archive = createFakeWindowsStandaloneArchive(tmpDir);
@@ -949,7 +949,7 @@ describe('Windows installer end-to-end', () => {
           path.join(tmpDir, 'home'),
           'standalone',
           {
-            QWEN_INSTALL_ROOT: `${path.join(tmpDir, 'install')}" & echo pwned > "${marker}" & "`,
+            GLM_INSTALL_ROOT: `${path.join(tmpDir, 'install')}" & echo pwned > "${marker}" & "`,
           },
         ),
       ).toThrow(/unsafe command characters/);
@@ -967,10 +967,10 @@ function ensureMinimalDist() {
 
   mkdirSync('dist/vendor', { recursive: true });
   mkdirSync('dist/bundled/qc-helper/docs', { recursive: true });
-  writeFileSync('dist/cli.js', 'console.log("qwen");\n');
+  writeFileSync('dist/cli.js', 'console.log("glm");\n');
   writeFileSync(
     'dist/package.json',
-    JSON.stringify({ name: '@qwen-code/qwen-code', version: '0.0.0' }),
+    JSON.stringify({ name: '@glm-code/glm-code', version: '0.0.0' }),
   );
   return true;
 }
@@ -1046,23 +1046,23 @@ function createFakeWindowsNodeArchive(tmpDir) {
 }
 
 function createFakeWindowsStandaloneArchive(tmpDir) {
-  const packageRoot = path.join(tmpDir, 'qwen-code');
+  const packageRoot = path.join(tmpDir, 'glm-code');
   const outDir = path.join(tmpDir, 'out');
   mkdirSync(path.join(packageRoot, 'bin'), { recursive: true });
   mkdirSync(path.join(packageRoot, 'node'), { recursive: true });
   mkdirSync(outDir, { recursive: true });
 
   writeFileSync(
-    path.join(packageRoot, 'bin', 'qwen.cmd'),
+    path.join(packageRoot, 'bin', 'glm.cmd'),
     ['@echo off', 'echo 0.0.0-smoke', ''].join('\r\n'),
   );
   writeFileSync(path.join(packageRoot, 'node', 'node.exe'), 'fake node.exe\n');
   writeFileSync(
     path.join(packageRoot, 'manifest.json'),
-    JSON.stringify({ name: '@qwen-code/qwen-code' }),
+    JSON.stringify({ name: '@glm-code/glm-code' }),
   );
 
-  const archive = path.join(outDir, 'qwen-code-win-x64.zip');
+  const archive = path.join(outDir, 'glm-code-win-x64.zip');
   createZipForTest(archive, tmpDir, path.basename(packageRoot));
   writeChecksumFile(outDir, path.basename(archive));
   return archive;
@@ -1077,13 +1077,13 @@ function createZipForTest(archive, cwd, entry) {
         '-ExecutionPolicy',
         'Bypass',
         '-Command',
-        'Compress-Archive -LiteralPath $env:QWEN_TEST_ZIP_ENTRY -DestinationPath $env:QWEN_TEST_ZIP_ARCHIVE -Force',
+        'Compress-Archive -LiteralPath $env:GLM_TEST_ZIP_ENTRY -DestinationPath $env:GLM_TEST_ZIP_ARCHIVE -Force',
       ],
       {
         env: {
           ...process.env,
-          QWEN_TEST_ZIP_ENTRY: path.join(cwd, entry),
-          QWEN_TEST_ZIP_ARCHIVE: archive,
+          GLM_TEST_ZIP_ENTRY: path.join(cwd, entry),
+          GLM_TEST_ZIP_ARCHIVE: archive,
         },
         stdio: 'ignore',
       },
@@ -1106,13 +1106,13 @@ function extractZipForTest(archive, destination) {
         '-ExecutionPolicy',
         'Bypass',
         '-Command',
-        'Expand-Archive -LiteralPath $env:QWEN_TEST_ZIP_ARCHIVE -DestinationPath $env:QWEN_TEST_ZIP_DESTINATION -Force',
+        'Expand-Archive -LiteralPath $env:GLM_TEST_ZIP_ARCHIVE -DestinationPath $env:GLM_TEST_ZIP_DESTINATION -Force',
       ],
       {
         env: {
           ...process.env,
-          QWEN_TEST_ZIP_ARCHIVE: archive,
-          QWEN_TEST_ZIP_DESTINATION: destination,
+          GLM_TEST_ZIP_ARCHIVE: archive,
+          GLM_TEST_ZIP_DESTINATION: destination,
         },
         stdio: 'ignore',
       },
@@ -1143,7 +1143,7 @@ function packageFakeStandalone(tmpDir, nodeArchiveOptions = {}) {
     ],
     { stdio: 'pipe' },
   );
-  return path.join(outDir, 'qwen-code-linux-x64.tar.gz');
+  return path.join(outDir, 'glm-code-linux-x64.tar.gz');
 }
 
 function runUnixInstaller(
@@ -1158,7 +1158,7 @@ function runUnixInstaller(
     return execFileSync(
       'bash',
       [
-        'scripts/installation/install-qwen-with-source.sh',
+        'scripts/installation/install-glm-with-source.sh',
         '--method',
         method,
         '--archive',
@@ -1170,7 +1170,7 @@ function runUnixInstaller(
         env: {
           ...process.env,
           HOME: home,
-          QWEN_INSTALL_ROOT: installRoot,
+          GLM_INSTALL_ROOT: installRoot,
           ...extraEnv,
         },
         stdio: 'pipe',
@@ -1199,7 +1199,7 @@ function runWindowsInstaller(
   try {
     return runWindowsCommand(
       [
-        `call "${path.resolve('scripts/installation/install-qwen-with-source.bat')}"`,
+        `call "${path.resolve('scripts/installation/install-glm-with-source.bat')}"`,
         '--method',
         method,
         '--archive',
@@ -1209,7 +1209,7 @@ function runWindowsInstaller(
       ].join(' '),
       {
         USERPROFILE: home,
-        QWEN_INSTALL_ROOT: installRoot,
+        GLM_INSTALL_ROOT: installRoot,
         ...extraEnv,
       },
     );
@@ -1238,10 +1238,10 @@ function runWindowsCommand(command, env = {}) {
 }
 
 function createSymlinkStandaloneArchive(tmpDir) {
-  const packageRoot = path.join(tmpDir, 'malicious', 'qwen-code');
+  const packageRoot = path.join(tmpDir, 'malicious', 'glm-code');
   mkdirSync(path.join(packageRoot, 'bin'), { recursive: true });
   mkdirSync(path.join(packageRoot, 'node', 'bin'), { recursive: true });
-  symlinkSync('/usr/bin/env', path.join(packageRoot, 'bin', 'qwen'));
+  symlinkSync('/usr/bin/env', path.join(packageRoot, 'bin', 'glm'));
   writeFileSync(
     path.join(packageRoot, 'node', 'bin', 'node'),
     '#!/usr/bin/env sh\necho 0.0.0-smoke\n',
@@ -1249,15 +1249,15 @@ function createSymlinkStandaloneArchive(tmpDir) {
   chmodSync(path.join(packageRoot, 'node', 'bin', 'node'), 0o755);
   writeFileSync(
     path.join(packageRoot, 'manifest.json'),
-    JSON.stringify({ name: '@qwen-code/qwen-code' }),
+    JSON.stringify({ name: '@glm-code/glm-code' }),
   );
 
   const outDir = path.join(tmpDir, 'out');
   mkdirSync(outDir, { recursive: true });
-  const archive = path.join(outDir, 'qwen-code-linux-x64.tar.gz');
+  const archive = path.join(outDir, 'glm-code-linux-x64.tar.gz');
   execFileSync(
     'tar',
-    ['-czf', archive, '-C', path.dirname(packageRoot), 'qwen-code'],
+    ['-czf', archive, '-C', path.dirname(packageRoot), 'glm-code'],
     {
       env: { ...process.env, LC_ALL: 'C' },
       stdio: 'ignore',
@@ -1269,14 +1269,14 @@ function createSymlinkStandaloneArchive(tmpDir) {
 
 function createTraversalStandaloneArchive(tmpDir) {
   const maliciousRoot = path.join(tmpDir, 'malicious');
-  const packageRoot = path.join(maliciousRoot, 'qwen-code');
+  const packageRoot = path.join(maliciousRoot, 'glm-code');
   mkdirSync(path.join(packageRoot, 'bin'), { recursive: true });
   mkdirSync(path.join(packageRoot, 'node', 'bin'), { recursive: true });
   writeFileSync(
-    path.join(packageRoot, 'bin', 'qwen'),
+    path.join(packageRoot, 'bin', 'glm'),
     '#!/usr/bin/env sh\necho 0.0.0-smoke\n',
   );
-  chmodSync(path.join(packageRoot, 'bin', 'qwen'), 0o755);
+  chmodSync(path.join(packageRoot, 'bin', 'glm'), 0o755);
   writeFileSync(
     path.join(packageRoot, 'node', 'bin', 'node'),
     '#!/usr/bin/env sh\necho 0.0.0-smoke\n',
@@ -1284,14 +1284,14 @@ function createTraversalStandaloneArchive(tmpDir) {
   chmodSync(path.join(packageRoot, 'node', 'bin', 'node'), 0o755);
   writeFileSync(
     path.join(packageRoot, 'manifest.json'),
-    JSON.stringify({ name: '@qwen-code/qwen-code' }),
+    JSON.stringify({ name: '@glm-code/glm-code' }),
   );
-  writeFileSync(path.join(tmpDir, 'qwen-slip'), 'path traversal\n');
+  writeFileSync(path.join(tmpDir, 'glm-slip'), 'path traversal\n');
 
   const outDir = path.join(tmpDir, 'out');
   mkdirSync(outDir, { recursive: true });
-  const archive = path.join(outDir, 'qwen-code-linux-x64.zip');
-  execFileSync('zip', ['-qr', archive, 'qwen-code', '../qwen-slip'], {
+  const archive = path.join(outDir, 'glm-code-linux-x64.zip');
+  execFileSync('zip', ['-qr', archive, 'glm-code', '../glm-slip'], {
     cwd: maliciousRoot,
     stdio: 'ignore',
   });

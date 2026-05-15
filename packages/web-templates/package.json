@@ -4,7 +4,7 @@
   "description": "Web templates bundled as embeddable JS/CSS strings",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GLMLM/qwen-code.git"
+    "url": "git+https://github.com/GLMLM/glm-code.git"
   },
   "type": "module",
   "main": "dist/index.js",

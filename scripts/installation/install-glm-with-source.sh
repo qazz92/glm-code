@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-# Qwen Code Installation Script
-# Installs Qwen Code from a standalone archive when available, with npm fallback.
+# GLM Code Installation Script
+# Installs GLM Code from a standalone archive when available, with npm fallback.
 # This script intentionally does not install Node.js or change npm config.
 #
 # Usage:
-#   install-qwen-with-source.sh --source [github|npm|internal|local-build]
-#   install-qwen-with-source.sh --method [detect|standalone|npm]
+#   install-glm-with-source.sh --source [github|npm|internal|local-build]
+#   install-glm-with-source.sh --method [detect|standalone|npm]
 
-if [ -z "${BASH_VERSION}" ] && [ -z "${__QWEN_INSTALL_REEXEC:-}" ]; then
+if [ -z "${BASH_VERSION}" ] && [ -z "${__GLM_INSTALL_REEXEC:-}" ]; then
     if command -v bash >/dev/null 2>&1; then
         if [ -f "${0}" ]; then
-            export __QWEN_INSTALL_REEXEC=1
+            export __GLM_INSTALL_REEXEC=1
             exec bash -- "${0}" "$@"
         fi
 
@@ -77,47 +77,47 @@ trap 'cleanup_temp_dirs; exit 143' TERM
 
 print_usage() {
     cat <<EOF
-Qwen Code Installer
+GLM Code Installer
 
 Usage: $0 [OPTIONS]
 
 Options:
   -s, --source SOURCE      Record the installation source.
   --method METHOD          Install method: detect, standalone, or npm.
-                           Defaults to QWEN_INSTALL_METHOD or detect.
+                           Defaults to GLM_INSTALL_METHOD or detect.
   --mirror MIRROR          Standalone archive mirror: github or aliyun.
-                           Defaults to QWEN_INSTALL_MIRROR or github.
+                           Defaults to GLM_INSTALL_MIRROR or github.
   --base-url URL           Override standalone archive base URL.
   --archive PATH           Install from a local standalone archive.
   --version VERSION        Standalone release version. Defaults to latest.
   --registry REGISTRY      npm registry to use for npm fallback.
-                           Defaults to QWEN_NPM_REGISTRY or https://registry.npmmirror.com
+                           Defaults to GLM_NPM_REGISTRY or https://registry.npmmirror.com
   -h, --help               Show this help message.
 
 Examples:
-  curl -fsSL https://qwen-code-assets.oss-cn-hangzhou.aliyuncs.com/installation/install-qwen.sh | bash
-  curl -fsSL https://qwen-code-assets.oss-cn-hangzhou.aliyuncs.com/installation/install-qwen.sh | bash -s -- --source github
-  curl -fsSL https://qwen-code-assets.oss-cn-hangzhou.aliyuncs.com/installation/install-qwen.sh | bash -s -- --method standalone
-  ./install-qwen-with-source.sh --archive ./qwen-code-linux-x64.tar.gz
+  curl -fsSL https://glm-code-assets.oss-cn-hangzhou.aliyuncs.com/installation/install-glm.sh | bash
+  curl -fsSL https://glm-code-assets.oss-cn-hangzhou.aliyuncs.com/installation/install-glm.sh | bash -s -- --source github
+  curl -fsSL https://glm-code-assets.oss-cn-hangzhou.aliyuncs.com/installation/install-glm.sh | bash -s -- --method standalone
+  ./install-glm-with-source.sh --archive ./glm-code-linux-x64.tar.gz
 EOF
 }
 
 SOURCE="unknown"
-METHOD="${QWEN_INSTALL_METHOD:-}"
-MIRROR="${QWEN_INSTALL_MIRROR:-github}"
-BASE_URL="${QWEN_INSTALL_BASE_URL:-}"
-ARCHIVE_PATH="${QWEN_INSTALL_ARCHIVE:-}"
-VERSION="${QWEN_INSTALL_VERSION:-latest}"
-NPM_REGISTRY="${QWEN_NPM_REGISTRY:-https://registry.npmmirror.com}"
-INSTALL_ROOT="${QWEN_INSTALL_ROOT:-${HOME:-}/.local}"
-if [[ -n "${QWEN_INSTALL_LIB_DIR:-}" ]]; then
-    INSTALL_LIB_DIR="${QWEN_INSTALL_LIB_DIR}"
+METHOD="${GLM_INSTALL_METHOD:-}"
+MIRROR="${GLM_INSTALL_MIRROR:-github}"
+BASE_URL="${GLM_INSTALL_BASE_URL:-}"
+ARCHIVE_PATH="${GLM_INSTALL_ARCHIVE:-}"
+VERSION="${GLM_INSTALL_VERSION:-latest}"
+NPM_REGISTRY="${GLM_NPM_REGISTRY:-https://registry.npmmirror.com}"
+INSTALL_ROOT="${GLM_INSTALL_ROOT:-${HOME:-}/.local}"
+if [[ -n "${GLM_INSTALL_LIB_DIR:-}" ]]; then
+    INSTALL_LIB_DIR="${GLM_INSTALL_LIB_DIR}"
     INSTALL_LIB_PARENT="$(dirname "${INSTALL_LIB_DIR}")"
 else
-    INSTALL_LIB_PARENT="${QWEN_INSTALL_LIB_PARENT:-${INSTALL_ROOT}/lib}"
-    INSTALL_LIB_DIR="${INSTALL_LIB_PARENT}/qwen-code"
+    INSTALL_LIB_PARENT="${GLM_INSTALL_LIB_PARENT:-${INSTALL_ROOT}/lib}"
+    INSTALL_LIB_DIR="${INSTALL_LIB_PARENT}/glm-code"
 fi
-INSTALL_BIN_DIR="${QWEN_INSTALL_BIN_DIR:-${INSTALL_ROOT}/bin}"
+INSTALL_BIN_DIR="${GLM_INSTALL_BIN_DIR:-${INSTALL_ROOT}/bin}"
 
 validate_source() {
     if [[ "${SOURCE}" == "unknown" ]]; then
@@ -207,10 +207,10 @@ validate_options() {
     validate_https_url "${BASE_URL}" "--base-url"
     validate_https_url "${NPM_REGISTRY}" "--registry"
     validate_version
-    validate_install_path "${INSTALL_ROOT}" "QWEN_INSTALL_ROOT"
-    validate_install_path "${INSTALL_LIB_PARENT}" "QWEN_INSTALL_LIB_PARENT"
-    validate_install_path "${INSTALL_LIB_DIR}" "QWEN_INSTALL_LIB_DIR"
-    validate_install_path "${INSTALL_BIN_DIR}" "QWEN_INSTALL_BIN_DIR"
+    validate_install_path "${INSTALL_ROOT}" "GLM_INSTALL_ROOT"
+    validate_install_path "${INSTALL_LIB_PARENT}" "GLM_INSTALL_LIB_PARENT"
+    validate_install_path "${INSTALL_LIB_DIR}" "GLM_INSTALL_LIB_DIR"
+    validate_install_path "${INSTALL_BIN_DIR}" "GLM_INSTALL_BIN_DIR"
     validate_source
 }
 
@@ -291,7 +291,7 @@ validate_options
 
 print_header() {
     echo "=========================================="
-    echo "   Qwen Code Installation Script"
+    echo "   GLM Code Installation Script"
     echo "=========================================="
     echo ""
     log_info "System: $(uname -s 2>/dev/null || echo unknown) $(uname -r 2>/dev/null || true)"
@@ -318,7 +318,7 @@ print_header() {
 
 print_node_help() {
     echo ""
-    echo "Node.js 20 or newer is required before installing Qwen Code with npm."
+    echo "Node.js 20 or newer is required before installing GLM Code with npm."
     echo ""
     echo "Install Node.js, then rerun this installer:"
     case "$(uname -s 2>/dev/null || echo unknown)" in
@@ -403,7 +403,7 @@ create_source_json() {
         return 0
     fi
 
-    local qwen_dir="${HOME}/.qwen"
+    local qwen_dir="${HOME}/.glm"
     mkdir -p "${qwen_dir}"
 
     local escaped_source
@@ -415,7 +415,7 @@ create_source_json() {
 }
 EOF
 
-    log_success "Installation source saved to ~/.qwen/source.json"
+    log_success "Installation source saved to ~/.glm/source.json"
 }
 
 detect_target() {
@@ -488,16 +488,16 @@ standalone_base_url() {
     version_path=$(release_version_path)
 
     if [[ "${MIRROR}" == "aliyun" ]]; then
-        echo "https://qwen-code-assets.oss-cn-hangzhou.aliyuncs.com/releases/qwen-code/${version_path}"
+        echo "https://glm-code-assets.oss-cn-hangzhou.aliyuncs.com/releases/glm-code/${version_path}"
         return 0
     fi
 
     if [[ "${version_path}" == "latest" ]]; then
-        echo "https://github.com/QwenLM/qwen-code/releases/latest/download"
+        echo "https://github.com/GLMLM/glm-code/releases/latest/download"
         return 0
     fi
 
-    echo "https://github.com/QwenLM/qwen-code/releases/download/${version_path}"
+    echo "https://github.com/GLMLM/glm-code/releases/download/${version_path}"
 }
 
 download_file() {
@@ -703,7 +703,7 @@ ensure_managed_install_dir() {
         return 0
     fi
 
-    log_error "${install_dir} exists but is not a Qwen Code standalone install."
+    log_error "${install_dir} exists but is not a GLM Code standalone install."
     log_error "Refusing to overwrite it. Move or remove it manually, then rerun the installer."
     return 1
 }
@@ -747,7 +747,7 @@ install_standalone() {
 
         local archive_extension
         archive_extension=$(archive_extension_for_target "${target}")
-        archive_name="qwen-code-${target}.${archive_extension}"
+        archive_name="glm-code-${target}.${archive_extension}"
 
         local base_url
         base_url=$(standalone_base_url)
@@ -789,14 +789,14 @@ install_standalone() {
         return 1
     fi
 
-    if [[ ! -f "${extract_dir}/qwen-code/bin/qwen" || -L "${extract_dir}/qwen-code/bin/qwen" || ! -x "${extract_dir}/qwen-code/bin/qwen" ]]; then
-        log_error "Archive does not contain qwen-code/bin/qwen."
+    if [[ ! -f "${extract_dir}/glm-code/bin/glm" || -L "${extract_dir}/glm-code/bin/glm" || ! -x "${extract_dir}/glm-code/bin/glm" ]]; then
+        log_error "Archive does not contain glm-code/bin/glm."
         rm -rf "${temp_dir}"
         return 1
     fi
 
-    if [[ ! -f "${extract_dir}/qwen-code/node/bin/node" || -L "${extract_dir}/qwen-code/node/bin/node" || ! -x "${extract_dir}/qwen-code/node/bin/node" ]]; then
-        log_error "Archive does not contain executable qwen-code/node/bin/node."
+    if [[ ! -f "${extract_dir}/glm-code/node/bin/node" || -L "${extract_dir}/glm-code/node/bin/node" || ! -x "${extract_dir}/glm-code/node/bin/node" ]]; then
+        log_error "Archive does not contain executable glm-code/node/bin/node."
         rm -rf "${temp_dir}"
         return 1
     fi
@@ -809,7 +809,7 @@ install_standalone() {
     # Stage into .new and keep .old so failed upgrades can roll back.
     local new_install_dir="${INSTALL_LIB_DIR}.new"
     local old_install_dir="${INSTALL_LIB_DIR}.old"
-    local wrapper_tmp="${INSTALL_BIN_DIR}/qwen.new"
+    local wrapper_tmp="${INSTALL_BIN_DIR}/glm.new"
     if ! ensure_managed_install_dir "${INSTALL_LIB_DIR}" ||
         ! ensure_managed_install_dir "${new_install_dir}" ||
         ! ensure_managed_install_dir "${old_install_dir}"; then
@@ -817,11 +817,11 @@ install_standalone() {
         return 1
     fi
     rm -rf "${new_install_dir}" "${old_install_dir}" "${wrapper_tmp}"
-    mv "${extract_dir}/qwen-code" "${new_install_dir}"
+    mv "${extract_dir}/glm-code" "${new_install_dir}"
 
-    if ! write_unix_wrapper "${wrapper_tmp}" "${INSTALL_LIB_DIR}/bin/qwen"; then
+    if ! write_unix_wrapper "${wrapper_tmp}" "${INSTALL_LIB_DIR}/bin/glm"; then
         rm -rf "${temp_dir}" "${new_install_dir}" "${wrapper_tmp}"
-        log_error "Failed to create qwen wrapper in ${INSTALL_BIN_DIR}."
+        log_error "Failed to create glm wrapper in ${INSTALL_BIN_DIR}."
         return 1
     fi
 
@@ -838,13 +838,13 @@ install_standalone() {
         return 1
     fi
 
-    if ! mv -f "${wrapper_tmp}" "${INSTALL_BIN_DIR}/qwen"; then
+    if ! mv -f "${wrapper_tmp}" "${INSTALL_BIN_DIR}/glm"; then
         rm -rf "${INSTALL_LIB_DIR}" "${wrapper_tmp}"
         if [[ -e "${old_install_dir}" ]]; then
             mv "${old_install_dir}" "${INSTALL_LIB_DIR}"
         fi
         rm -rf "${temp_dir}"
-        log_error "Failed to create qwen wrapper in ${INSTALL_BIN_DIR}."
+        log_error "Failed to create glm wrapper in ${INSTALL_BIN_DIR}."
         return 1
     fi
 
@@ -854,7 +854,7 @@ install_standalone() {
     create_source_json
     rm -rf "${temp_dir}"
 
-    log_success "Qwen Code standalone archive installed successfully."
+    log_success "GLM Code standalone archive installed successfully."
     log_info "Installed to ${INSTALL_LIB_DIR}"
 }
 
@@ -862,10 +862,10 @@ install_npm() {
     require_node || return 1
     require_npm || return 1
 
-    if command_exists qwen; then
+    if command_exists glm; then
         local qwen_version
-        qwen_version=$(qwen --version 2>/dev/null || echo "unknown")
-        log_info "Existing Qwen Code detected: ${qwen_version}"
+        qwen_version=$(glm --version 2>/dev/null || echo "unknown")
+        log_info "Existing GLM Code detected: ${qwen_version}"
         log_info "Upgrading to the latest version."
     fi
 
@@ -873,24 +873,24 @@ install_npm() {
         npm
         install
         -g
-        @qwen-code/qwen-code@latest
+        @glm-code/glm-code@latest
         --registry
         "${NPM_REGISTRY}"
     )
 
-    log_info "Running: npm install -g @qwen-code/qwen-code@latest --registry ${NPM_REGISTRY}"
+    log_info "Running: npm install -g @glm-code/glm-code@latest --registry ${NPM_REGISTRY}"
     if "${install_cmd[@]}"; then
-        log_success "Qwen Code installed successfully."
+        log_success "GLM Code installed successfully."
         create_source_json
         return 0
     fi
 
-    log_error "Failed to install Qwen Code."
+    log_error "Failed to install GLM Code."
     echo ""
     echo "This installer does not change your npm prefix or shell profile."
     echo "If the failure is a permission error, install Node.js with a user-owned"
     echo "Node version manager or fix your npm global package directory, then run:"
-    echo "  npm install -g @qwen-code/qwen-code@latest --registry ${NPM_REGISTRY}"
+    echo "  npm install -g @glm-code/glm-code@latest --registry ${NPM_REGISTRY}"
     return 1
 }
 
@@ -906,31 +906,31 @@ print_final_instructions() {
     echo "=========================================="
     echo ""
 
-    if command_exists qwen; then
+    if command_exists glm; then
         local qwen_version
-        qwen_version=$(qwen --version 2>/dev/null || echo "unknown")
-        log_success "Qwen Code is ready to use: ${qwen_version}"
+        qwen_version=$(glm --version 2>/dev/null || echo "unknown")
+        log_success "GLM Code is ready to use: ${qwen_version}"
         echo ""
-        echo "You can now run: qwen"
+        echo "You can now run: glm"
         echo ""
-        log_info "Run qwen in your project directory to start an interactive session."
+        log_info "Run glm in your project directory to start an interactive session."
         return 0
     fi
 
-    log_warning "Qwen Code was installed, but qwen is not on PATH in this shell."
+    log_warning "GLM Code was installed, but glm is not on PATH in this shell."
     echo ""
-    echo "Restart your terminal, then run: qwen"
+    echo "Restart your terminal, then run: glm"
     if [[ -n "${install_bin_dir}" ]]; then
         echo ""
         echo "Or run this in the current shell:"
         echo "  export PATH=\"${install_bin_dir}:\$PATH\""
-        echo "  qwen"
+        echo "  glm"
     fi
 }
 
 main() {
     if [[ -z "${HOME:-}" ]]; then
-        log_error "HOME is not set; cannot determine where to install Qwen Code."
+        log_error "HOME is not set; cannot determine where to install GLM Code."
         exit 1
     fi
 

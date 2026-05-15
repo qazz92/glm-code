@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2026 Qwen Team
+ * Copyright 2026 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -18,15 +18,15 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { InteractiveSession } from './interactive-session.js';
 
 const IS_SANDBOX =
-  process.env['QWEN_SANDBOX'] &&
-  process.env['QWEN_SANDBOX']!.toLowerCase() !== 'false';
+  process.env['GLM_SANDBOX'] &&
+  process.env['GLM_SANDBOX']!.toLowerCase() !== 'false';
 
 function makeEnv(): NodeJS.ProcessEnv {
   const env = { ...process.env };
   delete env['NO_COLOR'];
   return {
     ...env,
-    QWEN_CODE_ENABLE_CRON: '1',
+    GLM_CODE_ENABLE_CRON: '1',
     FORCE_COLOR: '1',
     TERM: 'xterm-256color',
     NODE_NO_WARNINGS: '1',

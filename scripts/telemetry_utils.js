@@ -13,7 +13,7 @@ import os from 'node:os';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
-import { bootstrapHomeEnv, resolvePath } from './lib/qwen-home-bootstrap.js';
+import { bootstrapHomeEnv, resolvePath } from './lib/glm-home-bootstrap.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,21 +38,21 @@ function getProjectHash(projectRoot) {
 const projectHash = getProjectHash(projectRoot);
 
 // Runtime base directory for ephemeral data (tmp, otel, etc.)
-// Priority: QWEN_RUNTIME_DIR > QWEN_HOME > ~/.qwen
+// Priority: GLM_RUNTIME_DIR > GLM_HOME > ~/.glm
 function getRuntimeBaseDir() {
-  const runtimeDir = process.env.QWEN_RUNTIME_DIR;
+  const runtimeDir = process.env.GLM_RUNTIME_DIR;
   if (runtimeDir) {
     return resolvePath(runtimeDir);
   }
-  const homeEnv = process.env.QWEN_HOME;
+  const homeEnv = process.env.GLM_HOME;
   if (homeEnv) {
     return resolvePath(homeEnv);
   }
-  return path.join(os.homedir(), '.qwen');
+  return path.join(os.homedir(), '.glm');
 }
 
-// Project-level .qwen directory in the workspace
-const WORKSPACE_QWEN_DIR = path.join(projectRoot, '.qwen');
+// Project-level .glm directory in the workspace
+const WORKSPACE_GLM_DIR = path.join(projectRoot, '.glm');
 
 // Telemetry artifacts are stored in a hashed directory under the runtime dir
 export const OTEL_DIR = path.join(
@@ -65,19 +65,19 @@ export const BIN_DIR = path.join(OTEL_DIR, 'bin');
 
 // Workspace settings remain in the project's .gemini directory
 export const WORKSPACE_SETTINGS_FILE = path.join(
-  WORKSPACE_QWEN_DIR,
+  WORKSPACE_GLM_DIR,
   'settings.json',
 );
 
 export function getJson(url) {
   const tmpFile = path.join(
     os.tmpdir(),
-    `qwen-code-releases-${Date.now()}.json`,
+    `glm-code-releases-${Date.now()}.json`,
   );
   try {
     const result = spawnSync(
       'curl',
-      ['-sL', '-H', 'User-Agent: qwen-code-dev-script', '-o', tmpFile, url],
+      ['-sL', '-H', 'User-Agent: glm-code-dev-script', '-o', tmpFile, url],
       { stdio: 'pipe', encoding: 'utf-8' },
     );
     if (result.status !== 0) {
@@ -281,7 +281,7 @@ export async function ensureBinary(
   }
 
   const downloadUrl = asset.browser_download_url;
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'qwen-code-telemetry-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'glm-code-telemetry-'));
   const archivePath = path.join(tmpDir, asset.name);
 
   try {

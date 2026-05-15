@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 GLM
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -14,8 +14,8 @@ import { TestRig } from '../test-helper.js';
 const REQUEST_TIMEOUT_MS = 60_000;
 const INITIAL_PROMPT = 'Create a quick note (smoke test).';
 const IS_SANDBOX =
-  process.env['QWEN_SANDBOX'] &&
-  process.env['QWEN_SANDBOX']!.toLowerCase() !== 'false';
+  process.env['GLM_SANDBOX'] &&
+  process.env['GLM_SANDBOX']!.toLowerCase() !== 'false';
 
 type PendingRequest = {
   resolve: (value: unknown) => void;
@@ -403,9 +403,9 @@ function setupAcpTest(
         };
       };
 
-      // Choose a qwen-oauth model to trigger auth-required path deterministically.
+      // Choose a glm-oauth model to trigger auth-required path deterministically.
       const qwenOauthModel = newSession.models.availableModels.find((model) =>
-        model.modelId.includes('qwen-oauth'),
+        model.modelId.includes('glm-oauth'),
       );
       expect(qwenOauthModel).toBeDefined();
       await expect(
@@ -627,7 +627,7 @@ function setupAcpTest(
       expect(initCommand?.description).toBeTruthy();
 
       // Note: We don't test /init execution here because it triggers a complex
-      // multi-step process (listing files, reading up to 10 files, generating QWEN.md)
+      // multi-step process (listing files, reading up to 10 files, generating GLM.md)
       // that can take 30-60+ seconds, exceeding the request timeout.
       // The slash command execution path is tested via simpler prompts in other tests.
     } catch (e) {

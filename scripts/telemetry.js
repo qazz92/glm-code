@@ -11,17 +11,17 @@ import path from 'node:path';
 const { join } = path;
 import { existsSync, readFileSync } from 'node:fs';
 import os from 'node:os';
-import { bootstrapHomeEnv, resolvePath } from './lib/qwen-home-bootstrap.js';
+import { bootstrapHomeEnv, resolvePath } from './lib/glm-home-bootstrap.js';
 
 const projectRoot = join(import.meta.dirname, '..');
 
 bootstrapHomeEnv();
 
-const USER_SETTINGS_DIR = process.env.QWEN_HOME
-  ? resolvePath(process.env.QWEN_HOME)
-  : join(os.homedir(), '.qwen');
+const USER_SETTINGS_DIR = process.env.GLM_HOME
+  ? resolvePath(process.env.GLM_HOME)
+  : join(os.homedir(), '.glm');
 const USER_SETTINGS_PATH = join(USER_SETTINGS_DIR, 'settings.json');
-const WORKSPACE_SETTINGS_PATH = join(projectRoot, '.qwen', 'settings.json');
+const WORKSPACE_SETTINGS_PATH = join(projectRoot, '.glm', 'settings.json');
 
 let settingsTarget = undefined;
 

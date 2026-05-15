@@ -29,7 +29,7 @@ RUN npm ci \
 # Runtime stage
 FROM docker.io/library/node:22-slim
 
-ARG SANDBOX_NAME="qwen-code-sandbox"
+ARG SANDBOX_NAME="glm-code-sandbox"
 ARG CLI_VERSION_ARG
 ENV SANDBOX="$SANDBOX_NAME"
 ENV CLI_VERSION=$CLI_VERSION_ARG
@@ -70,4 +70,4 @@ RUN npm install -g /tmp/*.tgz \
   && rm -rf /tmp/*.tgz
 
 # Default entrypoint when none specified
-CMD ["qwen"]
+CMD ["glm"]

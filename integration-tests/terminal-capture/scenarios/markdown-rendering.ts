@@ -15,7 +15,7 @@ export default {
   name: 'markdown-rendering',
   spawn: ['node', 'dist/cli.js', '--yolo'],
   terminal: {
-    title: 'qwen-code markdown rendering',
+    title: 'glm-code markdown rendering',
     cwd: '../../..',
     cols: 140,
     rows: 42,

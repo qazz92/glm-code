@@ -26,7 +26,7 @@ import os from 'node:os';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import dotenv from 'dotenv';
-import { bootstrapHomeEnv, resolvePath } from './lib/qwen-home-bootstrap.js';
+import { bootstrapHomeEnv, resolvePath } from './lib/glm-home-bootstrap.js';
 
 const argv = yargs(hideBin(process.argv)).option('q', {
   alias: 'quiet',
@@ -34,14 +34,14 @@ const argv = yargs(hideBin(process.argv)).option('q', {
   default: false,
 }).argv;
 
-let qwenSandbox = process.env.QWEN_SANDBOX;
+let qwenSandbox = process.env.GLM_SANDBOX;
 
 bootstrapHomeEnv();
 
 if (!qwenSandbox) {
-  const configDir = process.env.QWEN_HOME
-    ? resolvePath(process.env.QWEN_HOME)
-    : join(os.homedir(), '.qwen');
+  const configDir = process.env.GLM_HOME
+    ? resolvePath(process.env.GLM_HOME)
+    : join(os.homedir(), '.glm');
   const userSettingsFile = join(configDir, 'settings.json');
   if (existsSync(userSettingsFile)) {
     const settings = JSON.parse(
@@ -55,13 +55,13 @@ if (!qwenSandbox) {
 
 if (!qwenSandbox) {
   // Walk up from cwd to find a project-level .env. Parse manually and copy
-  // only QWEN_SANDBOX — calling dotenv.config() here would inject every key,
-  // including QWEN_HOME / QWEN_RUNTIME_DIR that the main CLI hard-blocks via
+  // only GLM_SANDBOX — calling dotenv.config() here would inject every key,
+  // including GLM_HOME / GLM_RUNTIME_DIR that the main CLI hard-blocks via
   // PROJECT_ENV_HARDCODED_EXCLUSIONS. A project file must not be able to
   // redirect global state through this back door.
   let currentDir = process.cwd();
   while (true) {
-    const qwenEnv = join(currentDir, '.qwen', '.env');
+    const qwenEnv = join(currentDir, '.glm', '.env');
     const regularEnv = join(currentDir, '.env');
     let candidate = null;
     if (existsSync(qwenEnv)) {
@@ -73,10 +73,10 @@ if (!qwenSandbox) {
       try {
         const parsed = dotenv.parse(readFileSync(candidate, 'utf-8'));
         if (
-          parsed.QWEN_SANDBOX &&
-          !Object.hasOwn(process.env, 'QWEN_SANDBOX')
+          parsed.GLM_SANDBOX &&
+          !Object.hasOwn(process.env, 'GLM_SANDBOX')
         ) {
-          process.env.QWEN_SANDBOX = parsed.QWEN_SANDBOX;
+          process.env.GLM_SANDBOX = parsed.GLM_SANDBOX;
         }
       } catch (_e) {
         // Match dotenv's quiet-mode behavior used elsewhere.
@@ -89,7 +89,7 @@ if (!qwenSandbox) {
     }
     currentDir = parentDir;
   }
-  qwenSandbox = process.env.QWEN_SANDBOX;
+  qwenSandbox = process.env.GLM_SANDBOX;
 }
 
 qwenSandbox = (qwenSandbox || '').toLowerCase();
@@ -122,7 +122,7 @@ if (['1', 'true'].includes(qwenSandbox)) {
     command = 'podman';
   } else {
     console.error(
-      'ERROR: install docker or podman or specify command in QWEN_SANDBOX',
+      'ERROR: install docker or podman or specify command in GLM_SANDBOX',
     );
     process.exit(1);
   }
@@ -131,7 +131,7 @@ if (['1', 'true'].includes(qwenSandbox)) {
     command = qwenSandbox;
   } else {
     console.error(
-      `ERROR: missing sandbox command '${qwenSandbox}' (from QWEN_SANDBOX)`,
+      `ERROR: missing sandbox command '${qwenSandbox}' (from GLM_SANDBOX)`,
     );
     process.exit(1);
   }

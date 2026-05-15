@@ -1,6 +1,6 @@
 ---
 name: e2e-testing
-description: Guide for running end-to-end tests of the Qwen Code CLI, including
+description: Guide for running end-to-end tests of the GLM Code CLI, including
   headless mode, MCP server testing, and API traffic inspection. Use this skill
   whenever you need to verify CLI behavior with real model calls, reproduce
   user-reported bugs end-to-end, test MCP tool integrations, or inspect raw API
@@ -10,14 +10,14 @@ description: Guide for running end-to-end tests of the Qwen Code CLI, including
 
 # E2E Testing Guide
 
-How to run the Qwen Code CLI end-to-end, from building the bundle to inspecting
+How to run the GLM Code CLI end-to-end, from building the bundle to inspecting
 raw API traffic. Use when unit tests are not enough and you need to verify
 behavior through the full pipeline (model API → tool validation → tool
 execution).
 
 ## Which binary to use
 
-- **Reproducing bugs**: use the globally installed `qwen` command — this
+- **Reproducing bugs**: use the globally installed `glm` command — this
   matches what the user ran when they filed the issue.
 - **Verifying fixes**: build first (`npm run build && npm run bundle`), then
   run `node dist/cli.js` — this tests your local changes.
@@ -176,7 +176,7 @@ reusable zero-dependency test server template in `scripts/mcp-test-server.js`.
 Use `scripts/token-stats.py` to summarize token usage across recent API logs:
 
 ```bash
-python3 .qwen/skills/e2e-testing/scripts/token-stats.py 20  # last 20 requests
+python3 .glm/skills/e2e-testing/scripts/token-stats.py 20  # last 20 requests
 ```
 
 Shows input, cached, and output tokens per request with cache hit rates. Useful

@@ -1,17 +1,17 @@
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
- * `qwen serve` daemon — streaming / multi-client / recovery integration.
+ * `glm serve` daemon — streaming / multi-client / recovery integration.
  *
  * These tests need a working model credential because they fire real
  * prompts and observe the resulting SSE stream. They cover three flows
  * that unit tests can't fully exercise:
  *
- *   1. Real `qwen --acp` child crash → daemon publishes `session_died`,
+ *   1. Real `glm --acp` child crash → daemon publishes `session_died`,
  *      removes the dead entry from the maps, and a subsequent
  *      `createOrAttachSession` for the same workspace spawns fresh.
  *   2. Two SSE subscribers + a tool that needs permission → both see
@@ -27,14 +27,14 @@ import { spawn, execSync, type ChildProcess } from 'node:child_process';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { DaemonClient, parseSseStream } from '@qwen-code/sdk';
-import type { DaemonEvent, DaemonSessionSummary } from '@qwen-code/sdk';
+import { DaemonClient, parseSseStream } from '@glm-code/sdk';
+import type { DaemonEvent, DaemonSessionSummary } from '@glm-code/sdk';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Match the rest of the integration suite: prefer `TEST_CLI_PATH`
 // from `globalSetup.ts` (root `dist/cli.js` bundle), fall back to
 // the per-package output for direct vitest invocations. See the same
-// note in qwen-serve-routes.test.ts for full rationale.
+// note in glm-serve-routes.test.ts for full rationale.
 const CLI_BIN =
   process.env['TEST_CLI_PATH'] ??
   path.resolve(__dirname, '../../packages/cli/dist/index.js');
@@ -134,14 +134,14 @@ async function* sseFrames(
   yield* parseSseStream(res.body!, opts.signal);
 }
 
-describeLLM('qwen serve — child-crash recovery (real SIGKILL)', () => {
-  it('publishes session_died after the qwen --acp child is SIGKILL-ed', async () => {
+describeLLM('glm serve — child-crash recovery (real SIGKILL)', () => {
+  it('publishes session_died after the glm --acp child is SIGKILL-ed', async () => {
     const session = await client.createOrAttachSession({
       workspaceCwd: REPO_ROOT,
     });
 
     // Find the daemon's direct `--acp` child PID.
-    const childPids = execSync(`pgrep -P ${daemon.pid} -f "qwen.*--acp"`, {
+    const childPids = execSync(`pgrep -P ${daemon.pid} -f "glm.*--acp"`, {
       encoding: 'utf8',
     })
       .trim()
@@ -209,7 +209,7 @@ describeLLM('qwen serve — child-crash recovery (real SIGKILL)', () => {
   }, 60_000);
 });
 
-describeLLM('qwen serve — multi-client first-responder permission', () => {
+describeLLM('glm serve — multi-client first-responder permission', () => {
   it('fans out permission_request to both subscribers; only one vote wins', async () => {
     const session = await client.createOrAttachSession({
       workspaceCwd: REPO_ROOT,
@@ -246,7 +246,7 @@ describeLLM('qwen serve — multi-client first-responder permission', () => {
     // Let the subscribers register before firing the prompt.
     await new Promise((r) => setTimeout(r, 200));
 
-    const tmp = `/tmp/qwen-serve-mc-${Date.now()}.txt`;
+    const tmp = `/tmp/glm-serve-mc-${Date.now()}.txt`;
     const promptTask = client.prompt(session.sessionId, {
       prompt: [
         {
@@ -315,7 +315,7 @@ describeLLM('qwen serve — multi-client first-responder permission', () => {
   }, 90_000);
 });
 
-describeLLM('qwen serve — Last-Event-ID resume', () => {
+describeLLM('glm serve — Last-Event-ID resume', () => {
   it('reconnect with Last-Event-ID:N yields events with id > N', async () => {
     const session = await client.createOrAttachSession({
       workspaceCwd: REPO_ROOT,

@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2026 Qwen Team
+ * Copyright 2026 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -76,7 +76,7 @@ export class InteractiveSession {
    * @example
    * ```ts
    * const session = await InteractiveSession.start({
-   *   env: { QWEN_CODE_ENABLE_CRON: '1' },
+   *   env: { GLM_CODE_ENABLE_CRON: '1' },
    *   args: ['--approval-mode', 'yolo'],
    * });
    * ```

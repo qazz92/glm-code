@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -13,7 +13,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { query, isSDKSystemMessage, type SDKMessage } from '@qwen-code/sdk';
+import { query, isSDKSystemMessage, type SDKMessage } from '@glm-code/sdk';
 import {
   SDKTestHelper,
   createSharedTestOptions,

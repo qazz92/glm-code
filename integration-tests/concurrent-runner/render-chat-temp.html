@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Qwen Code Chat Export</title>
+    <title>GLM Code Chat Export</title>
     <!-- Load React and ReactDOM from CDN -->
     <script
       crossorigin
@@ -34,12 +34,12 @@
     </script>
 
     <!-- Load the webui library from CDN -->
-    <script src="https://unpkg.com/@qwen-code/webui@0.1.0-beta.3/dist/index.umd.js"></script>
+    <script src="https://unpkg.com/@glm-code/webui@0.1.0-beta.3/dist/index.umd.js"></script>
 
     <!-- Load the CSS -->
     <link
       rel="stylesheet"
-      href="https://unpkg.com/@qwen-code/webui@0.1.0-beta.3/dist/styles.css"
+      href="https://unpkg.com/@glm-code/webui@0.1.0-beta.3/dist/styles.css"
     />
 
     <style>
@@ -193,7 +193,7 @@
     <div class="page-wrapper">
       <div class="header">
         <div class="header-left">
-          <h1>Qwen Code Export</h1>
+          <h1>GLM Code Export</h1>
         </div>
         <div class="meta">
           <div class="meta-item">
@@ -247,7 +247,7 @@
       }
 
       // Get the ChatViewer and Platform components from the global object
-      const { ChatViewer, PlatformProvider } = QwenCodeWebUI;
+      const { ChatViewer, PlatformProvider } = GLMCodeWebUI;
 
       // Define a minimal platform context for web usage
       const platformContext = {

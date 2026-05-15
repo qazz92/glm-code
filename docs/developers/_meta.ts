@@ -1,26 +1,26 @@
 export default {
-  'Contribute to Qwen Code': {
-    title: 'Contribute to Qwen Code',
+  'Contribute to GLM Code': {
+    title: 'Contribute to GLM Code',
     type: 'separator',
   },
   architecture: 'Architecture',
   roadmap: 'Roadmap',
   contributing: 'Contributing Guide',
-  'Qwen Code SDK': {
+  'GLM Code SDK': {
     title: 'Agent SDK',
     type: 'separator',
   },
   'sdk-typescript': 'Typescript SDK',
   'sdk-python': 'Python SDK (alpha)',
   'sdk-java': 'Java SDK (alpha)',
-  'Dive Into Qwen Code': {
-    title: 'Dive Into Qwen Code',
+  'Dive Into GLM Code': {
+    title: 'Dive Into GLM Code',
     type: 'separator',
   },
 
   'channel-plugins': 'Channel Plugin Guide',
   tools: 'Tools',
-  'qwen-serve-protocol': 'qwen serve HTTP protocol',
+  'glm-serve-protocol': 'glm serve HTTP protocol',
 
   examples: {
     display: 'hidden',

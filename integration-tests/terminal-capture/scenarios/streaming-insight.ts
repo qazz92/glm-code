@@ -8,7 +8,7 @@ import type { ScenarioConfig } from '../scenario-runner.js';
 export default {
   name: 'streaming-insight',
   spawn: ['node', 'dist/cli.js', '--yolo'],
-  terminal: { title: 'qwen-code', cwd: '../../..' },
+  terminal: { title: 'glm-code', cwd: '../../..' },
   flow: [
     {
       type: '/insight',

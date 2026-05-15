@@ -56,7 +56,7 @@ async function fetchOnce(url, dispatcher, method = 'HEAD') {
     await fetch(url, {
       method,
       signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-      headers: { 'User-Agent': 'QwenCode-Benchmark/1.0' },
+      headers: { 'User-Agent': 'GLMCode-Benchmark/1.0' },
       dispatcher,
     });
   } catch (err) {
@@ -131,7 +131,7 @@ async function benchmarkEndpoint({ url, label }) {
 
 // ---------------------------------------------------------------------------
 
-console.log('=== Qwen Code API Preconnect Latency Benchmark ===');
+console.log('=== GLM Code API Preconnect Latency Benchmark ===');
 console.log(`Iterations per endpoint : ${ITERATIONS}`);
 console.log(`Request timeout         : ${REQUEST_TIMEOUT_MS}ms`);
 console.log('\nRunning...');

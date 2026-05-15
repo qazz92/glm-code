@@ -3,11 +3,11 @@
   "displayName": "GLM Code Companion",
   "description": "Enable GLM Code with direct access to your VS Code workspace.",
   "version": "0.0.1",
-  "publisher": "qwenlm",
+  "publisher": "glmlm",
   "icon": "assets/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/qazz92/glm-code.git",
+    "url": "https://github.com/GLMLM/glm-code.git",
     "directory": "packages/vscode-ide-companion"
   },
   "engines": {

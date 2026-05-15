@@ -2,7 +2,7 @@
 
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -90,12 +90,12 @@ async function main() {
   fs.mkdirSync(outDir, { recursive: true });
 
   const targetConfig = TARGETS.get(target);
-  const outputName = `qwen-code-${target}.${targetConfig.outputExtension}`;
+  const outputName = `glm-code-${target}.${targetConfig.outputExtension}`;
   const outputPath = path.join(outDir, outputName);
-  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'qwen-standalone-'));
+  const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'glm-standalone-'));
 
   try {
-    const packageRoot = path.join(tempRoot, 'qwen-code');
+    const packageRoot = path.join(tempRoot, 'glm-code');
     const runtimeExtractDir = path.join(tempRoot, 'runtime');
     fs.mkdirSync(packageRoot, { recursive: true });
     fs.mkdirSync(runtimeExtractDir, { recursive: true });
@@ -188,7 +188,7 @@ function readOptionValue(argv, index, optionName) {
 }
 
 function printUsage() {
-  console.log(`Qwen Code standalone package builder
+  console.log(`GLM Code standalone package builder
 
 Usage:
   npm run package:standalone -- --target TARGET --node-archive PATH [OPTIONS]
@@ -197,7 +197,7 @@ Options:
   --target TARGET         One of: ${Array.from(TARGETS.keys()).join(', ')}
   --node-archive PATH    Downloaded Node.js runtime archive.
   --out-dir DIR          Output directory. Defaults to dist/standalone.
-  --version VERSION      Qwen Code version. Defaults to package.json version.
+  --version VERSION      GLM Code version. Defaults to package.json version.
   --skip-checksums       Do not update SHA256SUMS. Used by release packaging.
   -h, --help             Show this help message.`);
 }
@@ -310,13 +310,13 @@ function extractZipArchive(nodeArchive, extractDir) {
         '-ExecutionPolicy',
         'Bypass',
         '-Command',
-        'Expand-Archive -LiteralPath $env:QWEN_NODE_ARCHIVE -DestinationPath $env:QWEN_EXTRACT_DIR -Force',
+        'Expand-Archive -LiteralPath $env:GLM_NODE_ARCHIVE -DestinationPath $env:GLM_EXTRACT_DIR -Force',
       ],
       {
         env: {
           ...process.env,
-          QWEN_NODE_ARCHIVE: nodeArchive,
-          QWEN_EXTRACT_DIR: extractDir,
+          GLM_NODE_ARCHIVE: nodeArchive,
+          GLM_EXTRACT_DIR: extractDir,
         },
       },
     );
@@ -487,7 +487,7 @@ set -e
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 exec "$ROOT/node/bin/node" "$ROOT/lib/cli.js" "$@"
 `;
-  const unixShimPath = path.join(binDir, 'qwen');
+  const unixShimPath = path.join(binDir, 'glm');
   fs.writeFileSync(unixShimPath, unixShim);
   fs.chmodSync(unixShimPath, 0o755);
 
@@ -496,7 +496,7 @@ setlocal
 set "ROOT=%~dp0.."
 "%ROOT%\\node\\node.exe" "%ROOT%\\lib\\cli.js" %*
 `;
-  fs.writeFileSync(path.join(binDir, 'qwen.cmd'), windowsShim);
+  fs.writeFileSync(path.join(binDir, 'glm.cmd'), windowsShim);
 }
 
 function writeManifest(packageRoot, manifest) {
@@ -505,7 +505,7 @@ function writeManifest(packageRoot, manifest) {
     manifestPath,
     JSON.stringify(
       {
-        name: '@qwen-code/qwen-code',
+        name: '@glm-code/glm-code',
         version: manifest.version,
         target: manifest.target,
         nodeArchive: manifest.nodeArchive,
@@ -523,7 +523,7 @@ function createArchive(outputExtension, outputPath, cwd) {
     return;
   }
 
-  run('tar', ['-czf', outputPath, '-C', cwd, 'qwen-code']);
+  run('tar', ['-czf', outputPath, '-C', cwd, 'glm-code']);
 }
 
 function createZipArchive(outputPath, cwd) {
@@ -535,20 +535,20 @@ function createZipArchive(outputPath, cwd) {
         '-ExecutionPolicy',
         'Bypass',
         '-Command',
-        'Compress-Archive -LiteralPath $env:QWEN_PACKAGE_ROOT -DestinationPath $env:QWEN_OUTPUT_PATH -Force',
+        'Compress-Archive -LiteralPath $env:GLM_PACKAGE_ROOT -DestinationPath $env:GLM_OUTPUT_PATH -Force',
       ],
       {
         env: {
           ...process.env,
-          QWEN_PACKAGE_ROOT: path.join(cwd, 'qwen-code'),
-          QWEN_OUTPUT_PATH: outputPath,
+          GLM_PACKAGE_ROOT: path.join(cwd, 'glm-code'),
+          GLM_OUTPUT_PATH: outputPath,
         },
       },
     );
     return;
   }
 
-  run('zip', ['-qr', outputPath, 'qwen-code'], { cwd });
+  run('zip', ['-qr', outputPath, 'glm-code'], { cwd });
 }
 
 async function writeSha256Sums(outDir) {
@@ -556,14 +556,14 @@ async function writeSha256Sums(outDir) {
     .readdirSync(outDir)
     .filter(
       (entry) =>
-        entry.startsWith('qwen-code-') &&
+        entry.startsWith('glm-code-') &&
         (entry.endsWith('.tar.gz') || entry.endsWith('.zip')),
     )
     .sort();
 
   if (entries.length === 0) {
     fail(
-      `No qwen-code archives found in ${outDir}; refusing to write empty SHA256SUMS.`,
+      `No glm-code archives found in ${outDir}; refusing to write empty SHA256SUMS.`,
     );
   }
 

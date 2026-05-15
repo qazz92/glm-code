@@ -1,8 +1,8 @@
 {
   "concurrency": 2,
   "yolo": true,
-  "source_repo": "/Users/andy/workspace/projects/qwen-code/integration-tests/concurrent-runner/examples/toy-project",
-  "worktree_base": "~/.qwen/worktrees",
+  "source_repo": "/Users/andy/workspace/projects/glm-code/integration-tests/concurrent-runner/examples/toy-project",
+  "worktree_base": "~/.glm/worktrees",
   "outputs_dir": "./examples/test-run",
   "results_file": "./examples/test-run/results.json",
   "keep_worktree": false,

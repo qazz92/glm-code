@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Qwen Concurrent Runner - Execute multiple CLI tasks across different models concurrently.
+GLM Concurrent Runner - Execute multiple CLI tasks across different models concurrently.
 
 This tool creates isolated git worktrees for each task/model combination and executes
-the Qwen CLI in parallel with status tracking and output capture.
+the GLM CLI in parallel with status tracking and output capture.
 """
 
 from __future__ import annotations
@@ -65,7 +65,7 @@ class RunConfig:
     concurrency: int = 4
     yolo: bool = True
     source_repo: Path = field(default_factory=lambda: Path.cwd())
-    worktree_base: Path = field(default_factory=lambda: Path.home() / ".qwen" / "worktrees")
+    worktree_base: Path = field(default_factory=lambda: Path.home() / ".glm" / "worktrees")
     outputs_dir: Path = field(default_factory=lambda: Path("./outputs"))
     results_file: Path = field(default_factory=lambda: Path("./results.json"))
     branch: Optional[str] = None  # Git branch to checkout (uses default if not set)
@@ -91,7 +91,7 @@ class RunRecord:
     task_name: str
     model: str
     status: RunStatus
-    auth_type: Optional[str] = None  # e.g. "anthropic" for qwen --auth-type
+    auth_type: Optional[str] = None  # e.g. "anthropic" for glm --auth-type
     worktree_path: Optional[str] = None
     output_dir: Optional[str] = None
     logs_dir: Optional[str] = None
@@ -266,7 +266,7 @@ class GitWorktreeManager:
         """Collect the session log file from the worktree's chat recording.
 
         Session logs are stored at:
-        ~/.qwen/projects/{projectId}/chats/{sessionId}.jsonl
+        ~/.glm/projects/{projectId}/chats/{sessionId}.jsonl
 
         Where projectId is the sanitized worktree path.
 
@@ -279,7 +279,7 @@ class GitWorktreeManager:
         project_id = re.sub(r'[^a-zA-Z0-9]', '-', str(worktree_dir))
 
         # Build the chats directory path
-        qwen_dir = Path.home() / ".qwen"
+        qwen_dir = Path.home() / ".glm"
         chats_dir = qwen_dir / "projects" / project_id / "chats"
 
         if not chats_dir.exists():
@@ -512,7 +512,7 @@ class StatusTracker:
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Qwen Runner Report</title>
+    <title>GLM Runner Report</title>
     <style>
         body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 1200px; margin: 0 auto; padding: 20px; background: #f5f7f9; }}
         h1 {{ color: #1a202c; }}
@@ -537,7 +537,7 @@ class StatusTracker:
     </style>
 </head>
 <body>
-    <h1>Qwen Runner Execution Report</h1>
+    <h1>GLM Runner Execution Report</h1>
     <div class="summary">
         <div class="summary-card"><h3>Total</h3><div class="value">{total}</div></div>
         <div class="summary-card"><h3 style="color: #38a169;">Succeeded</h3><div class="value" style="color: #38a169;">{succeeded}</div></div>
@@ -712,8 +712,8 @@ class ProgressDisplay:
         ))
 
 
-class QwenRunner:
-    """Executes the Qwen CLI for a specific task and model."""
+class GLMRunner:
+    """Executes the GLM CLI for a specific task and model."""
 
     def __init__(self, config: RunConfig, console: Console):
         self.config = config
@@ -725,7 +725,7 @@ class QwenRunner:
         worktree_dir: Path,
         output_dir: Path,
     ) -> None:
-        """Execute the Qwen CLI for each prompt sequentially."""
+        """Execute the GLM CLI for each prompt sequentially."""
         output_dir.mkdir(parents=True, exist_ok=True)
         run.output_dir = str(output_dir)
 
@@ -758,7 +758,7 @@ class QwenRunner:
             # Run the CLI
             env = os.environ.copy()
             worktree_dir_resolved = worktree_dir.resolve()
-            env["QWEN_CODE_ROOT"] = str(worktree_dir_resolved)
+            env["GLM_CODE_ROOT"] = str(worktree_dir_resolved)
 
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
@@ -810,8 +810,8 @@ class QwenRunner:
             run.stderr_file = run.prompt_results[0].stderr_file
 
     def _build_command(self, run: RunRecord, prompt_text: str, use_continue: bool = False) -> List[str]:
-        """Build the qwen CLI command for a single prompt."""
-        cmd = ["qwen"]
+        """Build the glm CLI command for a single prompt."""
+        cmd = ["glm"]
 
         # Add model
         cmd.extend(["--model", run.model])
@@ -881,7 +881,7 @@ def load_config(config_path: Path) -> RunConfig:
         concurrency=data.get("concurrency", 4),
         yolo=data.get("yolo", True),
         source_repo=Path(data.get("source_repo", ".")).resolve(),
-        worktree_base=Path(data.get("worktree_base", "~/.qwen/worktrees")).expanduser(),
+        worktree_base=Path(data.get("worktree_base", "~/.glm/worktrees")).expanduser(),
         outputs_dir=Path(data.get("outputs_dir", "./outputs")),
         results_file=Path(data.get("results_file", "./results.json")),
         branch=data.get("branch"),
@@ -894,7 +894,7 @@ async def execute_single_run(
     config: RunConfig,
     tracker: StatusTracker,
     worktree_manager: GitWorktreeManager,
-    qwen_runner: QwenRunner,
+    qwen_runner: GLMRunner,
     console: Console,
 ) -> None:
     """Execute a single run with proper cleanup."""
@@ -997,7 +997,7 @@ async def run_all(config: RunConfig, console: Console) -> ExecutionState:
     
     worktree_manager = GitWorktreeManager(console, config.source_repo)
     await worktree_manager.ensure_git_repo()
-    qwen_runner = QwenRunner(config, console)
+    qwen_runner = GLMRunner(config, console)
     display = ProgressDisplay(console)
 
     # Start progress display
@@ -1046,7 +1046,7 @@ async def run_all(config: RunConfig, console: Console) -> ExecutionState:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Qwen Concurrent Runner - Execute multiple CLI tasks across models"
+        description="GLM Concurrent Runner - Execute multiple CLI tasks across models"
     )
     parser.add_argument(
         "config",

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Display token usage stats from the last X request logs in ~/.qwen/logs."""
+"""Display token usage stats from the last X request logs in ~/.glm/logs."""
 
 import argparse
 import json
@@ -7,9 +7,9 @@ from pathlib import Path
 
 
 def parse_args():
-    p = argparse.ArgumentParser(description="Show token stats from qwen request logs")
+    p = argparse.ArgumentParser(description="Show token stats from glm request logs")
     p.add_argument("count", nargs="?", type=int, default=10, help="Number of recent logs to show (default: 10)")
-    p.add_argument("--log-dir", default=Path.home() / ".qwen" / "logs", type=Path)
+    p.add_argument("--log-dir", default=Path.home() / ".glm" / "logs", type=Path)
     return p.parse_args()
 
 

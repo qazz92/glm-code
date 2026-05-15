@@ -22,19 +22,19 @@ names lose their code highlight after wrapping.
 ## Commands
 
 ```bash
-cd /Users/gawain/Documents/codebase/opensource/qwen-code-table-wrap-ansi-highlight
+cd /Users/gawain/Documents/codebase/opensource/glm-code-table-wrap-ansi-highlight
 
 cd packages/cli && npx vitest run src/ui/utils/TableRenderer.test.tsx
 
-cd /Users/gawain/Documents/codebase/opensource/qwen-code-table-wrap-ansi-highlight
+cd /Users/gawain/Documents/codebase/opensource/glm-code-table-wrap-ansi-highlight
 npm run build && npm run typecheck && npm run bundle
 
-QWEN_TUI_E2E_OUT=/tmp/qwen-table-wrap-ansi/fixed \
+GLM_TUI_E2E_OUT=/tmp/glm-table-wrap-ansi/fixed \
   npx tsx integration-tests/terminal-capture/table-inline-code-wrap-regression.ts
 
-QWEN_TUI_E2E_REPO=/Users/gawain/Documents/codebase/opensource/qwen-code-table-wrap-ansi-highlight-base \
-QWEN_TUI_E2E_OUT=/tmp/qwen-table-wrap-ansi/base \
-QWEN_TUI_E2E_EXPECT_PASS=false \
+GLM_TUI_E2E_REPO=/Users/gawain/Documents/codebase/opensource/glm-code-table-wrap-ansi-highlight-base \
+GLM_TUI_E2E_OUT=/tmp/glm-table-wrap-ansi/base \
+GLM_TUI_E2E_EXPECT_PASS=false \
   npx tsx integration-tests/terminal-capture/table-inline-code-wrap-regression.ts
 ```
 
@@ -47,12 +47,12 @@ QWEN_TUI_E2E_EXPECT_PASS=false \
 
 ## Artifacts
 
-- Base summary: `/tmp/qwen-table-wrap-ansi/base/summary.json`
-- Base raw ANSI: `/tmp/qwen-table-wrap-ansi/base/raw.ansi.log`
-- Base screenshot: `/tmp/qwen-table-wrap-ansi/base/table-inline-code-wrap.png`
-- Fixed summary: `/tmp/qwen-table-wrap-ansi/fixed/summary.json`
-- Fixed raw ANSI: `/tmp/qwen-table-wrap-ansi/fixed/raw.ansi.log`
-- Fixed screenshot: `/tmp/qwen-table-wrap-ansi/fixed/table-inline-code-wrap.png`
+- Base summary: `/tmp/glm-table-wrap-ansi/base/summary.json`
+- Base raw ANSI: `/tmp/glm-table-wrap-ansi/base/raw.ansi.log`
+- Base screenshot: `/tmp/glm-table-wrap-ansi/base/table-inline-code-wrap.png`
+- Fixed summary: `/tmp/glm-table-wrap-ansi/fixed/summary.json`
+- Fixed raw ANSI: `/tmp/glm-table-wrap-ansi/fixed/raw.ansi.log`
+- Fixed screenshot: `/tmp/glm-table-wrap-ansi/fixed/table-inline-code-wrap.png`
 
 What this proves:
 

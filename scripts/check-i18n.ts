@@ -2,7 +2,7 @@
 
 /**
  * @license
- * Copyright 2025 Qwen
+ * Copyright 2025 GLM
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -62,7 +62,7 @@ export interface PrintCheckI18nOptions {
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const WRITE_UNUSED_KEYS_FLAG = '--write-unused-locale-keys';
-const WRITE_UNUSED_KEYS_ENV = 'QWEN_CHECK_I18N_WRITE_UNUSED_KEYS';
+const WRITE_UNUSED_KEYS_ENV = 'GLM_CHECK_I18N_WRITE_UNUSED_KEYS';
 
 export function shouldWriteUnusedKeysJson(): boolean {
   return (

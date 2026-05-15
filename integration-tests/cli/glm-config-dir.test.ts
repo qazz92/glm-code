@@ -1,18 +1,18 @@
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
- * E2E integration tests for the QWEN_HOME environment variable.
+ * E2E integration tests for the GLM_HOME environment variable.
  *
- * These tests verify that when QWEN_HOME is set, all global config files
+ * These tests verify that when GLM_HOME is set, all global config files
  * (installation_id, settings.json, memory.md, etc.) are routed to the
- * custom directory instead of ~/.qwen/.
+ * custom directory instead of ~/.glm/.
  *
  * Based on the test plan at:
- *   .claude/docs/PLAN-qwen-config-dir-e2e-tests.md
+ *   .claude/docs/PLAN-glm-config-dir-e2e-tests.md
  *
  * NOTE: Most tests require a full prompt run (config.initialize() must run to
  * write installation_id). Only scenario 2b can use --help because settings
@@ -45,7 +45,7 @@ function listFilesRecursive(dir: string, base = dir): string[] {
   return results;
 }
 
-describe('QWEN_HOME environment variable', () => {
+describe('GLM_HOME environment variable', () => {
   let rig: TestRig;
   let customConfigDir: string;
 
@@ -55,8 +55,8 @@ describe('QWEN_HOME environment variable', () => {
 
   afterEach(async () => {
     // Always clean up env vars regardless of test outcome
-    delete process.env['QWEN_HOME'];
-    delete process.env['QWEN_RUNTIME_DIR'];
+    delete process.env['GLM_HOME'];
+    delete process.env['GLM_RUNTIME_DIR'];
     await rig.cleanup();
   });
 
@@ -72,12 +72,12 @@ describe('QWEN_HOME environment variable', () => {
      * during config.initialize() → logStartSession() → getInstallationId().
      * --help exits before that point.
      */
-    it('1a: installation_id is written inside QWEN_HOME, not ~/.qwen', async () => {
-      rig.setup('qwen-home-1a-installation-id');
+    it('1a: installation_id is written inside GLM_HOME, not ~/.glm', async () => {
+      rig.setup('glm-home-1a-installation-id');
 
       customConfigDir = join(rig.testDir!, 'custom-config');
       mkdirSync(customConfigDir, { recursive: true });
-      process.env['QWEN_HOME'] = customConfigDir;
+      process.env['GLM_HOME'] = customConfigDir;
 
       // A full prompt run is needed to trigger config.initialize()
       try {
@@ -98,13 +98,13 @@ describe('QWEN_HOME environment variable', () => {
      * 1b. CLI creates the config dir structure when the path does not yet exist.
      */
     it('1b: config dir is created when it does not exist', async () => {
-      rig.setup('qwen-home-1b-dir-creation');
+      rig.setup('glm-home-1b-dir-creation');
 
       // Point to a path that does NOT exist yet
       customConfigDir = join(rig.testDir!, 'nonexistent-config');
       expect(existsSync(customConfigDir)).toBe(false);
 
-      process.env['QWEN_HOME'] = customConfigDir;
+      process.env['GLM_HOME'] = customConfigDir;
 
       try {
         await rig.run('say hello');
@@ -130,14 +130,14 @@ describe('QWEN_HOME environment variable', () => {
      * 1c. Relative path is resolved correctly.
      *
      * TestRig sets cwd to testDir when spawning the child process, so a
-     * relative path like "./custom-qwen" resolves to
-     * <testDir>/custom-qwen inside the subprocess.
+     * relative path like "./custom-glm" resolves to
+     * <testDir>/custom-glm inside the subprocess.
      */
-    it('1c: relative QWEN_HOME path is resolved against subprocess cwd', async () => {
-      rig.setup('qwen-home-1c-relative-path');
+    it('1c: relative GLM_HOME path is resolved against subprocess cwd', async () => {
+      rig.setup('glm-home-1c-relative-path');
 
-      const relativePath = './custom-qwen';
-      process.env['QWEN_HOME'] = relativePath;
+      const relativePath = './custom-glm';
+      process.env['GLM_HOME'] = relativePath;
 
       try {
         await rig.run('say hello');
@@ -146,7 +146,7 @@ describe('QWEN_HOME environment variable', () => {
       }
 
       // Resolve the expected absolute path the same way the subprocess does
-      const expectedAbsPath = resolve(rig.testDir!, 'custom-qwen');
+      const expectedAbsPath = resolve(rig.testDir!, 'custom-glm');
       const installationIdPath = join(expectedAbsPath, 'installation_id');
       expect(
         existsSync(installationIdPath),
@@ -155,13 +155,13 @@ describe('QWEN_HOME environment variable', () => {
     });
 
     /**
-     * 1d. Default behaviour is preserved when QWEN_HOME is unset.
+     * 1d. Default behaviour is preserved when GLM_HOME is unset.
      */
-    it('1d: CLI functions normally when QWEN_HOME is not set', async () => {
-      rig.setup('qwen-home-1d-default-behaviour');
+    it('1d: CLI functions normally when GLM_HOME is not set', async () => {
+      rig.setup('glm-home-1d-default-behaviour');
 
-      // Explicitly ensure QWEN_HOME is absent for this test
-      delete process.env['QWEN_HOME'];
+      // Explicitly ensure GLM_HOME is absent for this test
+      delete process.env['GLM_HOME'];
 
       // A simple prompt run should succeed without errors
       const result = await rig.run('say hello');
@@ -183,12 +183,12 @@ describe('QWEN_HOME environment variable', () => {
      * (Note: `--help` cannot be used — yargs intercepts it and exits the
      * process before `loadSettings()` runs.)
      */
-    it('2b: settings migration runs in QWEN_HOME dir', async () => {
-      rig.setup('qwen-home-2b-settings-migration');
+    it('2b: settings migration runs in GLM_HOME dir', async () => {
+      rig.setup('glm-home-2b-settings-migration');
 
       customConfigDir = join(rig.testDir!, 'migration-config');
       mkdirSync(customConfigDir, { recursive: true });
-      process.env['QWEN_HOME'] = customConfigDir;
+      process.env['GLM_HOME'] = customConfigDir;
 
       // Write a V1-format settings file into the custom config dir
       const v1Settings = {
@@ -223,31 +223,31 @@ describe('QWEN_HOME environment variable', () => {
   });
 
   // -------------------------------------------------------------------------
-  // Group 3: Isolation — project-level .qwen/ is NOT affected
+  // Group 3: Isolation — project-level .glm/ is NOT affected
   // -------------------------------------------------------------------------
 
   describe('Group 3: Project-level isolation', () => {
     /**
-     * 3a. Project-level workspace settings work independently of QWEN_HOME.
+     * 3a. Project-level workspace settings work independently of GLM_HOME.
      *
-     * We put already-current settings in QWEN_HOME and V1 settings in the
-     * workspace .qwen/settings.json. Running `extensions list` triggers
+     * We put already-current settings in GLM_HOME and V1 settings in the
+     * workspace .glm/settings.json. Running `extensions list` triggers
      * loadSettings() (migration). If the CLI is correctly reading workspace
-     * settings from <testDir>/.qwen/, the workspace settings.json will be
-     * migrated. If it mistakenly read from QWEN_HOME, the workspace file
+     * settings from <testDir>/.glm/, the workspace settings.json will be
+     * migrated. If it mistakenly read from GLM_HOME, the workspace file
      * would be untouched.
      *
      * `extensions list` runs through `main()` and reaches `loadSettings()`
      * (which triggers migration) without needing an API key.
      */
-    it('3a: workspace settings are read from project .qwen/, not from QWEN_HOME', async () => {
-      rig.setup('qwen-home-3a-isolation');
+    it('3a: workspace settings are read from project .glm/, not from GLM_HOME', async () => {
+      rig.setup('glm-home-3a-isolation');
 
       customConfigDir = join(rig.testDir!, 'global-config');
       mkdirSync(customConfigDir, { recursive: true });
-      process.env['QWEN_HOME'] = customConfigDir;
+      process.env['GLM_HOME'] = customConfigDir;
 
-      // Seed QWEN_HOME with the current schema version so it shouldn't migrate.
+      // Seed GLM_HOME with the current schema version so it shouldn't migrate.
       // Bump alongside SETTINGS_VERSION in packages/cli/src/config/settings.ts.
       writeFileSync(
         join(customConfigDir, 'settings.json'),
@@ -257,7 +257,7 @@ describe('QWEN_HOME environment variable', () => {
       // Overwrite the workspace settings.json with V1 format so migration is observable
       const workspaceSettingsPath = join(
         rig.testDir!,
-        '.qwen',
+        '.glm',
         'settings.json',
       );
       writeFileSync(
@@ -284,7 +284,7 @@ describe('QWEN_HOME environment variable', () => {
 
       // The workspace settings.json must have been migrated to the current
       // SETTINGS_VERSION — proving the CLI read it from the workspace dir, not
-      // from QWEN_HOME. Update the version when the schema bumps.
+      // from GLM_HOME. Update the version when the schema bumps.
       const workspaceRaw = readFileSync(workspaceSettingsPath, 'utf-8');
       const workspaceSettings = JSON.parse(workspaceRaw) as Record<
         string,
@@ -293,7 +293,7 @@ describe('QWEN_HOME environment variable', () => {
       expect(workspaceSettings['$version']).toBe(4);
       expect(workspaceSettings['customWorkspaceKey']).toBe('workspace-value');
 
-      // The QWEN_HOME settings.json must be unchanged (still at the version we wrote)
+      // The GLM_HOME settings.json must be unchanged (still at the version we wrote)
       const globalRaw = readFileSync(
         join(customConfigDir, 'settings.json'),
         'utf-8',
@@ -304,26 +304,26 @@ describe('QWEN_HOME environment variable', () => {
   });
 
   // -------------------------------------------------------------------------
-  // Group 4: Interaction with QWEN_RUNTIME_DIR
+  // Group 4: Interaction with GLM_RUNTIME_DIR
   // -------------------------------------------------------------------------
 
-  describe('Group 4: Interaction with QWEN_RUNTIME_DIR', () => {
+  describe('Group 4: Interaction with GLM_RUNTIME_DIR', () => {
     /**
-     * 4a. QWEN_HOME and QWEN_RUNTIME_DIR can be set independently.
+     * 4a. GLM_HOME and GLM_RUNTIME_DIR can be set independently.
      *
-     * Config files (installation_id) go to QWEN_HOME.
-     * Runtime files (debug logs) go to QWEN_RUNTIME_DIR.
+     * Config files (installation_id) go to GLM_HOME.
+     * Runtime files (debug logs) go to GLM_RUNTIME_DIR.
      */
-    it('4a: config files land in QWEN_HOME and runtime files land in QWEN_RUNTIME_DIR', async () => {
-      rig.setup('qwen-home-4a-independence');
+    it('4a: config files land in GLM_HOME and runtime files land in GLM_RUNTIME_DIR', async () => {
+      rig.setup('glm-home-4a-independence');
 
       customConfigDir = join(rig.testDir!, 'config-dir');
       const runtimeDir = join(rig.testDir!, 'runtime-dir');
       mkdirSync(customConfigDir, { recursive: true });
       mkdirSync(runtimeDir, { recursive: true });
 
-      process.env['QWEN_HOME'] = customConfigDir;
-      process.env['QWEN_RUNTIME_DIR'] = runtimeDir;
+      process.env['GLM_HOME'] = customConfigDir;
+      process.env['GLM_RUNTIME_DIR'] = runtimeDir;
 
       try {
         await rig.run('say hello');
@@ -331,14 +331,14 @@ describe('QWEN_HOME environment variable', () => {
         // May fail without a valid API key — tolerate the error
       }
 
-      // Config file must be inside QWEN_HOME
+      // Config file must be inside GLM_HOME
       const installationIdPath = join(customConfigDir, 'installation_id');
       expect(
         existsSync(installationIdPath),
-        `Expected installation_id in QWEN_HOME at ${installationIdPath}`,
+        `Expected installation_id in GLM_HOME at ${installationIdPath}`,
       ).toBe(true);
 
-      // Debug logs must be inside QWEN_RUNTIME_DIR (under debug/)
+      // Debug logs must be inside GLM_RUNTIME_DIR (under debug/)
       const debugDir = join(runtimeDir, 'debug');
       const debugFiles = listFilesRecursive(debugDir);
       expect(
@@ -350,7 +350,7 @@ describe('QWEN_HOME environment variable', () => {
       const runtimeInstallationId = join(runtimeDir, 'installation_id');
       expect(
         existsSync(runtimeInstallationId),
-        `Did NOT expect installation_id inside QWEN_RUNTIME_DIR`,
+        `Did NOT expect installation_id inside GLM_RUNTIME_DIR`,
       ).toBe(false);
     });
   });

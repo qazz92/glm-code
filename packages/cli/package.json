@@ -4,7 +4,7 @@
   "description": "GLM Code",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GLMLM/qwen-code.git"
+    "url": "git+https://github.com/GLMLM/glm-code.git"
   },
   "type": "module",
   "main": "dist/index.js",
@@ -37,7 +37,7 @@
     "dist"
   ],
   "config": {
-    "sandboxImageUri": "ghcr.io/qwenlm/qwen-code:0.15.10"
+    "sandboxImageUri": "ghcr.io/glmlm/glm-code:0.15.10"
   },
   "dependencies": {
     "@agentclientprotocol/sdk": "^0.14.1",
@@ -48,7 +48,7 @@
     "@glm-code/channel-dingtalk": "file:../channels/dingtalk",
     "@glm-code/channel-telegram": "file:../channels/telegram",
     "@glm-code/channel-weixin": "file:../channels/weixin",
-    "@glm-code/qwen-code-core": "file:../core",
+    "@glm-code/core": "file:../core",
     "@glm-code/web-templates": "file:../web-templates",
     "@types/update-notifier": "^6.0.8",
     "ansi-regex": "^6.2.2",

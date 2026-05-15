@@ -16,7 +16,7 @@
  *         → SenderGate (open policy)
  *         → SessionRouter (creates/reuses session)
  *         → AcpBridge.prompt(sessionId, text)
- *           → glm --acp (REAL model request)
+ *           → glm-code --acp (REAL model request)
  *       → MockPluginChannel.sendMessage(chatId, response)
  *         → WebSocket response to mock server
  *     → server resolves promise with agent text
@@ -66,7 +66,7 @@ describe('Channel Plugin (Mock WebSocket E2E)', () => {
     // 1. Start mock server on random ports (no port conflicts)
     server = await createMockServer({ httpPort: 0, wsPort: 0 });
 
-    // 2. Start AcpBridge (spawns real glm --acp)
+    // 2. Start AcpBridge (spawns real glm-code --acp)
     bridge = new AcpBridge({
       cliEntryPath: CLI_PATH,
       cwd: testDir,

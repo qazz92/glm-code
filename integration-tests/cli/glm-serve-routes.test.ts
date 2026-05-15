@@ -1,15 +1,15 @@
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
 /**
- * `qwen serve` daemon — HTTP route + middleware integration tests.
+ * `glm serve` daemon — HTTP route + middleware integration tests.
  *
  * These exercise the daemon end-to-end without needing a working model
  * credential: they spawn a real `node packages/cli/dist/index.js serve`
- * (which itself spawns real `qwen --acp` children), then probe the HTTP
+ * (which itself spawns real `glm --acp` children), then probe the HTTP
  * surface. The agent's `initialize` + `newSession` handshake works
  * without auth, so session creation, listing, cancellation, validation,
  * SSE wiring, the CORS guard, the bearer-auth guard and shutdown all
@@ -17,7 +17,7 @@
  *
  * Tests that require an actual model call (streaming prompts, real
  * permission flows, Last-Event-ID resume across a real reconnect) live
- * in `qwen-serve-streaming.test.ts` and skip when no auth is set.
+ * in `glm-serve-streaming.test.ts` and skip when no auth is set.
  */
 import { spawn, type ChildProcess } from 'node:child_process';
 import * as path from 'node:path';
@@ -27,7 +27,7 @@ import {
   DaemonClient,
   DaemonHttpError,
   type DaemonSessionSummary,
-} from '@qwen-code/sdk';
+} from '@glm-code/sdk';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // Match the rest of the integration suite: prefer the bundled CLI
@@ -99,7 +99,7 @@ afterAll(async () => {
   await new Promise((r) => daemon.once('exit', r));
 }, 15_000);
 
-describe('qwen serve — bearer auth (timing-safe compare)', () => {
+describe('glm serve — bearer auth (timing-safe compare)', () => {
   // Probe `/capabilities` for the rejection cases instead of `/health`
   // — `/health` is intentionally registered before the bearer middleware
   // so liveness probes work without credentials. `/capabilities` is the
@@ -139,7 +139,7 @@ describe('qwen serve — bearer auth (timing-safe compare)', () => {
 
   it('/health exempt: missing Authorization header → 200', async () => {
     // Locks the auth-bypass exemption documented in
-    // docs/developers/qwen-serve-protocol.md so a future middleware
+    // docs/developers/glm-serve-protocol.md so a future middleware
     // ordering change can't silently break liveness probes.
     const res = await fetch(`${base}/health`);
     expect(res.status).toBe(200);
@@ -147,7 +147,7 @@ describe('qwen serve — bearer auth (timing-safe compare)', () => {
   });
 });
 
-describe('qwen serve — CORS browser-origin denial', () => {
+describe('glm serve — CORS browser-origin denial', () => {
   it('GET with Origin header → 403 + JSON', async () => {
     const res = await fetch(`${base}/health`, {
       headers: {
@@ -170,7 +170,7 @@ describe('qwen serve — CORS browser-origin denial', () => {
   });
 });
 
-describe('qwen serve — capabilities envelope', () => {
+describe('glm serve — capabilities envelope', () => {
   it('advertises all 9 Stage 1 features', async () => {
     const caps = await client.capabilities();
     expect(caps.v).toBe(1);
@@ -189,7 +189,7 @@ describe('qwen serve — capabilities envelope', () => {
   });
 });
 
-describe('qwen serve — POST /session validation + concurrent coalescing', () => {
+describe('glm serve — POST /session validation + concurrent coalescing', () => {
   it('rejects relative cwd', async () => {
     const res = await fetch(`${base}/session`, {
       method: 'POST',
@@ -238,7 +238,7 @@ describe('qwen serve — POST /session validation + concurrent coalescing', () =
   });
 });
 
-describe('qwen serve — POST /permission/:requestId validation', () => {
+describe('glm serve — POST /permission/:requestId validation', () => {
   it('400 on empty optionId', async () => {
     const res = await fetch(`${base}/permission/req-1`, {
       method: 'POST',
@@ -280,7 +280,7 @@ describe('qwen serve — POST /permission/:requestId validation', () => {
   });
 });
 
-describe('qwen serve — SSE Content-Type guard (SDK side)', () => {
+describe('glm serve — SSE Content-Type guard (SDK side)', () => {
   it('throws DaemonHttpError when upstream returns 200 + JSON', async () => {
     const ghostFetch = async () =>
       new Response(JSON.stringify({ ok: true }), {
@@ -303,7 +303,7 @@ describe('qwen serve — SSE Content-Type guard (SDK side)', () => {
   });
 });
 
-describe('qwen serve — Last-Event-ID strict parsing', () => {
+describe('glm serve — Last-Event-ID strict parsing', () => {
   it('malformed Last-Event-ID accepted but ignored', async () => {
     // Spawn a session so /events has somewhere to attach.
     const session = await client.createOrAttachSession({
@@ -322,7 +322,7 @@ describe('qwen serve — Last-Event-ID strict parsing', () => {
   });
 });
 
-describe('qwen serve — cancel + list', () => {
+describe('glm serve — cancel + list', () => {
   it('cancel called twice does not throw', async () => {
     const session = await client.createOrAttachSession({
       workspaceCwd: REPO_ROOT,
@@ -336,7 +336,7 @@ describe('qwen serve — cancel + list', () => {
     const sessions = await client.listWorkspaceSessions(REPO_ROOT);
     expect(sessions.length).toBeGreaterThanOrEqual(1);
     // Explicit `s` type because the reviewer's tsc run resolves
-    // `@qwen-code/sdk` against a possibly-stale dist .d.ts (per
+    // `@glm-code/sdk` against a possibly-stale dist .d.ts (per
     // integration-tests/tsconfig.json `paths` mapping); without
     // the annotation `s` widens to `any` in that environment and
     // trips strict-mode TS7006.

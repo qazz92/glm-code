@@ -2,7 +2,7 @@
 
 /**
  * @license
- * Copyright 2025 Qwen Team
+ * Copyright 2025 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -70,7 +70,7 @@ async function main() {
   );
   fs.mkdirSync(runtimeParent, { recursive: true });
   const runtimeDir = fs.mkdtempSync(
-    path.join(runtimeParent, 'qwen-node-runtime-'),
+    path.join(runtimeParent, 'glm-node-runtime-'),
   );
   const nodeDistUrl = `https://nodejs.org/dist/v${nodeVersion}`;
 
@@ -203,7 +203,7 @@ function assertStandaloneOutput(outDir) {
     .sort();
   const expectedArchiveNames = RELEASE_TARGETS.map(
     ({ qwenTarget }) =>
-      `qwen-code-${qwenTarget}.${qwenTarget === 'win-x64' ? 'zip' : 'tar.gz'}`,
+      `glm-code-${qwenTarget}.${qwenTarget === 'win-x64' ? 'zip' : 'tar.gz'}`,
   ).sort();
   const missing = expectedArchiveNames.filter(
     (archiveName) => !archiveNames.includes(archiveName),

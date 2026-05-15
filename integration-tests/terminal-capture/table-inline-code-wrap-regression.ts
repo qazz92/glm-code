@@ -1,7 +1,7 @@
 #!/usr/bin/env npx tsx
 /**
  * @license
- * Copyright 2026 Qwen Team
+ * Copyright 2026 GLM Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -256,12 +256,12 @@ function foregroundsAtOccurrences(raw: string, needle: string): string[] {
 async function main(): Promise<void> {
   const scriptDir = dirname(fileURLToPath(import.meta.url));
   const defaultRepoRoot = resolve(scriptDir, '../..');
-  const repoRoot = resolve(process.env['QWEN_TUI_E2E_REPO'] ?? defaultRepoRoot);
+  const repoRoot = resolve(process.env['GLM_TUI_E2E_REPO'] ?? defaultRepoRoot);
   const outputDir = resolve(
-    process.env['QWEN_TUI_E2E_OUT'] ??
-      join(tmpdir(), 'qwen-table-wrap-ansi', basename(repoRoot)),
+    process.env['GLM_TUI_E2E_OUT'] ??
+      join(tmpdir(), 'glm-table-wrap-ansi', basename(repoRoot)),
   );
-  const expectedPass = process.env['QWEN_TUI_E2E_EXPECT_PASS'] !== 'false';
+  const expectedPass = process.env['GLM_TUI_E2E_EXPECT_PASS'] !== 'false';
 
   if (existsSync(outputDir)) {
     rmSync(outputDir, { recursive: true });
@@ -277,14 +277,14 @@ async function main(): Promise<void> {
     FORCE_COLOR: '1',
     HOME: homeDir,
     NODE_NO_WARNINGS: '1',
-    QWEN_CODE_DISABLE_SYNCHRONIZED_OUTPUT: '1',
-    QWEN_CODE_NO_RELAUNCH: '1',
-    QWEN_SANDBOX: 'false',
+    GLM_CODE_DISABLE_SYNCHRONIZED_OUTPUT: '1',
+    GLM_CODE_NO_RELAUNCH: '1',
+    GLM_SANDBOX: 'false',
     TERM: 'xterm-256color',
     USERPROFILE: homeDir,
   };
   delete env['NO_COLOR'];
-  delete env['QWEN_CODE_SIMPLE'];
+  delete env['GLM_CODE_SIMPLE'];
   for (const key of [
     'HTTP_PROXY',
     'http_proxy',

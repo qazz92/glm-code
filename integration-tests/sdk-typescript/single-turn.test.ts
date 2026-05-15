@@ -13,7 +13,7 @@ import {
   type SDKMessage,
   type SDKSystemMessage,
   type SDKAssistantMessage,
-} from '@qwen-code/sdk';
+} from '@glm-code/sdk';
 import {
   SDKTestHelper,
   extractText,
@@ -131,7 +131,7 @@ describe('Single-Turn Query (E2E)', () => {
         // Validate content contains either the requested greeting or self-description.
         expect(assistantText.length).toBeGreaterThan(0);
         expect(assistantText.toLowerCase()).toMatch(
-          /hello|hi|greetings|qwen code|assistant/,
+          /hello|hi|greetings|glm code|assistant/,
         );
 
         // Validate message types
@@ -182,7 +182,7 @@ describe('Single-Turn Query (E2E)', () => {
         expect(Array.isArray(systemMessage!.mcp_servers)).toBe(true);
         expect(systemMessage!.model).toBeDefined();
         expect(systemMessage!.permission_mode).toBeDefined();
-        expect(systemMessage!.qwen_code_version).toBeDefined();
+        expect(systemMessage!.glm_code_version).toBeDefined();
 
         // Validate system message appears early in sequence
         const systemMessageIndex = messages.findIndex(
@@ -464,7 +464,7 @@ describe('Single-Turn Query (E2E)', () => {
         const q = query({
           prompt: 'Hello',
           options: {
-            pathToQwenExecutable: '/nonexistent/path/to/cli',
+            pathToGLMExecutable: '/nonexistent/path/to/cli',
             debug: false,
           },
         });
@@ -478,7 +478,7 @@ describe('Single-Turn Query (E2E)', () => {
         expect(error).toBeDefined();
         expect(error instanceof Error).toBe(true);
         expect((error as Error).message).toContain(
-          'Invalid pathToQwenExecutable',
+          'Invalid pathToGLMExecutable',
         );
       }
     });

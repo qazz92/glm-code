@@ -1,30 +1,30 @@
 ---
 name: feat-dev
-description: End-to-end workflow for implementing a non-trivial qwen-code
+description: End-to-end workflow for implementing a non-trivial glm-code
   feature. Covers requirements investigation, design, E2E test planning,
   baseline dry-run, implementation, verification, code review, and iteration.
 ---
 
 # Feature Development Workflow
 
-Use this workflow when implementing a feature in qwen-code that needs design,
+Use this workflow when implementing a feature in glm-code that needs design,
 behavioral validation, or coordinated changes across multiple files. Each phase
 produces a concrete artifact. Do not combine phases; the output of each phase
 feeds the next.
 
 ## Artifact Paths
 
-Use `.qwen/` paths for planning artifacts:
+Use `.glm/` paths for planning artifacts:
 
-- `.qwen/design/<feature>.md`
-- `.qwen/e2e-tests/<feature>.md`
+- `.glm/design/<feature>.md`
+- `.glm/e2e-tests/<feature>.md`
 
 ## Phase 1: Investigate
 
-Understand the requested behavior and the current qwen-code implementation.
+Understand the requested behavior and the current glm-code implementation.
 
 Use a code exploration agent when available. Ask it to inspect the relevant
-qwen-code areas for:
+glm-code areas for:
 
 - Existing feature definitions: tools, parameters, schemas, commands, UI, or
   config.
@@ -71,7 +71,7 @@ Output: test plan on disk.
 ## Phase 4: Dry-Run
 
 Validate the test plan against the current baseline using the globally installed
-`qwen` CLI, not the local build.
+`glm` CLI, not the local build.
 
 Spawn `test-engineer` agents for independent test groups when the runtime
 supports it. The feature is not implemented yet, so tests should either fail or
