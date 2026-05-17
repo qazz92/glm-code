@@ -297,6 +297,48 @@ describe('UiTelemetryService', () => {
       expect(metrics.models['gemini-2.5-flash'].api.totalRequests).toBe(1);
       expect(service.getLastPromptTokenCount()).toBe(0);
     });
+
+    it('should aggregate GLM model metrics case-insensitively', () => {
+      const responseEvent = {
+        'event.name': EVENT_API_RESPONSE,
+        model: 'GLM-5.1',
+        duration_ms: 500,
+        input_token_count: 10,
+        output_token_count: 20,
+        total_token_count: 30,
+        cached_content_token_count: 5,
+        thoughts_token_count: 2,
+      } as ApiResponseEvent & {
+        'event.name': typeof EVENT_API_RESPONSE;
+      };
+      const errorEvent = {
+        'event.name': EVENT_API_ERROR,
+        model: 'glm-5.1',
+        duration_ms: 300,
+        error_message: 'Something went wrong',
+        subagent_name: 'critic',
+      } as ApiErrorEvent & { 'event.name': typeof EVENT_API_ERROR };
+
+      service.addEvent(responseEvent);
+      service.addEvent(errorEvent);
+
+      const metrics = service.getMetrics();
+      expect(Object.keys(metrics.models)).toEqual(['glm-5.1']);
+      expect(metrics.models['GLM-5.1']).toBeUndefined();
+
+      const modelMetrics = metrics.models['glm-5.1'];
+      expect(modelMetrics.api.totalRequests).toBe(2);
+      expect(modelMetrics.api.totalErrors).toBe(1);
+      expect(modelMetrics.api.totalLatencyMs).toBe(800);
+      expect(modelMetrics.tokens.prompt).toBe(10);
+      expect(modelMetrics.tokens.candidates).toBe(20);
+      expect(modelMetrics.tokens.total).toBe(30);
+      expect(modelMetrics.tokens.cached).toBe(5);
+      expect(modelMetrics.tokens.thoughts).toBe(2);
+      expect(modelMetrics.bySource[MAIN_SOURCE].api.totalRequests).toBe(1);
+      expect(modelMetrics.bySource['critic'].api.totalRequests).toBe(1);
+      expect(modelMetrics.bySource['critic'].api.totalErrors).toBe(1);
+    });
   });
 
   describe('API Error Event Processing', () => {

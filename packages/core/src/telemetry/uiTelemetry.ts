@@ -142,6 +142,23 @@ const createInitialMetrics = (): SessionMetrics => ({
   },
 });
 
+function normalizeModelNameForMetrics(modelName: string): string {
+  const trimmedModelName = modelName.trim();
+  if (trimmedModelName.length === 0) {
+    return modelName;
+  }
+
+  // GLM model identifiers are entered and emitted through several paths:
+  // provider model IDs (`glm-5.1`) and internal presets (`GLM-5.1`). They
+  // refer to the same backing model, so aggregate session stats under a single
+  // canonical key instead of showing duplicate `GLM-*` and `glm-*` rows.
+  if (/^glm-/i.test(trimmedModelName)) {
+    return trimmedModelName.toLowerCase();
+  }
+
+  return trimmedModelName;
+}
+
 export class UiTelemetryService extends EventEmitter {
   #metrics: SessionMetrics = createInitialMetrics();
   #lastPromptTokenCount = 0;
@@ -207,10 +224,11 @@ export class UiTelemetryService extends EventEmitter {
   }
 
   private getOrCreateModelMetrics(modelName: string): ModelMetrics {
-    if (!this.#metrics.models[modelName]) {
-      this.#metrics.models[modelName] = createInitialModelMetrics();
+    const metricModelName = normalizeModelNameForMetrics(modelName);
+    if (!this.#metrics.models[metricModelName]) {
+      this.#metrics.models[metricModelName] = createInitialModelMetrics();
     }
-    return this.#metrics.models[modelName];
+    return this.#metrics.models[metricModelName];
   }
 
   private getOrCreateSourceMetrics(
