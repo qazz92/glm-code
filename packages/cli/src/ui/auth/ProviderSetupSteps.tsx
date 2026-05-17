@@ -184,9 +184,88 @@ function ModelIdsStep({
   flow: ProviderSetupFlow;
 }): React.JSX.Element {
   const defaultIds = config.models?.map((m) => m.id).join(', ') ?? '';
+  const hasModelPicker =
+    !!config.discoverModels &&
+    !flow.state.isDiscoveringModels &&
+    flow.state.discoveredModels.length > 0 &&
+    !flow.state.modelDiscoveryError;
+
+  if (config.discoverModels && flow.state.isDiscoveringModels) {
+    return (
+      <Box marginTop={1} flexDirection="column">
+        <Box marginTop={1}>
+          <Text color={theme.text.primary}>
+            {t('Fetching available models from {{url}}/models…', {
+              url: flow.state.baseUrl.replace(/\/$/, ''),
+            })}
+          </Text>
+        </Box>
+      </Box>
+    );
+  }
+
+  if (hasModelPicker) {
+    return (
+      <Box marginTop={1} flexDirection="column">
+        <Box marginTop={1}>
+          <Text color={theme.text.primary}>
+            {t('Select one or more models available to this API key.')}
+          </Text>
+        </Box>
+        <Box marginTop={1} flexDirection="column">
+          {flow.state.discoveredModels.map((model, index) => {
+            const selected = flow.state.selectedModelIds.includes(model.id);
+            const focused = flow.state.focusedModelIndex === index;
+            const checkmark = selected ? '◉' : '○';
+            const cursor = focused ? '›' : ' ';
+            const description = [
+              model.contextWindowSize
+                ? t('{{tokens}} context', {
+                    tokens: String(model.contextWindowSize),
+                  })
+                : undefined,
+              model.enableThinking ? t('thinking') : undefined,
+            ]
+              .filter(Boolean)
+              .join(' · ');
+
+            return (
+              <Box key={model.id} marginLeft={2}>
+                <Text color={focused ? theme.status.success : undefined}>
+                  {cursor} {checkmark} {model.id}
+                </Text>
+                {description && (
+                  <Text color={theme.text.secondary}> — {description}</Text>
+                )}
+              </Box>
+            );
+          })}
+        </Box>
+        {flow.state.modelIdsError && (
+          <Box marginTop={1}>
+            <Text color={theme.status.error}>{flow.state.modelIdsError}</Text>
+          </Box>
+        )}
+        <Box marginTop={1}>
+          <Text color={theme.text.secondary}>
+            {t(
+              '↑↓ to navigate, Space to toggle, Enter to continue, Esc to go back',
+            )}
+          </Text>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box marginTop={1} flexDirection="column">
+      {flow.state.modelDiscoveryError && (
+        <Box marginTop={1}>
+          <Text color={theme.status.warning}>
+            {flow.state.modelDiscoveryError}
+          </Text>
+        </Box>
+      )}
       {defaultIds && (
         <Box marginTop={1}>
           <Text color={theme.text.secondary}>
@@ -414,11 +493,39 @@ export function ProviderSetupSteps({
         }
       }
 
+      if (
+        step === 'models' &&
+        provider?.discoverModels &&
+        !flow.state.isDiscoveringModels &&
+        flow.state.discoveredModels.length > 0 &&
+        !flow.state.modelDiscoveryError
+      ) {
+        if (key.name === 'up') {
+          flow.moveModelFocusUp();
+          return;
+        }
+        if (key.name === 'down') {
+          flow.moveModelFocusDown();
+          return;
+        }
+        if (key.name === 'space') {
+          flow.toggleFocusedModel();
+          return;
+        }
+        if (key.name === 'return') {
+          flow.submitSelectedModels();
+          return;
+        }
+      }
+
       if (step === 'review' && key.name === 'return') {
         flow.submit();
       }
     },
-    { isActive: step === 'advancedConfig' || step === 'review' },
+    {
+      isActive:
+        step === 'advancedConfig' || step === 'review' || step === 'models',
+    },
   );
 
   if (!provider || !step) return null;

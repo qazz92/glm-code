@@ -76,7 +76,7 @@ function getStepLabel(step: string | null, p: ProviderConfig): string {
     return Array.isArray(p.baseUrl) ? t('Endpoint') : t('Base URL');
   }
   if (step === 'apiKey') return t('API Key');
-  if (step === 'models') return t('Model IDs');
+  if (step === 'models') return t(p.uiLabels?.modelsStepTitle ?? 'Model IDs');
   if (step === 'advancedConfig') return t('Advanced Config');
   if (step === 'review') return t('Review');
   return '';
@@ -100,11 +100,7 @@ export function AuthDialog(): React.JSX.Element {
     auth: { pendingAuthType, authError },
   } = useUIState();
   const {
-    auth: {
-      handleAuthSelect: onAuthSelect,
-      handleProviderSubmit,
-      onAuthError,
-    },
+    auth: { handleAuthSelect: onAuthSelect, handleProviderSubmit, onAuthError },
   } = useUIActions();
   const config = useConfig();
   const settings = useSettings();

@@ -60,6 +60,16 @@ export interface ProviderConfig {
   models?: ModelSpec[];
 
   /**
+   * Optional runtime model discovery. Providers that expose an OpenAI-
+   * compatible `GET /models` endpoint can use this to replace manual comma
+   * entry with an authenticated picker during setup.
+   */
+  discoverModels?: (params: {
+    apiKey: string;
+    baseUrl: string;
+  }) => Promise<ModelSpec[]>;
+
+  /**
    * Whether the user can add/remove models in the setup UI.
    * - `true`  → show model editing step; known IDs inherit their ModelSpec metadata
    * - `false` → skip model step; use models as-is (e.g. Coding Plan)
@@ -105,6 +115,7 @@ export interface ProviderConfig {
   uiLabels?: {
     flowTitle?: string;
     baseUrlStepTitle?: string;
+    modelsStepTitle?: string;
   };
 }
 
@@ -224,11 +235,16 @@ function buildModelConfigs(
 
   // Editable ModelSpec[] — look up per-model metadata for known IDs
   if (config.models && config.modelsEditable) {
-    const specMap = new Map(config.models.map((s) => [s.id, s]));
+    const specMap = new Map(config.models.map((s) => [s.id.toLowerCase(), s]));
     return inputs.modelIds.map((id) => {
-      const spec = specMap.get(id);
+      const spec = specMap.get(id.toLowerCase());
       if (spec) {
-        return specToModelConfig(spec, prefix, inputs.baseUrl, envKey);
+        return specToModelConfig(
+          { ...spec, id },
+          prefix,
+          inputs.baseUrl,
+          envKey,
+        );
       }
       return {
         id,

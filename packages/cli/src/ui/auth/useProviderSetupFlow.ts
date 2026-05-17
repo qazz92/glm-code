@@ -18,6 +18,7 @@ import {
   shouldShowStep,
   resolveBaseUrl,
   getDefaultModelIds,
+  type ModelSpec,
   type ProviderConfig,
   type ProviderSetupInputs,
 } from '../../auth/providerConfig.js';
@@ -76,6 +77,11 @@ export interface ProviderSetupState {
   // Model IDs
   modelIds: string;
   modelIdsError: string | null;
+  discoveredModels: ModelSpec[];
+  isDiscoveringModels: boolean;
+  modelDiscoveryError: string | null;
+  selectedModelIds: string[];
+  focusedModelIndex: number;
 
   // Advanced config
   thinkingEnabled: boolean;
@@ -113,6 +119,13 @@ export function useProviderSetupFlow(
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
   const [modelIds, setModelIds] = useState('');
   const [modelIdsError, setModelIdsError] = useState<string | null>(null);
+  const [discoveredModels, setDiscoveredModels] = useState<ModelSpec[]>([]);
+  const [isDiscoveringModels, setIsDiscoveringModels] = useState(false);
+  const [modelDiscoveryError, setModelDiscoveryError] = useState<string | null>(
+    null,
+  );
+  const [selectedModelIds, setSelectedModelIds] = useState<string[]>([]);
+  const [focusedModelIndex, setFocusedModelIndex] = useState(0);
   const [thinkingEnabled, setThinkingEnabled] = useState(false);
   const [modalityEnabled, setModalityEnabled] = useState(false);
   const [modalityImage, setModalityImage] = useState(true);
@@ -156,8 +169,14 @@ export function useProviderSetupFlow(
       setApiKey(prefillKey);
 
       setApiKeyError(null);
-      setModelIds(getDefaultModelIds(config).join(', '));
+      const defaultModelIds = getDefaultModelIds(config);
+      setModelIds(defaultModelIds.join(', '));
       setModelIdsError(null);
+      setDiscoveredModels([]);
+      setIsDiscoveringModels(false);
+      setModelDiscoveryError(null);
+      setSelectedModelIds(defaultModelIds);
+      setFocusedModelIndex(0);
       setThinkingEnabled(false);
       setModalityEnabled(false);
       setModalityImage(true);
@@ -235,6 +254,7 @@ export function useProviderSetupFlow(
   const changeApiKey = useCallback((value: string) => {
     setApiKey(value);
     setApiKeyError(null);
+    setModelDiscoveryError(null);
   }, []);
 
   // Shared helper: assemble ProviderSetupInputs from current form state
@@ -260,6 +280,52 @@ export function useProviderSetupFlow(
     [stepIndex, visibleSteps, provider, onSubmit, buildCurrentInputs, goNext],
   );
 
+  const discoverModels = useCallback(
+    async (config: ProviderConfig, selectedApiKey: string) => {
+      if (!config.discoverModels) {
+        return;
+      }
+
+      setIsDiscoveringModels(true);
+      setModelDiscoveryError(null);
+      setDiscoveredModels([]);
+
+      try {
+        const models = await config.discoverModels({
+          apiKey: selectedApiKey,
+          baseUrl: baseUrl.trim(),
+        });
+        setDiscoveredModels(models);
+        const defaultIds = getDefaultModelIds(config);
+        const availableIds = new Map(
+          models.map((model) => [model.id.toLowerCase(), model.id]),
+        );
+        const initialSelection = defaultIds
+          .map((id) => availableIds.get(id.toLowerCase()))
+          .filter((id): id is string => typeof id === 'string');
+        const fallbackSelection =
+          initialSelection.length > 0
+            ? initialSelection
+            : models.slice(0, 1).map((model) => model.id);
+        setSelectedModelIds(fallbackSelection);
+        setModelIds(fallbackSelection.join(', '));
+        setFocusedModelIndex(0);
+      } catch (error) {
+        setModelDiscoveryError(
+          t(
+            'Could not fetch models from the provider. You can enter model IDs manually. {{message}}',
+            {
+              message: error instanceof Error ? error.message : String(error),
+            },
+          ),
+        );
+      } finally {
+        setIsDiscoveringModels(false);
+      }
+    },
+    [baseUrl],
+  );
+
   const submitApiKey = useCallback(
     (keyOverride?: string): boolean => {
       const trimmed = (keyOverride ?? apiKey).trim();
@@ -276,10 +342,27 @@ export function useProviderSetupFlow(
       }
       setApiKeyError(null);
       setApiKey(trimmed);
+      if (
+        visibleSteps[stepIndex + 1] === 'models' &&
+        provider?.discoverModels
+      ) {
+        goNext();
+        void discoverModels(provider, trimmed);
+        return true;
+      }
       submitOrNext({ apiKey: trimmed });
       return true;
     },
-    [apiKey, provider, baseUrl, submitOrNext],
+    [
+      apiKey,
+      provider,
+      baseUrl,
+      visibleSteps,
+      stepIndex,
+      goNext,
+      discoverModels,
+      submitOrNext,
+    ],
   );
 
   const highlightBaseUrl = useCallback(
@@ -296,6 +379,49 @@ export function useProviderSetupFlow(
     setModelIds(value);
     setModelIdsError(null);
   }, []);
+
+  const moveModelFocusUp = useCallback(() => {
+    setFocusedModelIndex((index) =>
+      discoveredModels.length === 0
+        ? 0
+        : index <= 0
+          ? discoveredModels.length - 1
+          : index - 1,
+    );
+  }, [discoveredModels.length]);
+
+  const moveModelFocusDown = useCallback(() => {
+    setFocusedModelIndex((index) =>
+      discoveredModels.length === 0
+        ? 0
+        : index >= discoveredModels.length - 1
+          ? 0
+          : index + 1,
+    );
+  }, [discoveredModels.length]);
+
+  const toggleFocusedModel = useCallback(() => {
+    const model = discoveredModels[focusedModelIndex];
+    if (!model) return;
+    setSelectedModelIds((ids) => {
+      if (ids.includes(model.id)) {
+        return ids.filter((id) => id !== model.id);
+      }
+      return [...ids, model.id];
+    });
+    setModelIdsError(null);
+  }, [discoveredModels, focusedModelIndex]);
+
+  const submitSelectedModels = useCallback((): boolean => {
+    if (selectedModelIds.length === 0) {
+      setModelIdsError(t('Select at least one model.'));
+      return false;
+    }
+    setModelIdsError(null);
+    setModelIds(selectedModelIds.join(', '));
+    submitOrNext({ modelIds: selectedModelIds });
+    return true;
+  }, [selectedModelIds, submitOrNext]);
 
   const submitModelIds = useCallback((): boolean => {
     const normalized = normalizeModelIds(modelIds);
@@ -466,6 +592,11 @@ export function useProviderSetupFlow(
     apiKeyError,
     modelIds,
     modelIdsError,
+    discoveredModels,
+    isDiscoveringModels,
+    modelDiscoveryError,
+    selectedModelIds,
+    focusedModelIndex,
     thinkingEnabled,
     modalityEnabled,
     modalityImage,
@@ -490,6 +621,10 @@ export function useProviderSetupFlow(
     changeApiKey,
     submitApiKey,
     changeModelIds,
+    moveModelFocusUp,
+    moveModelFocusDown,
+    toggleFocusedModel,
+    submitSelectedModels,
     submitModelIds,
     moveAdvancedFocusUp,
     moveAdvancedFocusDown,
