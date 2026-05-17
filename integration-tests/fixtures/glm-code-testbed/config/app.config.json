@@ -1,0 +1,9 @@
+{
+  "appName": "GLM Code Testbed",
+  "defaultLocale": "en-US",
+  "features": {
+    "mcp": true,
+    "slashCommands": true,
+    "pythonChecks": true
+  }
+}

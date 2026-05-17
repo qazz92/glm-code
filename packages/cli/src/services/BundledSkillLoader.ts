@@ -5,10 +5,7 @@
  */
 
 import type { Config } from '@glm-code/core';
-import {
-  createDebugLogger,
-  appendToLastTextPart,
-} from '@glm-code/core';
+import { createDebugLogger, appendToLastTextPart } from '@glm-code/core';
 import type { ICommandLoader } from './types.js';
 import type {
   SlashCommand,
@@ -18,6 +15,8 @@ import { CommandKind } from '../ui/commands/types.js';
 import { t } from '../i18n/index.js';
 
 const debugLogger = createDebugLogger('BUNDLED_SKILL_LOADER');
+
+const NATIVE_ORCHESTRATION_SKILLS = new Set(['plan-review']);
 
 /**
  * Loads bundled skills as slash commands, making them directly invocable
@@ -44,6 +43,12 @@ export class BundledSkillLoader implements ICommandLoader {
       // Hide skills whose allowedTools require cron when cron is disabled
       const cronEnabled = this.config?.isCronEnabled() ?? false;
       const skills = allSkills.filter((skill) => {
+        if (NATIVE_ORCHESTRATION_SKILLS.has(skill.name)) {
+          debugLogger.debug(
+            `Hiding bundled skill "${skill.name}" because a native orchestration command owns that route`,
+          );
+          return false;
+        }
         if (
           !cronEnabled &&
           skill.allowedTools?.some((t) => t.startsWith('cron_'))

@@ -95,6 +95,19 @@ describe('BundledSkillLoader', () => {
     });
   });
 
+  it('should not load plan-review bundled skill as a slash command because native orchestration owns it', async () => {
+    const skills = [
+      makeSkill({ name: 'plan-review', description: 'Review plans' }),
+      makeSkill({ name: 'review', description: 'Review code changes' }),
+    ];
+    mockSkillManager.listSkills.mockResolvedValue(skills);
+
+    const loader = new BundledSkillLoader(mockConfig);
+    const commands = await loader.loadCommands(signal);
+
+    expect(commands.map((c) => c.name)).toEqual(['review']);
+  });
+
   it('should submit skill body as prompt without args', async () => {
     const skill = makeSkill();
     mockSkillManager.listSkills.mockResolvedValue([skill]);

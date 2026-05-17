@@ -73,6 +73,16 @@ describe('SkillManager', () => {
     // Setup yaml parser mocks with sophisticated behavior
     mockParseYaml.mockImplementation((yamlString: string) => {
       // Handle different test cases based on YAML content
+      if (yamlString.includes('name: plan-review')) {
+        return {
+          name: 'plan-review',
+          description: 'Review implementation plans',
+          when_to_use: 'Use when reviewing a plan before implementation.',
+          'argument-hint': '[plan-path] [--all|--product|--ux|--technical]',
+          'disable-model-invocation': true,
+          allowedTools: ['agent', 'read_file', 'grep_search', 'glob'],
+        };
+      }
       if (yamlString.includes('hooks:')) {
         // For hooks tests, use real YAML parser
         return yaml.parse(yamlString);
@@ -575,11 +585,7 @@ You are a helpful assistant.
     beforeEach(() => {
       // Mock directory listing based on path to handle multiple base dirs per level.
       // Use path.join to construct expected paths so separators match on all platforms.
-      const projectGLMSkillsDir = path.join(
-        '/test/project',
-        '.glm',
-        'skills',
-      );
+      const projectGLMSkillsDir = path.join('/test/project', '.glm', 'skills');
       const userGLMSkillsDir = path.join('/home/user', '.glm', 'skills');
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -810,6 +816,12 @@ Skill 3 content`);
       isFile: () => false,
       isSymbolicLink: () => false,
     };
+    const planReviewDirEntry = {
+      name: 'plan-review',
+      isDirectory: () => true,
+      isFile: () => false,
+      isSymbolicLink: () => false,
+    };
 
     const emptyDir = [] as unknown as Awaited<ReturnType<typeof fs.readdir>>;
 
@@ -839,15 +851,45 @@ Skill 3 content`);
 
     function setupReviewSkillMocks() {
       vi.mocked(fs.access).mockResolvedValue(undefined);
-      vi.mocked(fs.readFile).mockResolvedValue(`---
+      vi.mocked(fs.readFile).mockImplementation((filePath) => {
+        const pathStr = String(filePath);
+        if (pathStr.includes('plan-review')) {
+          return Promise.resolve(`---
+name: plan-review
+description: Review implementation plans
+when_to_use: Use when reviewing a plan before implementation.
+argument-hint: '[plan-path] [--all|--product|--ux|--technical]'
+disable-model-invocation: true
+allowedTools:
+  - agent
+  - read_file
+  - grep_search
+  - glob
+---
+Plan review content`);
+        }
+        return Promise.resolve(`---
 name: review
 description: Review code changes
 ---
 Review content`);
+      });
 
-      mockParseYaml.mockReturnValue({
-        name: 'review',
-        description: 'Review code changes',
+      mockParseYaml.mockImplementation((yamlString: string) => {
+        if (yamlString.includes('name: plan-review')) {
+          return {
+            name: 'plan-review',
+            description: 'Review implementation plans',
+            when_to_use: 'Use when reviewing a plan before implementation.',
+            'argument-hint': '[plan-path] [--all|--product|--ux|--technical]',
+            'disable-model-invocation': true,
+            allowedTools: ['agent', 'read_file', 'grep_search', 'glob'],
+          };
+        }
+        return {
+          name: 'review',
+          description: 'Review code changes',
+        };
       });
     }
 
@@ -904,6 +946,34 @@ Review content`);
       expect(skill).toBeDefined();
       expect(skill!.name).toBe('review');
       expect(skill!.level).toBe('bundled');
+    });
+
+    it('should parse the bundled plan-review skill metadata', async () => {
+      vi.mocked(fs.readdir).mockImplementation((dirPath) => {
+        const pathStr = String(dirPath);
+        const isBundled =
+          pathStr.endsWith(bundledDirSegment) && !pathStr.includes('.glm');
+        if (isBundled) {
+          return Promise.resolve([
+            reviewDirEntry,
+            planReviewDirEntry,
+          ] as unknown as Awaited<ReturnType<typeof fs.readdir>>);
+        }
+        return Promise.resolve(emptyDir);
+      });
+      setupReviewSkillMocks();
+
+      const skill = await manager.loadSkill('plan-review');
+
+      expect(skill).toBeDefined();
+      expect(skill!.name).toBe('plan-review');
+      expect(skill!.level).toBe('bundled');
+      expect(skill!.argumentHint).toBe(
+        '[plan-path] [--all|--product|--ux|--technical]',
+      );
+      expect(skill!.whenToUse).toContain('reviewing a plan');
+      expect(skill!.disableModelInvocation).toBe(true);
+      expect(skill!.allowedTools).toContain('agent');
     });
   });
 
@@ -1228,11 +1298,7 @@ Body.
       // otherwise the user copy's globs activate the visible (project)
       // skill, even when the touched file is outside the project skill's
       // declared paths.
-      const projectGLMSkillsDir = path.join(
-        '/test/project',
-        '.glm',
-        'skills',
-      );
+      const projectGLMSkillsDir = path.join('/test/project', '.glm', 'skills');
       const userGLMSkillsDir = path.join('/home/user', '.glm', 'skills');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       vi.mocked(fs.readdir).mockImplementation((dirPath: any) => {
@@ -1622,13 +1688,13 @@ Skill content`;
 
       expect(config.hooks?.PostToolUse).toHaveLength(1);
       const hook = config.hooks?.PostToolUse?.[0]?.hooks?.[0];
-      expect(hook?.type).toBe('http');
-      if (hook?.type === 'http') {
-        expect(hook.url).toBe('https://audit.example.com/log');
-        expect(hook.headers).toEqual({ Authorization: 'Bearer token' });
-        expect(hook.allowedEnvVars).toEqual(['API_KEY']);
-        expect(hook.timeout).toBe(10);
-      }
+      expect(hook).toMatchObject({
+        type: 'http',
+        url: 'https://audit.example.com/log',
+        headers: { Authorization: 'Bearer token' },
+        allowedEnvVars: ['API_KEY'],
+        timeout: 10,
+      });
     });
 
     it('should ignore unknown hook events', () => {

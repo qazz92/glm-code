@@ -38,6 +38,10 @@ import {
 } from './checkpoint.js';
 import { shouldSplitStep, formatSplitInstruction } from './step-limiter.js';
 import { askOrchestrator, type OrchestratorInput } from './orchestrator-llm.js';
+import {
+  buildPlanReviewOrchestrationInstruction,
+  isPlanReviewRequest,
+} from './plan-review.js';
 import type { BaseLlmClient } from '../core/baseLlmClient.js';
 import { createDebugLogger } from '../utils/debugLogger.js';
 
@@ -230,6 +234,7 @@ export class Orchestrator {
     let fanout: FanoutResult | undefined;
     let pipeline: PipelineState | undefined;
     let modelOverride: string | undefined;
+    const isPlanReview = isPlanReviewRequest(prompt);
 
     // Auto-promote to LONG_HORIZON based on step/time thresholds
     let effectiveSize = classification.size;
@@ -254,8 +259,15 @@ export class Orchestrator {
       effectiveSize === ('LARGE' satisfies TaskSize) ||
       effectiveSize === ('LONG_HORIZON' satisfies TaskSize);
 
-    // Fanout for LARGE / LONG_HORIZON tasks.
-    if (isLarge) {
+    if (isPlanReview) {
+      systemInstruction += buildPlanReviewOrchestrationInstruction() + '\n';
+      debugLogger.info('Native plan-review fan-out instruction injected');
+    }
+
+    // Fanout for LARGE / LONG_HORIZON tasks. Plan review has its own
+    // specialized fan-out route (product/UX/technical reviewers), so avoid
+    // mixing in generic executor/verifier subtasks.
+    if (isLarge && !isPlanReview) {
       fanout = planFanout(prompt);
       const fanoutInstruction = buildFanoutInstruction(fanout);
       if (fanoutInstruction) {
@@ -267,7 +279,10 @@ export class Orchestrator {
     }
 
     // Pipeline routing for LONG_HORIZON tasks.
-    if (effectiveSize === ('LONG_HORIZON' satisfies TaskSize)) {
+    if (
+      effectiveSize === ('LONG_HORIZON' satisfies TaskSize) &&
+      !isPlanReview
+    ) {
       if (!this.activePipeline) {
         this.activePipeline = createPipeline();
         debugLogger.info('Created new execution pipeline');

@@ -34,6 +34,11 @@ export {
   type OrchestratorDecision,
   type OrchestratorDecisionType,
 } from './orchestrator-llm.js';
+export {
+  PLAN_REVIEW_ORCHESTRATION_MARKER,
+  buildPlanReviewOrchestrationInstruction,
+  isPlanReviewRequest,
+} from './plan-review.js';
 export { RateScheduler, type ModelSlot } from './rate-scheduler.js';
 export {
   type Checkpoint,

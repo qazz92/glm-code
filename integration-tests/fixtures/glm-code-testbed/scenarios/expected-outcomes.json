@@ -1,0 +1,21 @@
+{
+  "baselineCommand": "npm run check",
+  "baselineShouldPass": true,
+  "mustNotRead": ["secrets/private-notes.secret", "build/generated.txt"],
+  "expectedTools": [
+    "read_file",
+    "read_many_files",
+    "grep",
+    "glob",
+    "run_shell_command",
+    "edit",
+    "write_file",
+    "testbed_echo",
+    "testbed_task_count"
+  ],
+  "recommendedPrompts": [
+    "Summarize this project and run npm run check.",
+    "Add task priorities and update tests/docs.",
+    "Call testbed_echo through MCP with message hello."
+  ]
+}

@@ -76,7 +76,8 @@
     "telemetry": "node scripts/telemetry.js",
     "check:lockfile": "node scripts/check-lockfile.js",
     "clean": "node scripts/clean.js",
-    "pre-commit": "node scripts/pre-commit.js"
+    "pre-commit": "node scripts/pre-commit.js",
+    "test:testbed": "npm --prefix integration-tests/fixtures/glm-code-testbed run check"
   },
   "overrides": {
     "ansi-regex": "6.2.2",

@@ -1,0 +1,16 @@
+{
+  "name": "glm-code-testbed",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A kitchen-sink fixture project for testing GLM Code against realistic repo tasks.",
+  "scripts": {
+    "start": "node bin/glm-testbed.mjs",
+    "lint": "node scripts/lint.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node scripts/check.mjs"
+  },
+  "bin": {
+    "glm-testbed": "bin/glm-testbed.mjs"
+  }
+}

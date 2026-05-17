@@ -36,6 +36,25 @@ describe('BuiltinAgentRegistry', () => {
       expect(generalAgent).toBeDefined();
       expect(generalAgent?.description).toContain('General-purpose agent');
     });
+
+    it('should include plan review specialist agents', () => {
+      const agents = BuiltinAgentRegistry.getBuiltinAgents();
+      const planReviewers = [
+        'product-plan-reviewer',
+        'ux-plan-reviewer',
+        'technical-plan-reviewer',
+      ];
+
+      for (const name of planReviewers) {
+        const agent = agents.find((candidate) => candidate.name === name);
+        expect(agent).toBeDefined();
+        expect(agent?.description).toContain('plan reviewer');
+        expect(agent?.systemPrompt).toContain('Do not edit files');
+        expect(agent?.tools).toBeDefined();
+        expect(agent?.tools).not.toContain('edit');
+        expect(agent?.tools).not.toContain('write_file');
+      }
+    });
   });
 
   describe('getBuiltinAgent', () => {

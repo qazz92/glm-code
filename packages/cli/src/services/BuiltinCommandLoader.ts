@@ -43,6 +43,7 @@ import { modelCommand } from '../ui/commands/modelCommand.js';
 import { manageModelsCommand } from '../ui/commands/manageModelsCommand.js';
 import { rememberCommand } from '../ui/commands/rememberCommand.js';
 import { planCommand } from '../ui/commands/planCommand.js';
+import { planReviewCommand } from '../ui/commands/planReviewCommand.js';
 import { permissionsCommand } from '../ui/commands/permissionsCommand.js';
 import { trustCommand } from '../ui/commands/trustCommand.js';
 import { quitCommand } from '../ui/commands/quitCommand.js';
@@ -162,6 +163,7 @@ export class BuiltinCommandLoader implements ICommandLoader {
       manageModelsCommand,
       rememberCommand,
       planCommand,
+      planReviewCommand,
       permissionsCommand,
       ...(this.config?.getFolderTrust() ? [trustCommand] : []),
       quitCommand,

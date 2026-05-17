@@ -1,0 +1,4 @@
+# GLM Code should avoid these during read-many/search operations.
+secrets/
+build/
+*.secret

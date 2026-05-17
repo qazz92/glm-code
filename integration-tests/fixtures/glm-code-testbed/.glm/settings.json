@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "testbed-tools": {
+      "command": "node",
+      "args": ["mcp/testbed-mcp-server.cjs"],
+      "trust": true,
+      "timeout": 30000
+    }
+  },
+  "experimental": {
+    "cron": true
+  }
+}

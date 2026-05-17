@@ -1,0 +1,20 @@
+[
+  {
+    "id": "task-read-files",
+    "title": "Verify file reading and project search",
+    "status": "done",
+    "tags": ["filesystem", "search"]
+  },
+  {
+    "id": "task-run-tests",
+    "title": "Run Node and Python checks",
+    "status": "open",
+    "tags": ["shell", "tests"]
+  },
+  {
+    "id": "task-mcp",
+    "title": "Call the local MCP echo tool",
+    "status": "open",
+    "tags": ["mcp", "tools"]
+  }
+]

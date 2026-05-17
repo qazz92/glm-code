@@ -1,5 +1,6 @@
 export default {
   commands: 'Commands',
+  'plan-review': 'Plan Review',
   'code-review': 'Code Review',
   'followup-suggestions': 'Followup Suggestions',
   'tool-use-summaries': 'Tool-Use Summaries',

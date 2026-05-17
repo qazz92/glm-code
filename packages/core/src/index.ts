@@ -413,4 +413,7 @@ export {
   type PhaseResult,
   type ModelSlot,
   type Checkpoint,
+  PLAN_REVIEW_ORCHESTRATION_MARKER,
+  buildPlanReviewOrchestrationInstruction,
+  isPlanReviewRequest,
 } from './orchestrator/index.js';

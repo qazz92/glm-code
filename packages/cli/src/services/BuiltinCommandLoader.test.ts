@@ -197,6 +197,10 @@ describe('BuiltinCommandLoader', () => {
     expect(approvalModeCmd).toBeDefined();
     expect(approvalModeCmd?.kind).toBe(CommandKind.BUILT_IN);
 
+    const planReviewCmd = commands.find((c) => c.name === 'plan-review');
+    expect(planReviewCmd).toBeDefined();
+    expect(planReviewCmd?.kind).toBe(CommandKind.BUILT_IN);
+
     const ideCmd = commands.find((c) => c.name === 'ide');
     expect(ideCmd).toBeDefined();
 
